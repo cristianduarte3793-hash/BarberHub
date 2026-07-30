@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard — BarberHub{% endblock %}
+{% block page_title %}Dashboard General{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-bold text-on-surface font-['Montserrat']">
+        Hola, {{ request.user.get_full_name|default:request.user.username }} 👋
+      </h2>
+      <p class="text-on-surface-variant mt-1">Bienvenido de nuevo. Aquí tienes el resumen de hoy.</p>
+    </div>
+    <div class="flex gap-2">
+      <button class="bg-surface-container-high text-on-surface px-4 py-2 rounded-lg flex items-center gap-2 border border-outline-variant text-sm hover:bg-surface-variant transition-colors">
+        <span class="material-symbols-outlined text-[20px]">filter_list</span> Filtrar
+      </button>
+      <button class="bg-secondary text-on-secondary px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-bold hover:opacity-90 transition-opacity">
+        <span class="material-symbols-outlined text-[20px]">download</span> Exportar
+      </button>
+    </div>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+    <div class="glass-card p-6 rounded-xl space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-lg">event</span>
+        <span class="text-tertiary text-xs font-semibold">+15% ↑</span>
+      </div>
+      <p class="text-on-surface-variant text-sm">Citas de hoy</p>
+      <p class="text-2xl font-bold text-on-surface">—</p>
+    </div>
+
+    <div class="glass-card p-6 rounded-xl space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-lg">groups</span>
+        <span class="text-tertiary text-xs font-semibold">+4% ↑</span>
+      </div>
+      <p class="text-on-surface-variant text-sm">Clientes registrados</p>
+      <p class="text-2xl font-bold text-on-surface">—</p>
+    </div>
+
+    <div class="glass-card p-6 rounded-xl space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-lg">content_cut</span>
+        <span class="text-on-surface-variant text-xs">Estable</span>
+      </div>
+      <p class="text-on-surface-variant text-sm">Barberos activos</p>
+      <p class="text-2xl font-bold text-on-surface">—</p>
+    </div>
+
+    <div class="glass-card p-6 rounded-xl space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-lg">payments</span>
+        <span class="text-tertiary text-xs font-semibold">+22% ↑</span>
+      </div>
+      <p class="text-on-surface-variant text-sm">Ingresos del mes</p>
+      <p class="text-2xl font-bold text-on-surface">—</p>
+    </div>
+
+  </div>
+
+  <!-- Charts -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+    <!-- Citas por semana -->
+    <div class="glass-card p-6 rounded-xl">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Citas por semana</h3>
+        <span class="material-symbols-outlined text-on-surface-variant cursor-pointer">more_vert</span>
+      </div>
+      <canvas id="chartCitas" height="100"></canvas>
+    </div>
+
+    <!-- Servicios más solicitados -->
+    <div class="glass-card p-6 rounded-xl">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Servicios más solicitados</h3>
+      </div>
+      <div class="space-y-4">
+        {% for item in servicios_top %}
+        <div>
+          <div class="flex justify-between text-sm mb-1">
+            <span class="text-on-surface">{{ item.nombre }}</span>
+            <span class="text-secondary">{{ item.porcentaje }}%</span>
+          </div>
+          <div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+            <div class="h-full bg-secondary rounded-full" style="width: {{ item.porcentaje }}%;"></div>
+          </div>
+        </div>
+        {% empty %}
+        <!-- Datos de ejemplo mientras no hay reales -->
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span class="text-on-surface">Corte Clásico</span><span class="text-secondary">45%</span></div>
+          <div class="w-full h-2 bg-surface-container-high rounded-full"><div class="h-full bg-secondary" style="width:45%"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span class="text-on-surface">Arreglo de Barba</span><span class="text-secondary">30%</span></div>
+          <div class="w-full h-2 bg-surface-container-high rounded-full"><div class="h-full bg-secondary" style="width:30%"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span class="text-on-surface">Corte + Barba</span><span class="text-secondary">20%</span></div>
+          <div class="w-full h-2 bg-surface-container-high rounded-full"><div class="h-full bg-secondary" style="width:20%"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span class="text-on-surface">Tratamiento Facial</span><span class="text-secondary">5%</span></div>
+          <div class="w-full h-2 bg-surface-container-high rounded-full"><div class="h-full bg-secondary" style="width:5%"></div></div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Tabla próximas citas -->
+  <div class="glass-card rounded-xl overflow-hidden">
+    <div class="p-6 flex items-center justify-between border-b border-outline-variant bg-surface-container-high/30">
+      <h3 class="text-xl font-bold text-on-surface font-['Montserrat']">Próximas Citas</h3>
+      <button class="text-secondary text-sm font-semibold hover:underline">Ver todo</button>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
+          <tr>
+            <th class="px-6 py-4">Cliente</th>
+            <th class="px-6 py-4">Barbero</th>
+            <th class="px-6 py-4">Servicio</th>
+            <th class="px-6 py-4">Hora</th>
+            <th class="px-6 py-4">Estado</th>
+            <th class="px-6 py-4 text-right">Acción</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant">
+          {% for cita in proximas_citas %}
+          <tr class="hover:bg-surface-variant/30 transition-colors">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-bold text-secondary">
+                  {{ cita.cliente.usuario.first_name|first|upper }}{{ cita.cliente.usuario.last_name|first|upper }}
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-on-surface">{{ cita.cliente.usuario.get_full_name }}</p>
+                  <p class="text-xs text-on-surface-variant">{{ cita.cliente.usuario.email }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-on-surface">{{ cita.barbero }}</td>
+            <td class="px-6 py-4 text-sm text-on-surface">{{ cita.servicio.nombre }}</td>
+            <td class="px-6 py-4 text-sm text-on-surface">{{ cita.hora_inicio|time:"H:i" }}</td>
+            <td class="px-6 py-4">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
+                {% if cita.estado == 'CONFIRMADA' %}bg-tertiary/10 text-tertiary
+                {% elif cita.estado == 'PENDIENTE' %}bg-secondary/10 text-secondary
+                {% elif cita.estado == 'EN_PROCESO' %}bg-blue-500/10 text-blue-400
+                {% elif cita.estado == 'FINALIZADA' %}bg-green-500/10 text-green-400
+                {% else %}bg-red-500/10 text-red-400{% endif %}">
+                {{ cita.get_estado_display }}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">edit_note</button>
+            </td>
+          </tr>
+          {% empty %}
+          <!-- Filas de ejemplo -->
+          <tr class="hover:bg-surface-variant/30 transition-colors">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-bold text-secondary">JD</div>
+                <div>
+                  <p class="text-sm font-medium text-on-surface">Juan Delgado</p>
+                  <p class="text-xs text-on-surface-variant">juan.d@gmail.com</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-on-surface">Carlos Ruiz</td>
+            <td class="px-6 py-4 text-sm text-on-surface">Corte + Barba</td>
+            <td class="px-6 py-4 text-sm text-on-surface">14:30</td>
+            <td class="px-6 py-4">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-tertiary/10 text-tertiary">Confirmada</span>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">edit_note</button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Gráfico citas por semana
+  const ctx = document.getElementById('chartCitas');
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],
+        datasets: [{
+          label: 'Citas',
+          data: [5, 8, 6, 12, 9, 15, 7],
+          backgroundColor: 'rgba(233,195,73,0.7)',
+          borderColor: '#e9c349',
+          borderWidth: 1,
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#c4c7c7' }, grid: { color: 'rgba(68,71,72,0.3)' } },
+          y: { ticks: { color: '#c4c7c7' }, grid: { color: 'rgba(68,71,72,0.3)' } }
+        }
+      }
+    });
+  }
+</script>
+{% endblock %}

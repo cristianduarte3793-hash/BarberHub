@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>BarberHub - Iniciar Sesión</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "secondary": "#e9c349",
+            "on-secondary": "#3c2f00",
+            "secondary-container": "#af8d11",
+            "background": "#121414",
+            "surface": "#121414",
+            "surface-container": "#1e2020",
+            "surface-container-low": "#1a1c1c",
+            "surface-container-lowest": "#0c0f0f",
+            "surface-variant": "#333535",
+            "on-surface": "#e2e2e2",
+            "on-surface-variant": "#c4c7c7",
+            "outline": "#8e9192",
+            "outline-variant": "#444748",
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass-effect { backdrop-filter: blur(8px); background: rgba(18,20,20,0.7); }
+    .input-transition { transition: border-color .3s cubic-bezier(.4,0,.2,1), box-shadow .3s ease; }
+    .split-layout { min-height: 100vh; display: flex; }
+  </style>
+</head>
+<body class="bg-background text-on-surface overflow-hidden">
+<main class="split-layout">
+
+  <!-- Left: imagen decorativa -->
+  <section class="hidden lg:flex lg:w-1/2 relative flex-col justify-end p-12 overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <div class="w-full h-full bg-cover bg-center"
+           style="background-image: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&q=80');"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-90"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent"></div>
+    </div>
+    <div class="relative z-10 max-w-xl">
+      <div class="mb-2 flex items-center gap-2">
+        <span class="h-[2px] w-12 bg-secondary"></span>
+        <span class="text-secondary tracking-widest uppercase text-xs font-semibold">Premium Experience</span>
+      </div>
+      <h1 class="text-5xl font-bold text-on-surface leading-tight mb-6 font-['Montserrat']">
+        "Don't just get a haircut, <span class="text-secondary italic">get an experience.</span>"
+      </h1>
+      <p class="text-lg text-on-surface-variant max-w-md">
+        Elevate your grooming routine with BarberHub's surgical precision management.
+      </p>
+    </div>
+  </section>
+
+  <!-- Right: formulario -->
+  <section class="w-full lg:w-1/2 flex flex-col items-center justify-center bg-surface-container-lowest p-6">
+
+    <!-- Branding -->
+    <div class="absolute top-8 left-8 lg:left-auto lg:right-6 flex items-center gap-3">
+      <div class="w-10 h-10 rounded bg-secondary flex items-center justify-center">
+        <span class="material-symbols-outlined text-on-secondary" style="font-variation-settings:'FILL' 1;">content_cut</span>
+      </div>
+      <span class="text-xl font-bold text-secondary tracking-tight font-['Montserrat']">BarberHub</span>
+    </div>
+
+    <!-- Card login -->
+    <div class="w-full max-w-[440px] flex flex-col gap-6">
+      <header class="text-center lg:text-left">
+        <h2 class="text-3xl font-bold text-on-surface mb-2 font-['Montserrat']">Bienvenido de nuevo</h2>
+        <p class="text-on-surface-variant">Accede a tu cuenta de gestión premium.</p>
+      </header>
+
+      <!-- Mensajes de error -->
+      {% if messages %}
+        {% for message in messages %}
+          <div class="bg-red-900/40 border border-red-500/40 text-red-300 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">error</span>
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" class="flex flex-col gap-3" novalidate>
+        {% csrf_token %}
+
+        <!-- Email/Usuario -->
+        <div>
+          <label class="block text-xs font-semibold text-on-surface-variant uppercase mb-2 tracking-wider" for="username">Usuario</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-outline">
+              <span class="material-symbols-outlined text-[20px]">person</span>
+            </div>
+            <input class="w-full h-14 bg-surface-container border border-outline-variant rounded-lg pl-12 pr-4 text-on-surface focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary input-transition"
+                   id="username" name="username" placeholder="Tu usuario" type="text" required autofocus autocomplete="username"/>
+          </div>
+        </div>
+
+        <!-- Contraseña -->
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider" for="password">Contraseña</label>
+          </div>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-outline">
+              <span class="material-symbols-outlined text-[20px]">lock</span>
+            </div>
+            <input class="w-full h-14 bg-surface-container border border-outline-variant rounded-lg pl-12 pr-12 text-on-surface focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary input-transition"
+                   id="password" name="password" placeholder="••••••••" type="password" required autocomplete="current-password"/>
+            <button class="absolute inset-y-0 right-0 pr-4 flex items-center text-on-surface-variant hover:text-secondary transition-colors"
+                    type="button" id="togglePassword">
+              <span class="material-symbols-outlined text-[20px]" id="eyeIcon">visibility</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Botón -->
+        <button class="w-full h-14 bg-secondary text-on-secondary text-sm font-bold uppercase tracking-widest rounded-lg mt-4 hover:bg-secondary/90 hover:scale-[1.02] active:scale-95 transition-all duration-200 shadow-lg flex items-center justify-center gap-2"
+                type="submit">
+          Ingresar
+          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="relative flex items-center py-2">
+        <div class="flex-grow border-t border-outline-variant"></div>
+        <span class="flex-shrink mx-4 text-xs text-outline uppercase tracking-widest">O</span>
+        <div class="flex-grow border-t border-outline-variant"></div>
+      </div>
+
+      <!-- Registro -->
+      <div class="text-center">
+        <p class="text-on-surface-variant text-sm">
+          ¿No tienes cuenta?
+          <a class="text-secondary font-semibold hover:underline ml-1" href="{% url 'registro' %}">Regístrate como cliente</a>
+        </p>
+      </div>
+    </div>
+
+    <footer class="mt-auto pt-12">
+      <p class="text-xs text-outline-variant text-center">
+        © 2024 BarberHub Premium Management. Todos los derechos reservados.
+      </p>
+    </footer>
+  </section>
+</main>
+
+<script>
+  const toggleBtn = document.getElementById('togglePassword');
+  const passwordInput = document.getElementById('password');
+  const eyeIcon = document.getElementById('eyeIcon');
+  let visible = false;
+  toggleBtn.addEventListener('click', () => {
+    visible = !visible;
+    passwordInput.type = visible ? 'text' : 'password';
+    eyeIcon.textContent = visible ? 'visibility_off' : 'visibility';
+  });
+</script>
+</body>
+</html>
