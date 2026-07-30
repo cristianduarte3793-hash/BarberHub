@@ -127,10 +127,24 @@
 <!-- Stats rápidas -->
 <div class="bg-surface-container-low border-y border-outline-variant py-8 px-6">
   <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-    <div><p class="text-3xl font-bold text-secondary">+500</p><p class="text-sm text-on-surface-variant mt-1">Clientes felices</p></div>
-    <div><p class="text-3xl font-bold text-secondary">4</p><p class="text-sm text-on-surface-variant mt-1">Barberos expertos</p></div>
-    <div><p class="text-3xl font-bold text-secondary">+1200</p><p class="text-sm text-on-surface-variant mt-1">Citas completadas</p></div>
-    <div><p class="text-3xl font-bold text-secondary">4.9★</p><p class="text-sm text-on-surface-variant mt-1">Calificación promedio</p></div>
+    <div>
+      <p class="text-3xl font-bold text-secondary">{{ total_clientes|default:"0" }}+</p>
+      <p class="text-sm text-on-surface-variant mt-1">Clientes felices</p>
+    </div>
+    <div>
+      <p class="text-3xl font-bold text-secondary">{{ total_barberos_activos|default:"0" }}</p>
+      <p class="text-sm text-on-surface-variant mt-1">Barberos expertos</p>
+    </div>
+    <div>
+      <p class="text-3xl font-bold text-secondary">{{ total_citas|default:"0" }}+</p>
+      <p class="text-sm text-on-surface-variant mt-1">Citas completadas</p>
+    </div>
+    <div>
+      <p class="text-3xl font-bold text-secondary">
+        {% if promedio_calificacion %}{{ promedio_calificacion }}★{% else %}—{% endif %}
+      </p>
+      <p class="text-sm text-on-surface-variant mt-1">Calificación promedio</p>
+    </div>
   </div>
 </div>
 
@@ -244,38 +258,40 @@
       <h2 class="text-3xl font-bold font-['Montserrat'] text-on-surface mb-4">Lo que dicen nuestros clientes</h2>
       <p class="text-on-surface-variant">Calidad y servicio garantizado por nuestra comunidad.</p>
     </div>
+
+    {% if testimonios %}
     <div class="flex gap-4 overflow-x-auto no-scrollbar pb-4">
-      <div class="min-w-[320px] md:min-w-[380px] glass-card p-8 rounded-2xl border border-outline-variant hover:border-secondary transition-colors">
+      {% for cal in testimonios %}
+      <div class="min-w-[320px] md:min-w-[380px] glass-card p-8 rounded-2xl border border-outline-variant hover:border-secondary transition-colors flex-shrink-0">
         <div class="flex items-center gap-4 mb-6">
-          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDwlQqptJypsV4-FCQv0mxXTf7KgxQRA9O2p_BB4xhW42TY_K9E3m_5tfK0Ley2tdfxjkQDUiQWd_vJ9EoVrbtWhiGWJqJGUSFnBSFA_V-MF7BinS6Evhq9hgIY4bVainUQaCjKLh5XSFxyncAqSt60V0narPFOyNzSimKzLqzxLukFwZh3_DLVZbXapQ8yfnbg_10tTtDbgH9bXvKn6aMIsYkDGamm_5x9VZl1MS4gDaoEsvrd0DR" class="w-14 h-14 rounded-full object-cover" alt="">
+          <div class="w-14 h-14 rounded-full bg-secondary flex items-center justify-center text-on-secondary text-xl font-bold flex-shrink-0">
+            {{ cal.cliente.usuario.first_name|first|upper }}{{ cal.cliente.usuario.last_name|first|upper }}
+          </div>
           <div>
-            <p class="font-semibold text-on-surface">Carlos Eduardo</p>
-            <div class="flex text-secondary"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span></div>
+            <p class="font-semibold text-on-surface">{{ cal.cliente.usuario.get_full_name|default:cal.cliente.usuario.username }}</p>
+            <div class="flex text-secondary gap-0.5">
+              {% for i in "12345" %}
+                {% if forloop.counter <= cal.puntuacion %}
+                  <span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span>
+                {% else %}
+                  <span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 0;">star</span>
+                {% endif %}
+              {% endfor %}
+            </div>
           </div>
         </div>
-        <p class="text-on-surface-variant italic">"La mejor barbería de la ciudad sin duda. La atención al detalle es impresionante y el ambiente del lugar es de otro nivel."</p>
+        <p class="text-on-surface-variant italic">"{{ cal.comentario }}"</p>
       </div>
-      <div class="min-w-[320px] md:min-w-[380px] glass-card p-8 rounded-2xl border border-outline-variant hover:border-secondary transition-colors">
-        <div class="flex items-center gap-4 mb-6">
-          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwF1_oygqJo1Q-hm1dicYXKiH_cCp0QSY384LKpNUNjTJaQ4Sx_V7-T6UQg0Tf04oMX9NkD15ncBB-hgdIARNag_Wo9s56cpYNBsETSmgR3Fmhw4K5lCLKA4JQ_ULYkg6x8JW8n7XKehjQnRwz_imubwWARhbbO-3qsl3Gnt0BbQyWa-Xu_px_8noWYfl2w1I3uSQmN-nlD658m7iJqKus8Diexj0d-B03_1zD8dPbKwdweri1gh4y" class="w-14 h-14 rounded-full object-cover" alt="">
-          <div>
-            <p class="font-semibold text-on-surface">Roberto V.</p>
-            <div class="flex text-secondary"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span></div>
-          </div>
-        </div>
-        <p class="text-on-surface-variant italic">"Increíble experiencia. Reservar por la web fue super sencillo y el corte + barba fue simplemente perfecto. 100% recomendado."</p>
-      </div>
-      <div class="min-w-[320px] md:min-w-[380px] glass-card p-8 rounded-2xl border border-outline-variant hover:border-secondary transition-colors">
-        <div class="flex items-center gap-4 mb-6">
-          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF89LV_yO9Gm9ecVGchHTcdvDx2LtAHUHiyPf_Ljv-hRKBS2ZD6tdZ1W31DR7FtZQErpjgueIQqzvQMj_1QNi3luRzn414akZLHoijUEbfBb9HztL4Nk7elbUnfJ1nzesr-ZQQ6QFCprHId2pv3MJrooPHcpDRflovtFEXqf2803oml2bKSqDK6jgHRpPGkJQF4PsRiNKUbo3EWajmG_LJy4NJogk7w7dIzGPif4npYhnlJt6Mpi9A" class="w-14 h-14 rounded-full object-cover" alt="">
-          <div>
-            <p class="font-semibold text-on-surface">Andrés López</p>
-            <div class="flex text-secondary"><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span><span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span></div>
-          </div>
-        </div>
-        <p class="text-on-surface-variant italic">"Vine por primera vez hace 3 meses y ya no puedo ir a otro lugar. El ambiente, la calidad del servicio... todo es premium."</p>
-      </div>
+      {% endfor %}
     </div>
+    {% else %}
+    <!-- Sin testimonios aún -->
+    <div class="text-center py-12 text-on-surface-variant">
+      <span class="material-symbols-outlined text-5xl block mb-3 opacity-30">star</span>
+      <p class="text-sm">Sé el primero en dejar una reseña después de tu cita.</p>
+    </div>
+    {% endif %}
+
   </div>
 </section>
 
