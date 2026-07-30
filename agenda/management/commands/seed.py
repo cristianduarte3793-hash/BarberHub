@@ -208,20 +208,29 @@ class Command(BaseCommand):
     # -----------------------------------------------------------------------
     def _crear_admin(self):
         self.stdout.write('\n👑 Admin:')
-        if not User.objects.filter(username='admin').exists():
-            user = User.objects.create_superuser(
-                username='admin',
-                email='admin@barberhub.co',
-                password='admin1234',
-                first_name='Admin',
-                last_name='BarberHub',
-            )
-            PerfilUsuario.objects.create(
-                usuario=user,
-                telefono='+57 310 000 0000',
-                rol='ADMIN',
-                activo=True,
-            )
+        user, user_created = User.objects.get_or_create(
+            username='admin',
+            defaults={
+                'email': 'admin@barberhub.co',
+                'first_name': 'Admin',
+                'last_name': 'BarberHub',
+                'is_staff': True,
+                'is_superuser': True,
+            }
+        )
+        if user_created:
+            user.set_password('admin1234')
+            user.save()
+
+        perfil, perfil_created = PerfilUsuario.objects.get_or_create(
+            usuario=user,
+            defaults={
+                'telefono': '+57 310 000 0000',
+                'rol': 'ADMIN',
+                'activo': True,
+            }
+        )
+        if user_created or perfil_created:
             self.stdout.write('  ✔ admin creado')
         else:
             self.stdout.write('  — admin ya existe')
