@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}{{ accion }} Servicio — BarberHub{% endblock %}
+{% block page_title %}{{ accion }} Servicio{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+  <div class="glass-card rounded-xl p-8 border border-outline-variant">
+
+    <h3 class="text-lg font-bold text-on-surface mb-6 flex items-center gap-2 font-['Montserrat']">
+      <span class="material-symbols-outlined text-secondary">spa</span>
+      {{ accion }} servicio{% if servicio %}: {{ servicio.nombre }}{% endif %}
+    </h3>
+
+    <form method="post" novalidate class="space-y-5">
+      {% csrf_token %}
+
+      <!-- Nombre -->
+      <div>
+        <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Nombre del servicio *</label>
+        <input type="text" name="nombre" value="{{ form.nombre.value|default:'' }}" placeholder="Ej: Corte Clásico"
+               class="w-full h-11 bg-surface-container border border-outline-variant rounded-lg px-4 text-on-surface focus:outline-none focus:border-secondary text-sm {% if form.nombre.errors %}border-error{% endif %}">
+        {% if form.nombre.errors %}<p class="text-error text-xs mt-1">{{ form.nombre.errors.0 }}</p>{% endif %}
+      </div>
+
+      <!-- Descripción -->
+      <div>
+        <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Descripción</label>
+        <textarea name="descripcion" rows="3" placeholder="Descripción del servicio..."
+                  class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:border-secondary text-sm resize-none">{{ form.descripcion.value|default:'' }}</textarea>
+      </div>
+
+      <!-- Precio y Duración -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Precio ($) *</label>
+          <input type="number" name="precio" value="{{ form.precio.value|default:'' }}" step="0.01" min="0" placeholder="0.00"
+                 class="w-full h-11 bg-surface-container border border-outline-variant rounded-lg px-4 text-on-surface focus:outline-none focus:border-secondary text-sm {% if form.precio.errors %}border-error{% endif %}">
+          {% if form.precio.errors %}<p class="text-error text-xs mt-1">{{ form.precio.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Duración (min) *</label>
+          <input type="number" name="duracion" value="{{ form.duracion.value|default:'' }}" step="5" min="5" placeholder="45"
+                 class="w-full h-11 bg-surface-container border border-outline-variant rounded-lg px-4 text-on-surface focus:outline-none focus:border-secondary text-sm {% if form.duracion.errors %}border-error{% endif %}">
+          {% if form.duracion.errors %}<p class="text-error text-xs mt-1">{{ form.duracion.errors.0 }}</p>{% endif %}
+        </div>
+      </div>
+
+      <!-- Activo -->
+      <div class="flex items-center gap-3 p-4 bg-surface-container rounded-lg border border-outline-variant">
+        <input type="checkbox" name="activo" id="activo"
+               {% if form.activo.value %}checked{% endif %}
+               class="w-4 h-4 accent-secondary">
+        <label for="activo" class="text-sm font-semibold text-on-surface cursor-pointer">
+          Servicio activo <span class="text-on-surface-variant font-normal">(visible para agendar citas)</span>
+        </label>
+      </div>
+
+      <!-- Botones -->
+      <div class="flex gap-3 pt-2">
+        <button type="submit"
+                class="bg-secondary text-on-secondary px-6 py-2.5 rounded-lg text-sm font-bold hover:opacity-90 transition-opacity flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">check</span> Guardar
+        </button>
+        <a href="{% url 'servicios' %}"
+           class="px-6 py-2.5 rounded-lg text-sm font-semibold border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-all">
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -345,3 +345,317 @@ def agendar_cita_view(request):
         'dias_abiertos': dias_abiertos,
     }
     return render(request, 'agendar_cita.html', contexto)
+
+
+# ===========================================================================
+# MÓDULO ADMINISTRADOR — vistas nuevas
+# ===========================================================================
+
+from .forms import ServicioForm, HorarioForm, ConfiguracionBarberiaForm
+from .models import ConfiguracionBarberia
+from django.db.models import Sum, Q
+from django.http import JsonResponse
+
+
+# ---------------------------------------------------------------------------
+# Helper decorador admin
+# ---------------------------------------------------------------------------
+def admin_required(view_func):
+    """Decorador que restringe acceso a administradores."""
+    from functools import wraps
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login')
+        if not es_admin(request.user):
+            messages.error(request, 'No tienes permisos para acceder a esta sección.')
+            return redirect('dashboard')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
+# ---------------------------------------------------------------------------
+# 1. GESTIÓN DE SERVICIOS
+# ---------------------------------------------------------------------------
+
+@login_required
+@admin_required
+def servicios_view(request):
+    """Lista todos los servicios."""
+    servicios = Servicio.objects.annotate(total_citas=Count('citas_servicio')).order_by('nombre')
+    return render(request, 'admin/servicios.html', {'servicios': servicios})
+
+
+@login_required
+@admin_required
+def servicio_crear(request):
+    """Crear un nuevo servicio."""
+    form = ServicioForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Servicio creado correctamente.')
+        return redirect('servicios')
+    return render(request, 'admin/servicio_form.html', {'form': form, 'accion': 'Crear'})
+
+
+@login_required
+@admin_required
+def servicio_editar(request, pk):
+    """Editar servicio existente."""
+    servicio = get_object_or_404(Servicio, pk=pk)
+    form = ServicioForm(request.POST or None, instance=servicio)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Servicio actualizado correctamente.')
+        return redirect('servicios')
+    return render(request, 'admin/servicio_form.html', {'form': form, 'accion': 'Editar', 'servicio': servicio})
+
+
+@login_required
+@admin_required
+def servicio_toggle(request, pk):
+    """Activar / desactivar servicio."""
+    servicio = get_object_or_404(Servicio, pk=pk)
+    servicio.activo = not servicio.activo
+    servicio.save()
+    estado = 'activado' if servicio.activo else 'desactivado'
+    messages.success(request, f'Servicio "{servicio.nombre}" {estado}.')
+    return redirect('servicios')
+
+
+@login_required
+@admin_required
+def servicio_eliminar(request, pk):
+    """Eliminar servicio (solo si no tiene citas asociadas)."""
+    servicio = get_object_or_404(Servicio, pk=pk)
+    if servicio.citas_servicio.exists():
+        messages.error(request, f'No se puede eliminar "{servicio.nombre}" porque tiene citas asociadas. Desactívalo en su lugar.')
+        return redirect('servicios')
+    if request.method == 'POST':
+        servicio.delete()
+        messages.success(request, 'Servicio eliminado.')
+        return redirect('servicios')
+    return render(request, 'admin/confirmar_eliminar.html', {'objeto': servicio, 'tipo': 'servicio'})
+
+
+# ---------------------------------------------------------------------------
+# 2. GESTIÓN DE CITAS (Admin)
+# ---------------------------------------------------------------------------
+
+@login_required
+@admin_required
+def citas_admin_view(request):
+    """Lista todas las citas con filtros."""
+    citas = Cita.objects.select_related(
+        'cliente__usuario', 'barbero__perfil__usuario', 'servicio'
+    ).order_by('-fecha', '-hora_inicio')
+
+    # Filtros GET
+    fecha    = request.GET.get('fecha', '').strip()
+    estado   = request.GET.get('estado', '').strip()
+    barbero  = request.GET.get('barbero', '').strip()
+    cliente  = request.GET.get('cliente', '').strip()
+
+    if fecha:
+        citas = citas.filter(fecha=fecha)
+    if estado:
+        citas = citas.filter(estado=estado)
+    if barbero:
+        citas = citas.filter(barbero__id=barbero)
+    if cliente:
+        citas = citas.filter(
+            Q(cliente__usuario__first_name__icontains=cliente) |
+            Q(cliente__usuario__last_name__icontains=cliente)  |
+            Q(cliente__usuario__username__icontains=cliente)
+        )
+
+    contexto = {
+        'citas': citas,
+        'barberos_lista': Barbero.objects.select_related('perfil__usuario').filter(estado='ACTIVO'),
+        'estados': Cita.ESTADO_CHOICES,
+        'filtros': {'fecha': fecha, 'estado': estado, 'barbero': barbero, 'cliente': cliente},
+        'total': citas.count(),
+    }
+    return render(request, 'admin/citas_admin.html', contexto)
+
+
+@login_required
+@admin_required
+def cita_cambiar_estado(request, pk):
+    """Cambiar el estado de una cita vía POST."""
+    cita = get_object_or_404(Cita, pk=pk)
+    if request.method == 'POST':
+        nuevo_estado = request.POST.get('estado', '')
+        estados_validos = [e[0] for e in Cita.ESTADO_CHOICES]
+        if nuevo_estado in estados_validos:
+            cita.estado = nuevo_estado
+            cita.save()
+            messages.success(request, f'Cita #{cita.pk} → {cita.get_estado_display()}')
+        else:
+            messages.error(request, 'Estado inválido.')
+    return redirect(request.META.get('HTTP_REFERER', 'citas_admin'))
+
+
+# ---------------------------------------------------------------------------
+# 3. GESTIÓN DE HORARIOS
+# ---------------------------------------------------------------------------
+
+@login_required
+@admin_required
+def horarios_view(request):
+    """Lista horarios semanales y días especiales."""
+    horarios_semana = Horario.objects.filter(
+        fecha_especifica__isnull=True
+    ).order_by('dia_semana')
+
+    horarios_especiales = Horario.objects.filter(
+        fecha_especifica__isnull=False
+    ).order_by('-fecha_especifica')
+
+    return render(request, 'admin/horarios.html', {
+        'horarios_semana': horarios_semana,
+        'horarios_especiales': horarios_especiales,
+    })
+
+
+@login_required
+@admin_required
+def horario_crear(request):
+    """Crear horario o bloqueo de día."""
+    form = HorarioForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Horario guardado correctamente.')
+        return redirect('horarios')
+    return render(request, 'admin/horario_form.html', {'form': form, 'accion': 'Crear'})
+
+
+@login_required
+@admin_required
+def horario_editar(request, pk):
+    """Editar horario existente."""
+    horario = get_object_or_404(Horario, pk=pk)
+    form = HorarioForm(request.POST or None, instance=horario)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Horario actualizado.')
+        return redirect('horarios')
+    return render(request, 'admin/horario_form.html', {'form': form, 'accion': 'Editar', 'horario': horario})
+
+
+@login_required
+@admin_required
+def horario_eliminar(request, pk):
+    """Eliminar horario."""
+    horario = get_object_or_404(Horario, pk=pk)
+    if request.method == 'POST':
+        horario.delete()
+        messages.success(request, 'Horario eliminado.')
+        return redirect('horarios')
+    return render(request, 'admin/confirmar_eliminar.html', {'objeto': horario, 'tipo': 'horario'})
+
+
+# ---------------------------------------------------------------------------
+# 4. REPORTES Y ESTADÍSTICAS
+# ---------------------------------------------------------------------------
+
+@login_required
+@admin_required
+def reportes_view(request):
+    """Panel de reportes con datos reales del ORM."""
+    from datetime import date
+    hoy = timezone.localdate()
+    inicio_mes = hoy.replace(day=1)
+
+    # Totales generales
+    total_citas          = Cita.objects.count()
+    citas_hoy            = Cita.objects.filter(fecha=hoy).exclude(estado='CANCELADA').count()
+    citas_mes            = Cita.objects.filter(fecha__gte=inicio_mes).exclude(estado='CANCELADA').count()
+    citas_finalizadas    = Cita.objects.filter(estado='FINALIZADA').count()
+    citas_canceladas     = Cita.objects.filter(estado='CANCELADA').count()
+    citas_pendientes     = Cita.objects.filter(estado='PENDIENTE').count()
+    total_clientes       = PerfilUsuario.objects.filter(rol='CLIENTE', activo=True).count()
+    total_barberos       = Barbero.objects.filter(estado='ACTIVO').count()
+
+    # Ingresos
+    ingresos_total = Cita.objects.filter(
+        estado='FINALIZADA'
+    ).aggregate(total=Sum('precio'))['total'] or 0
+
+    ingresos_mes = Cita.objects.filter(
+        estado='FINALIZADA', fecha__gte=inicio_mes
+    ).aggregate(total=Sum('precio'))['total'] or 0
+
+    # Top 5 servicios más solicitados
+    servicios_top = Cita.objects.filter(
+        estado='FINALIZADA'
+    ).values('servicio__nombre').annotate(
+        total=Count('id'),
+        ingresos=Sum('precio'),
+    ).order_by('-total')[:5]
+
+    # Top barberos por citas finalizadas
+    barberos_top = Cita.objects.filter(
+        estado='FINALIZADA'
+    ).values(
+        'barbero__perfil__usuario__first_name',
+        'barbero__perfil__usuario__last_name',
+    ).annotate(
+        total=Count('id'),
+        ingresos=Sum('precio'),
+    ).order_by('-total')[:5]
+
+    # Calificación promedio por barbero
+    calificaciones_barbero = Calificacion.objects.values(
+        'barbero__perfil__usuario__first_name',
+        'barbero__perfil__usuario__last_name',
+    ).annotate(promedio=Avg('puntuacion'), total=Count('id')).order_by('-promedio')
+
+    # Citas por estado (para gráfica)
+    citas_por_estado = {
+        e[1]: Cita.objects.filter(estado=e[0]).count()
+        for e in Cita.ESTADO_CHOICES
+    }
+
+    contexto = {
+        'total_citas': total_citas,
+        'citas_hoy': citas_hoy,
+        'citas_mes': citas_mes,
+        'citas_finalizadas': citas_finalizadas,
+        'citas_canceladas': citas_canceladas,
+        'citas_pendientes': citas_pendientes,
+        'total_clientes': total_clientes,
+        'total_barberos': total_barberos,
+        'ingresos_total': ingresos_total,
+        'ingresos_mes': ingresos_mes,
+        'servicios_top': servicios_top,
+        'barberos_top': barberos_top,
+        'calificaciones_barbero': calificaciones_barbero,
+        'citas_por_estado': citas_por_estado,
+    }
+    return render(request, 'admin/reportes.html', contexto)
+
+
+# ---------------------------------------------------------------------------
+# 5. CONFIGURACIÓN DE BARBERÍA
+# ---------------------------------------------------------------------------
+
+@login_required
+@admin_required
+def configuracion_view(request):
+    """Ver y editar configuración de la barbería (singleton)."""
+    config, _ = ConfiguracionBarberia.objects.get_or_create(
+        pk=1,
+        defaults={'nombre': 'BarberHub'}
+    )
+    form = ConfiguracionBarberiaForm(
+        request.POST or None,
+        request.FILES or None,
+        instance=config
+    )
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Configuración guardada correctamente.')
+        return redirect('configuracion')
+
+    return render(request, 'admin/configuracion.html', {'form': form, 'config': config})
