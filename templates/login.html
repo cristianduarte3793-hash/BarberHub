@@ -52,13 +52,13 @@
     <div class="relative z-10 max-w-xl">
       <div class="mb-2 flex items-center gap-2">
         <span class="h-[2px] w-12 bg-secondary"></span>
-        <span class="text-secondary tracking-widest uppercase text-xs font-semibold">Premium Experience</span>
+        <span class="text-secondary tracking-widest uppercase text-xs font-semibold">Experiencia Premium</span>
       </div>
       <h1 class="text-5xl font-bold text-on-surface leading-tight mb-6 font-['Montserrat']">
-        "Don't just get a haircut, <span class="text-secondary italic">get an experience.</span>"
+        "No solo un corte, <span class="text-secondary italic">una experiencia.</span>"
       </h1>
       <p class="text-lg text-on-surface-variant max-w-md">
-        Elevate your grooming routine with BarberHub's surgical precision management.
+        Eleva tu rutina de grooming con la gestión de precisión de BarberHub.
       </p>
     </div>
   </section>
@@ -67,11 +67,17 @@
   <section class="w-full lg:w-1/2 flex flex-col items-center justify-center bg-surface-container-lowest p-6">
 
     <!-- Branding -->
-    <div class="absolute top-8 left-8 lg:left-auto lg:right-6 flex items-center gap-3">
-      <div class="w-10 h-10 rounded bg-secondary flex items-center justify-center">
-        <span class="material-symbols-outlined text-on-secondary" style="font-variation-settings:'FILL' 1;">content_cut</span>
+    <div class="absolute top-6 right-6 flex items-center gap-2">
+      <div class="w-8 h-8 rounded bg-secondary flex items-center justify-center overflow-hidden flex-shrink-0">
+        {% if config_barberia and config_barberia.logo %}
+          <img src="{{ config_barberia.logo.url }}" class="w-full h-full object-cover" alt="Logo">
+        {% else %}
+          <span class="material-symbols-outlined text-on-secondary text-[16px]" style="font-variation-settings:'FILL' 1;">content_cut</span>
+        {% endif %}
       </div>
-      <span class="text-xl font-bold text-secondary tracking-tight font-['Montserrat']">BarberHub</span>
+      <span class="text-sm font-bold text-secondary font-['Montserrat'] hidden sm:block">
+        {{ config_barberia.nombre|default:"BarberHub" }}
+      </span>
     </div>
 
     <!-- Card login -->

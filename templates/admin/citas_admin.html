@@ -1,3 +1,4 @@
+﻿{% load barberhub_filters %}
 {% extends 'base.html' %}
 {% block title %}Citas — BarberHub{% endblock %}
 {% block page_title %}Gestión de Citas{% endblock %}
@@ -102,7 +103,7 @@
             <td class="px-4 py-3 text-sm text-on-surface">
               {{ cita.hora_inicio|time:"H:i" }} – {{ cita.hora_fin|time:"H:i" }}
             </td>
-            <td class="px-4 py-3 text-sm font-bold text-secondary">${{ cita.precio }}</td>
+            <td class="px-4 py-3 text-sm font-bold text-secondary">{{ cita.precio|cop }}</td>
             <td class="px-4 py-3">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
                 {% if cita.estado == 'CONFIRMADA' %}bg-tertiary/10 text-tertiary

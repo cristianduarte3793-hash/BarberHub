@@ -15,7 +15,8 @@ from django.db.models import Avg, Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from .models import Barbero, Calificacion, Cita
+from .forms import EditarPerfilForm
+from .models import Barbero, Calificacion, Cita, PerfilUsuario
 
 
 # ---------------------------------------------------------------------------
@@ -85,8 +86,19 @@ def barbero_dashboard(request):
     resultado = Calificacion.objects.filter(barbero=barbero).aggregate(prom=Avg('puntuacion'))
     calificacion_promedio = round(resultado['prom'], 1) if resultado['prom'] else None
 
+    # Total de clientes únicos atendidos (solo citas FINALIZADAS)
+    total_clientes_atendidos = (
+        Cita.objects.filter(barbero=barbero, estado='FINALIZADA')
+        .values('cliente')
+        .distinct()
+        .count()
+    )
+
     # Choices de disponibilidad
     disponibilidad_choices = Barbero.DISPONIBILIDAD_CHOICES
+
+    from datetime import datetime as _dt
+    now_time = timezone.localtime().time()
 
     return render(request, 'barbero/dashboard.html', {
         'barbero': barbero,
@@ -95,7 +107,9 @@ def barbero_dashboard(request):
         'proxima_cita': proxima_cita,
         'citas_pendientes': citas_pendientes,
         'calificacion_promedio': calificacion_promedio,
+        'total_clientes_atendidos': total_clientes_atendidos,
         'disponibilidad_choices': disponibilidad_choices,
+        'now_time': now_time,
     })
 
 
@@ -111,6 +125,7 @@ def barbero_agenda(request):
 
     vista = request.GET.get('vista', 'dia')
     offset = int(request.GET.get('offset', 0))
+    dias_semana = []  # solo se puebla en vista semana
 
     if vista == 'dia':
         fecha_base = hoy + timedelta(days=offset)
@@ -133,19 +148,52 @@ def barbero_agenda(request):
         # Semana que empieza en lunes
         inicio_semana = hoy + timedelta(weeks=offset) - timedelta(days=hoy.weekday())
         fin_semana = inicio_semana + timedelta(days=6)
-        citas = (
+        citas_qs = (
             Cita.objects.filter(barbero=barbero, fecha__range=(inicio_semana, fin_semana))
             .exclude(estado='CANCELADA')
             .select_related('cliente__usuario', 'servicio')
             .order_by('fecha', 'hora_inicio')
         )
+        citas = citas_qs  # para el template tabla mobile
+
+        DIAS_NOMBRES = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
         MESES_ES = ['', 'ene', 'feb', 'mar', 'abr', 'may', 'jun',
                     'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
+
+        # Grid de la semana: lista de 7 días con sus citas y posición
+        # La grilla empieza en 09:00 (540 min) y cada hora = 60px
+        HORA_INICIO_GRID = 9 * 60   # 09:00 en minutos
+        PX_POR_MINUTO = 1.0         # 60px por hora → 1px por minuto
+
+        dias_semana = []
+        for i in range(7):
+            dia_fecha = inicio_semana + timedelta(days=i)
+            citas_dia = [c for c in citas_qs if c.fecha == dia_fecha]
+            # Calcular posición top y altura para cada cita
+            citas_con_pos = []
+            for c in citas_dia:
+                minutos_inicio = c.hora_inicio.hour * 60 + c.hora_inicio.minute
+                minutos_fin    = c.hora_fin.hour * 60 + c.hora_fin.minute
+                top_px    = (minutos_inicio - HORA_INICIO_GRID) * PX_POR_MINUTO
+                height_px = max((minutos_fin - minutos_inicio) * PX_POR_MINUTO, 36)
+                # Adjuntar como atributos temporales al objeto
+                c.top_px    = max(int(top_px), 0)
+                c.height_px = int(height_px)
+                citas_con_pos.append(c)
+            dias_semana.append({
+                'fecha': dia_fecha,
+                'iso':   dia_fecha.isoformat(),
+                'nombre': DIAS_NOMBRES[i],
+                'dia':   dia_fecha.day,
+                'es_hoy': dia_fecha == hoy,
+                'citas': citas_con_pos,
+            })
+
         titulo_periodo = (
             f"{inicio_semana.day} {MESES_ES[inicio_semana.month]} — "
             f"{fin_semana.day} {MESES_ES[fin_semana.month]} {fin_semana.year}"
         )
-        total_citas_periodo = citas.count()
+        total_citas_periodo = citas_qs.count()
 
     else:  # mes
         from calendar import monthrange
@@ -174,6 +222,8 @@ def barbero_agenda(request):
         'offset_siguiente': offset + 1,
         'titulo_periodo': titulo_periodo,
         'total_citas_periodo': total_citas_periodo,
+        'dias_semana': dias_semana if vista == 'semana' else [],
+        'horas_grid': list(range(9, 20)),  # 09:00 → 19:00
     })
 
 
@@ -317,4 +367,82 @@ def barbero_disponibilidad(request):
     barbero = request.user.perfil.barbero
     return render(request, 'barbero/disponibilidad.html', {
         'barbero': barbero,
+    })
+
+
+# ---------------------------------------------------------------------------
+# 8. PERFIL DEL BARBERO (módulo dedicado)
+# ---------------------------------------------------------------------------
+
+@login_required
+@barbero_required
+def barbero_perfil(request):
+    """Perfil propio del barbero — muestra y permite editar campos permitidos."""
+    perfil = request.user.perfil
+    barbero = perfil.barbero
+
+    if request.method == 'POST':
+        form = EditarPerfilForm(request.POST, request.FILES, instance=perfil)
+        if form.is_valid():
+            form.save()
+            request.user.first_name = form.cleaned_data['first_name']
+            request.user.last_name  = form.cleaned_data['last_name']
+            request.user.email      = form.cleaned_data['email']
+            request.user.save()
+            messages.success(request, 'Perfil actualizado correctamente.')
+            return redirect('barbero_perfil')
+    else:
+        initial = {
+            'first_name': request.user.first_name,
+            'last_name':  request.user.last_name,
+            'email':      request.user.email,
+        }
+        form = EditarPerfilForm(instance=perfil, initial=initial)
+
+    # Métricas del barbero
+    resultado = Calificacion.objects.filter(barbero=barbero).aggregate(
+        prom=Avg('puntuacion'), total=Count('id')
+    )
+    calificacion_promedio = round(resultado['prom'], 1) if resultado['prom'] else None
+    total_calificaciones  = resultado['total'] or 0
+
+    total_citas_realizadas = Cita.objects.filter(
+        barbero=barbero, estado='FINALIZADA'
+    ).count()
+
+    total_clientes_unicos = (
+        Cita.objects.filter(barbero=barbero, estado='FINALIZADA')
+        .values('cliente')
+        .distinct()
+        .count()
+    )
+
+    # Servicio más realizado
+    servicio_top_qs = (
+        Cita.objects.filter(barbero=barbero, estado='FINALIZADA')
+        .values('servicio__nombre')
+        .annotate(total=Count('id'))
+        .order_by('-total')
+        .first()
+    )
+
+    # Últimas 5 calificaciones con comentario
+    ultimas_calificaciones = (
+        Calificacion.objects.filter(barbero=barbero)
+        .exclude(comentario='')
+        .exclude(comentario__isnull=True)
+        .select_related('cliente__usuario')
+        .order_by('-creado_en')[:5]
+    )
+
+    return render(request, 'barbero/perfil.html', {
+        'form': form,
+        'perfil': perfil,
+        'barbero': barbero,
+        'calificacion_promedio': calificacion_promedio,
+        'total_calificaciones': total_calificaciones,
+        'total_citas_realizadas': total_citas_realizadas,
+        'total_clientes_unicos': total_clientes_unicos,
+        'servicio_top': servicio_top_qs,
+        'ultimas_calificaciones': ultimas_calificaciones,
     })

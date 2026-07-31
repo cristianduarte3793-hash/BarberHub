@@ -26,7 +26,10 @@ urlpatterns = [
     path('barberos/',         views.barberos_view,        name='barberos'),
 
     # --- Citas ---
-    path('citas/agendar/',    views.agendar_cita_view,    name='agendar_cita'),
+    path('citas/agendar/',    views.agendar_cita_view,       name='agendar_cita'),
+    path('citas/',            views.mis_citas_view,          name='mis_citas'),
+    path('citas/<int:pk>/cancelar/', views.cancelar_cita_view, name='cancelar_cita'),
+    path('citas/slots/',      views.slots_disponibles_view,  name='slots_disponibles'),
 
     # -----------------------------------------------------------------------
     # MÓDULO ADMINISTRADOR
@@ -65,4 +68,5 @@ urlpatterns = [
     path('barbero/historial/',                    views_barbero.barbero_historial,     name='barbero_historial'),
     path('barbero/disponibilidad/',               views_barbero.barbero_disponibilidad,name='barbero_disponibilidad'),
     path('barbero/estado/',                       views_barbero.barbero_cambiar_estado,name='barbero_cambiar_estado'),
+    path('barbero/perfil/',                       views_barbero.barbero_perfil,        name='barbero_perfil'),
 ]

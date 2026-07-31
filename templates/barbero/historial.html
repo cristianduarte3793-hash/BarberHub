@@ -1,3 +1,4 @@
+﻿{% load barberhub_filters %}
 {% extends 'base.html' %}
 
 {% block title %}Historial — BarberHub{% endblock %}
@@ -108,7 +109,7 @@
               </div>
             </td>
             <td class="px-5 py-4 text-sm text-on-surface">{{ cita.servicio.nombre }}</td>
-            <td class="px-5 py-4 text-sm font-semibold text-secondary">${{ cita.precio }}</td>
+            <td class="px-5 py-4 text-sm font-semibold text-secondary">{{ cita.precio|cop }}</td>
             <td class="px-5 py-4">
               <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold
                 {% if cita.estado == 'FINALIZADA' %}bg-green-500/10 text-green-400

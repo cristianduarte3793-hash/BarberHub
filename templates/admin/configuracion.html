@@ -87,11 +87,6 @@
             <span class="material-symbols-outlined text-secondary text-[18px]">share</span> Redes sociales
           </h4>
 
-          {% for field_name, icon, placeholder in "instagram,photo_camera,https://instagram.com/...|facebook,thumb_up,https://facebook.com/...|tiktok,music_note,https://tiktok.com/@...|whatsapp,chat,+573100000000"|split:"|" %}
-          {% with parts=field_name|split:"," %}
-          {% endwith %}
-          {% endfor %}
-
           <!-- Instagram -->
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-surface-container-high rounded-lg flex items-center justify-center flex-shrink-0">

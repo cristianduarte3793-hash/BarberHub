@@ -33,25 +33,25 @@ SERVICIOS_DATA = [
     {
         'nombre': 'Corte Clásico',
         'descripcion': 'Corte tradicional con tijera y máquina, acabado impecable.',
-        'precio': Decimal('25.00'),
+        'precio': Decimal('35000.00'),
         'duracion': 45,
     },
     {
         'nombre': 'Corte Degradado (Fade)',
         'descripcion': 'Degradado de alta precisión con distintos niveles de máquina.',
-        'precio': Decimal('30.00'),
+        'precio': Decimal('45000.00'),
         'duracion': 60,
     },
     {
         'nombre': 'Arreglo de Barba',
         'descripcion': 'Perfilado con navaja, toalla caliente y aceite hidratante.',
-        'precio': Decimal('20.00'),
+        'precio': Decimal('25000.00'),
         'duracion': 30,
     },
     {
         'nombre': 'Corte + Barba',
         'descripcion': 'Experiencia completa: corte clásico y arreglo de barba con ritual de toalla.',
-        'precio': Decimal('45.00'),
+        'precio': Decimal('60000.00'),
         'duracion': 75,
     },
 ]

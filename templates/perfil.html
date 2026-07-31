@@ -1,3 +1,4 @@
+﻿{% load barberhub_filters %}
 {% extends 'base.html' %}
 
 {% block title %}Mi Perfil — BarberHub{% endblock %}
@@ -166,7 +167,7 @@
             <p class="text-xs text-on-surface-variant">{{ servicio.duracion }} min</p>
           </div>
         </div>
-        <span class="font-bold text-secondary text-sm">${{ servicio.precio }}</span>
+        <span class="font-bold text-secondary text-sm">{{ servicio.precio|cop }}</span>
       </div>
       {% empty %}
       <p class="text-sm text-on-surface-variant text-center py-4">Sin servicios asignados aún.</p>

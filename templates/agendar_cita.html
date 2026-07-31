@@ -1,203 +1,346 @@
+﻿{% load barberhub_filters %}
 {% extends 'base.html' %}
 
 {% block title %}Agendar Cita — BarberHub{% endblock %}
-{% block page_title %}Reservar Cita{% endblock %}
+{% block page_title %}Agendar Cita{% endblock %}
 
-{% block content %}
-<div class="space-y-6">
-
-  <!-- Stepper -->
-  <nav class="mb-8">
-    <div class="flex items-center justify-between relative max-w-3xl mx-auto">
-      <div class="absolute top-1/2 left-0 w-full h-0.5 bg-surface-variant -translate-y-1/2 z-0"></div>
-
-      <!-- Paso 1 -->
-      <div class="relative z-10 flex flex-col items-center gap-2">
-        <div class="w-10 h-10 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold shadow-lg">
-          <span class="material-symbols-outlined text-[20px]">check</span>
-        </div>
-        <span class="text-xs font-semibold text-secondary">Servicio</span>
-      </div>
-
-      <!-- Paso 2 -->
-      <div class="relative z-10 flex flex-col items-center gap-2">
-        <div class="w-10 h-10 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold shadow-lg">
-          <span class="material-symbols-outlined text-[20px]">check</span>
-        </div>
-        <span class="text-xs font-semibold text-secondary">Barbero</span>
-      </div>
-
-      <!-- Paso 3 (activo) -->
-      <div class="relative z-10 flex flex-col items-center gap-2">
-        <div class="w-10 h-10 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold shadow-[0_0_15px_rgba(233,195,73,0.4)] scale-110 border-2 border-secondary">
-          3
-        </div>
-        <span class="text-xs font-bold text-secondary">Fecha y Hora</span>
-      </div>
-
-      <!-- Paso 4 -->
-      <div class="relative z-10 flex flex-col items-center gap-2">
-        <div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant text-on-surface-variant flex items-center justify-center font-bold">
-          4
-        </div>
-        <span class="text-xs text-on-surface-variant">Confirmación</span>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Contenido principal -->
-  <div class="flex flex-col lg:flex-row gap-4">
-
-    <!-- Izquierda: calendario + horarios -->
-    <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
-
-      <!-- Calendario -->
-      <section class="glass-card p-6 rounded-xl border border-outline-variant">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-bold text-on-surface font-['Montserrat']">Julio 2026</h2>
-          <div class="flex gap-2">
-            <button class="p-2 hover:bg-surface-variant rounded-lg transition-colors text-on-surface-variant">
-              <span class="material-symbols-outlined">chevron_left</span>
-            </button>
-            <button class="p-2 hover:bg-surface-variant rounded-lg transition-colors text-on-surface-variant">
-              <span class="material-symbols-outlined">chevron_right</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Días de la semana -->
-        <div class="grid grid-cols-7 mb-2">
-          {% for dia in "LU MA MI JU VI SA DO"|split:" " %}
-          <div class="text-center text-xs text-on-surface-variant py-2">{{ dia }}</div>
-          {% endfor %}
-        </div>
-
-        <!-- Fechas -->
-        <div class="grid grid-cols-7 gap-1">
-          <!-- Días del mes - placeholder visual -->
-          <div class="h-12"></div>
-          <div class="h-12 flex items-center justify-center text-on-surface-variant opacity-20">30</div>
-          <button class="h-12 flex items-center justify-center hover:bg-surface-variant rounded-lg transition-all text-on-surface text-sm">1</button>
-          <button class="h-12 flex items-center justify-center hover:bg-surface-variant rounded-lg transition-all text-on-surface text-sm">2</button>
-          <button class="h-12 flex items-center justify-center hover:bg-surface-variant rounded-lg transition-all text-on-surface text-sm">3</button>
-          <button class="h-12 flex items-center justify-center bg-surface-variant/30 text-on-surface-variant cursor-not-allowed text-sm">4</button>
-          <button class="h-12 flex items-center justify-center bg-surface-variant/30 text-on-surface-variant cursor-not-allowed text-sm">5</button>
-          <button class="h-12 flex items-center justify-center hover:bg-surface-variant rounded-lg transition-all text-on-surface text-sm">6</button>
-          <button class="h-12 flex items-center justify-center hover:bg-surface-variant rounded-lg transition-all text-on-surface text-sm">7</button>
-          <button class="h-12 flex items-center justify-center hover:bg-surface-variant rounded-lg transition-all text-on-surface text-sm">8</button>
-          <button class="h-12 flex items-center justify-center hover:bg-surface-variant rounded-lg transition-all text-on-surface text-sm">9</button>
-          <button class="h-12 flex items-center justify-center hover:bg-surface-variant rounded-lg transition-all text-on-surface text-sm">10</button>
-          <button class="h-12 flex items-center justify-center bg-surface-variant/30 text-on-surface-variant cursor-not-allowed text-sm">11</button>
-          <button class="h-12 flex items-center justify-center bg-surface-variant/30 text-on-surface-variant cursor-not-allowed text-sm">12</button>
-          <button class="h-12 flex items-center justify-center hover:bg-surface-variant rounded-lg transition-all text-on-surface text-sm">13</button>
-          <button class="h-12 flex items-center justify-center hover:bg-surface-variant rounded-lg transition-all text-on-surface text-sm">14</button>
-          <button class="h-12 flex items-center justify-center bg-secondary text-on-secondary font-bold rounded-lg shadow-md ring-2 ring-secondary ring-offset-2 ring-offset-surface-container text-sm">29</button>
-          <button class="h-12 flex items-center justify-center hover:bg-surface-variant rounded-lg transition-all text-on-surface text-sm">30</button>
-          <button class="h-12 flex items-center justify-center hover:bg-surface-variant rounded-lg transition-all text-on-surface text-sm">31</button>
-        </div>
-      </section>
-
-      <!-- Horarios disponibles -->
-      <section class="glass-card p-6 rounded-xl border border-outline-variant flex flex-col">
-        <div class="mb-6">
-          <h2 class="text-xl font-bold text-on-surface font-['Montserrat']">Horarios Disponibles</h2>
-          <p class="text-xs text-on-surface-variant mt-1">Selecciona una fecha para ver horarios</p>
-        </div>
-        <div class="flex-grow space-y-6">
-          <div>
-            <span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-3 block">Mañana</span>
-            <div class="grid grid-cols-3 gap-2">
-              <button class="py-3 px-2 border border-outline text-on-surface rounded-lg hover:border-secondary hover:text-secondary transition-all text-center text-xs font-semibold">09:00</button>
-              <button class="py-3 px-2 border border-outline text-on-surface rounded-lg hover:border-secondary hover:text-secondary transition-all text-center text-xs font-semibold">09:30</button>
-              <button class="py-3 px-2 border border-outline text-on-surface rounded-lg hover:border-secondary hover:text-secondary transition-all text-center text-xs font-semibold">10:00</button>
-              <button class="py-3 px-2 bg-secondary text-on-secondary rounded-lg font-bold shadow-md text-center text-xs">11:30</button>
-              <button class="py-3 px-2 border border-outline text-on-surface rounded-lg hover:border-secondary hover:text-secondary transition-all text-center text-xs font-semibold">12:00</button>
-              <button class="py-3 px-2 border border-outline text-on-surface-variant rounded-lg opacity-40 cursor-not-allowed text-center text-xs">12:30</button>
-            </div>
-          </div>
-          <div>
-            <span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-3 block">Tarde</span>
-            <div class="grid grid-cols-3 gap-2">
-              <button class="py-3 px-2 border border-outline text-on-surface rounded-lg hover:border-secondary hover:text-secondary transition-all text-center text-xs font-semibold">16:00</button>
-              <button class="py-3 px-2 border border-outline text-on-surface rounded-lg hover:border-secondary hover:text-secondary transition-all text-center text-xs font-semibold">16:30</button>
-              <button class="py-3 px-2 border border-outline text-on-surface rounded-lg hover:border-secondary hover:text-secondary transition-all text-center text-xs font-semibold">17:00</button>
-              <button class="py-3 px-2 border border-outline text-on-surface rounded-lg hover:border-secondary hover:text-secondary transition-all text-center text-xs font-semibold">18:30</button>
-              <button class="py-3 px-2 border border-outline text-on-surface rounded-lg hover:border-secondary hover:text-secondary transition-all text-center text-xs font-semibold">19:00</button>
-              <button class="py-3 px-2 border border-outline text-on-surface rounded-lg hover:border-secondary hover:text-secondary transition-all text-center text-xs font-semibold">19:30</button>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <!-- Derecha: resumen -->
-    <aside class="w-full lg:w-[320px]">
-      <div class="glass-card p-6 rounded-xl border border-outline-variant sticky top-24">
-        <h3 class="text-xl font-bold text-on-surface mb-6 font-['Montserrat']">Resumen</h3>
-        <div class="space-y-4">
-          <div class="flex items-start gap-4 p-3 rounded-lg bg-surface-container-low border border-outline-variant">
-            <div class="bg-secondary/10 p-2 rounded-lg text-secondary">
-              <span class="material-symbols-outlined">content_cut</span>
-            </div>
-            <div>
-              <p class="text-xs text-on-surface-variant">Servicio</p>
-              <p class="text-sm font-semibold text-on-surface">—</p>
-              <p class="text-xs text-secondary">— min • $—</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-4 p-3 rounded-lg bg-surface-container-low border border-outline-variant">
-            <div class="w-10 h-10 rounded-full bg-surface-container-highest border border-outline flex items-center justify-center text-secondary font-bold">B</div>
-            <div>
-              <p class="text-xs text-on-surface-variant">Barbero</p>
-              <p class="text-sm font-semibold text-on-surface">—</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-4 p-3 rounded-lg bg-secondary/5 border border-secondary/30">
-            <div class="bg-secondary/10 p-2 rounded-lg text-secondary">
-              <span class="material-symbols-outlined">calendar_today</span>
-            </div>
-            <div>
-              <p class="text-xs text-on-surface-variant">Cita</p>
-              <p class="text-sm font-semibold text-on-surface">Selecciona fecha y hora</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-8 pt-6 border-t border-outline-variant">
-          <div class="flex justify-between items-center mb-2">
-            <span class="text-on-surface-variant text-sm">Subtotal</span>
-            <span class="text-sm text-on-surface">$—</span>
-          </div>
-          <div class="flex justify-between items-center">
-            <span class="text-xl font-bold text-on-surface">Total</span>
-            <span class="text-xl font-bold text-secondary">$—</span>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-  </div>
-
-</div>
+{% block extra_css %}
+<style>
+  .paso-oculto { display: none !important; }
+  .btn-seleccionado { border-color: #e9c349 !important; background: rgba(233,195,73,0.08) !important; }
+  .slot-activo { background: #e9c349 !important; color: #3c2f00 !important; border-color: #e9c349 !important; }
+</style>
 {% endblock %}
 
-{% block extra_js %}
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+
+  <div>
+    <h2 class="text-2xl font-bold text-on-surface font-['Montserrat']">Reservar una cita</h2>
+    <p class="text-on-surface-variant text-sm mt-1">Elige servicio, barbero, fecha y hora</p>
+  </div>
+
+  <form method="post" action="{% url 'agendar_cita' %}" id="form-cita">
+    {% csrf_token %}
+    <input type="hidden" name="servicio_id" id="input-servicio">
+    <input type="hidden" name="barbero_id"  id="input-barbero">
+    <input type="hidden" name="fecha"       id="input-fecha">
+    <input type="hidden" name="hora_inicio" id="input-hora">
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      {# ══ IZQUIERDA ══ #}
+      <div class="lg:col-span-2 space-y-5">
+
+        {# PASO 1: Servicio #}
+        <div class="glass-card rounded-xl border border-outline-variant overflow-hidden">
+          <div class="px-5 py-4 border-b border-outline-variant flex items-center gap-3">
+            <div class="w-7 h-7 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-xs font-bold">1</div>
+            <h3 class="font-bold text-on-surface">Selecciona el servicio</h3>
+          </div>
+          <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {% for s in servicios %}
+            <button type="button"
+                    class="servicio-btn text-left p-4 rounded-xl border-2 border-outline-variant bg-surface-container-low hover:opacity-80 transition-all"
+                    data-id="{{ s.pk }}"
+                    data-nombre="{{ s.nombre }}"
+                    data-duracion="{{ s.duracion }}"
+                    data-precio="{{ s.precio }}"
+                    data-servicios-ids="{{ s.pk }}">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <p class="font-bold text-on-surface text-sm">{{ s.nombre }}</p>
+                  <p class="text-xs text-on-surface-variant mt-0.5">{{ s.duracion }} min</p>
+                </div>
+                <span class="font-bold text-secondary text-sm">{{ s.precio|cop }}</span>
+              </div>
+              {% if s.descripcion %}
+              <p class="text-xs text-on-surface-variant mt-2">{{ s.descripcion|truncatewords:8 }}</p>
+              {% endif %}
+            </button>
+            {% endfor %}
+          </div>
+        </div>
+
+        {# PASO 2: Barbero #}
+        <div id="paso-barbero" class="paso-oculto glass-card rounded-xl border border-outline-variant overflow-hidden">
+          <div class="px-5 py-4 border-b border-outline-variant flex items-center gap-3">
+            <div class="w-7 h-7 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-xs font-bold">2</div>
+            <h3 class="font-bold text-on-surface">Selecciona el barbero</h3>
+          </div>
+          <div class="p-5 space-y-3">
+            {% for b in barberos %}
+            <button type="button"
+                    class="barbero-btn w-full text-left flex items-center gap-4 p-4 rounded-xl border-2 border-outline-variant bg-surface-container-low hover:opacity-80 transition-all"
+                    data-id="{{ b.pk }}"
+                    data-nombre="{{ b.perfil.usuario.get_full_name }}"
+                    data-servicios-ids="{% for s in b.servicios.all %}{{ s.pk }}{% if not forloop.last %},{% endif %}{% endfor %}">
+              <div class="w-11 h-11 rounded-full bg-secondary flex items-center justify-center text-on-secondary font-bold text-sm flex-shrink-0 overflow-hidden">
+                {% if b.perfil.foto_perfil %}
+                  <img src="{{ b.perfil.foto_perfil.url }}" class="w-full h-full object-cover" alt="{{ b.perfil.usuario.get_full_name }}">
+                {% else %}
+                  {{ b.perfil.usuario.first_name|first|upper }}{{ b.perfil.usuario.last_name|first|upper }}
+                {% endif %}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-bold text-on-surface text-sm">{{ b.perfil.usuario.get_full_name }}</p>
+                {% if b.especialidad %}<p class="text-xs text-on-surface-variant truncate">{{ b.especialidad }}</p>{% endif %}
+              </div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border
+                {% if b.disponibilidad == 'DISPONIBLE' %}bg-green-500/10 text-green-400 border-green-500/20
+                {% else %}bg-yellow-500/10 text-yellow-400 border-yellow-500/20{% endif %}">
+                {{ b.get_disponibilidad_display }}
+              </span>
+            </button>
+            {% endfor %}
+          </div>
+        </div>
+
+        {# PASO 3: Fecha #}
+        <div id="paso-fecha" class="paso-oculto glass-card rounded-xl border border-outline-variant overflow-hidden">
+          <div class="px-5 py-4 border-b border-outline-variant flex items-center gap-3">
+            <div class="w-7 h-7 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-xs font-bold">3</div>
+            <h3 class="font-bold text-on-surface">Selecciona la fecha</h3>
+          </div>
+          <div class="p-5">
+            <div class="flex items-center justify-between mb-4">
+              <button type="button" id="btn-mes-ant" class="p-2 hover:bg-surface-variant rounded-lg transition-colors text-on-surface-variant">
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+              <h4 id="titulo-mes" class="font-bold text-on-surface text-sm"></h4>
+              <button type="button" id="btn-mes-sig" class="p-2 hover:bg-surface-variant rounded-lg transition-colors text-on-surface-variant">
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+            <div class="grid grid-cols-7 mb-1 text-center text-xs font-bold text-on-surface-variant">
+              <div>Lu</div><div>Ma</div><div>Mi</div><div>Ju</div><div>Vi</div><div>Sá</div><div>Do</div>
+            </div>
+            <div id="grid-cal" class="grid grid-cols-7 gap-1"></div>
+          </div>
+        </div>
+
+        {# PASO 4: Hora #}
+        <div id="paso-hora" class="paso-oculto glass-card rounded-xl border border-outline-variant overflow-hidden">
+          <div class="px-5 py-4 border-b border-outline-variant flex items-center gap-3">
+            <div class="w-7 h-7 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-xs font-bold">4</div>
+            <h3 class="font-bold text-on-surface">Selecciona la hora</h3>
+          </div>
+          <div class="p-5">
+            <div id="slots" class="flex flex-wrap gap-2"></div>
+            <p id="slots-msg" class="text-sm text-on-surface-variant"></p>
+          </div>
+        </div>
+
+      </div>
+
+      {# ══ DERECHA: resumen ══ #}
+      <div>
+        <div class="glass-card rounded-xl border border-outline-variant p-5 sticky top-6">
+          <h3 class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-5">Tu reserva</h3>
+          <div class="space-y-4">
+            <div>
+              <p class="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Servicio</p>
+              <p id="r-servicio" class="text-sm font-bold text-on-surface">—</p>
+              <p id="r-duracion" class="text-xs text-on-surface-variant"></p>
+            </div>
+            <div>
+              <p class="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Barbero</p>
+              <p id="r-barbero" class="text-sm font-bold text-on-surface">—</p>
+            </div>
+            <div>
+              <p class="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Fecha y hora</p>
+              <p id="r-fecha" class="text-sm font-bold text-on-surface">—</p>
+            </div>
+            <div class="pt-4 border-t border-outline-variant flex justify-between items-center">
+              <span class="text-sm text-on-surface-variant font-semibold">Total</span>
+              <span id="r-precio" class="text-xl font-bold text-secondary">—</span>
+            </div>
+          </div>
+          <button type="submit" id="btn-ok" disabled
+                  class="mt-5 w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all"
+                  style="background:#e9c349;color:#3c2f00;opacity:0.35;cursor:not-allowed;">
+            <span class="material-symbols-outlined text-[18px]">check_circle</span>
+            Confirmar reserva
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </form>
+</div>
+
 <script>
-  // Selección de horarios
-  document.querySelectorAll('.grid button').forEach(btn => {
-    if (!btn.classList.contains('cursor-not-allowed') && !btn.classList.contains('bg-secondary')) {
-      btn.addEventListener('click', function() {
-        const parent = this.closest('.grid');
-        if (parent) {
-          parent.querySelectorAll('button.bg-secondary').forEach(b => {
-            b.classList.remove('bg-secondary','text-on-secondary','font-bold','shadow-md');
-            b.classList.add('border','border-outline','text-on-surface');
-          });
-        }
-        this.classList.remove('border','border-outline','text-on-surface','hover:border-secondary','hover:text-secondary');
-        this.classList.add('bg-secondary','text-on-secondary','font-bold','shadow-md');
+(function() {
+  var S = { servicio:null, barbero:null, fecha:null, hora:null };
+  var diasAbiertos = {{ dias_abiertos|safe }};
+  var calFecha = new Date(); calFecha.setDate(1); calFecha.setHours(0,0,0,0);
+  var MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var MESES_CORTOS = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+  function mostrar(id) { document.getElementById(id).classList.remove('paso-oculto'); }
+  function ocultar(id) { document.getElementById(id).classList.add('paso-oculto'); }
+
+  function actualizarBoton() {
+    var btn = document.getElementById('btn-ok');
+    var ok = S.servicio && S.barbero && S.fecha && S.hora;
+    btn.disabled = !ok;
+    btn.style.opacity = ok ? '1' : '0.35';
+    btn.style.cursor  = ok ? 'pointer' : 'not-allowed';
+  }
+
+  // ─ Servicios ─
+  document.querySelectorAll('.servicio-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.servicio-btn').forEach(function(b) { b.classList.remove('btn-seleccionado'); });
+      btn.classList.add('btn-seleccionado');
+
+      S.servicio = { id: btn.dataset.id, nombre: btn.dataset.nombre, duracion: btn.dataset.duracion, precio: btn.dataset.precio };
+      document.getElementById('input-servicio').value = S.servicio.id;
+      document.getElementById('r-servicio').textContent = S.servicio.nombre;
+      document.getElementById('r-duracion').textContent  = S.servicio.duracion + ' min';
+      document.getElementById('r-precio').textContent    = '$' + parseInt(S.servicio.precio).toLocaleString('es-CO');
+
+      // Filtrar barberos
+      var alguno = false;
+      document.querySelectorAll('.barbero-btn').forEach(function(b) {
+        var ids = (b.dataset.serviciosIds || '').split(',').map(function(x){return x.trim();});
+        if (ids.indexOf(String(S.servicio.id)) !== -1) { b.style.display = ''; alguno = true; }
+        else { b.style.display = 'none'; }
       });
-    }
+      if (alguno) mostrar('paso-barbero'); else ocultar('paso-barbero');
+
+      // Reset pasos siguientes
+      S.barbero = null; S.fecha = null; S.hora = null;
+      document.getElementById('input-barbero').value = '';
+      document.getElementById('input-fecha').value   = '';
+      document.getElementById('input-hora').value    = '';
+      document.getElementById('r-barbero').textContent = '—';
+      document.getElementById('r-fecha').textContent   = '—';
+      ocultar('paso-fecha'); ocultar('paso-hora');
+      actualizarBoton();
+    });
   });
+
+  // ─ Barberos ─
+  document.querySelectorAll('.barbero-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.barbero-btn').forEach(function(b) { b.classList.remove('btn-seleccionado'); });
+      btn.classList.add('btn-seleccionado');
+
+      S.barbero = { id: btn.dataset.id, nombre: btn.dataset.nombre };
+      document.getElementById('input-barbero').value = S.barbero.id;
+      document.getElementById('r-barbero').textContent = S.barbero.nombre;
+
+      S.fecha = null; S.hora = null;
+      document.getElementById('input-fecha').value = '';
+      document.getElementById('input-hora').value  = '';
+      document.getElementById('r-fecha').textContent = '—';
+      ocultar('paso-hora');
+      renderCal();
+      mostrar('paso-fecha');
+      actualizarBoton();
+    });
+  });
+
+  // ─ Calendario ─
+  function renderCal() {
+    var hoy   = new Date(); hoy.setHours(0,0,0,0);
+    var year  = calFecha.getFullYear();
+    var month = calFecha.getMonth();
+    document.getElementById('titulo-mes').textContent = MESES[month] + ' ' + year;
+
+    var primerDia = new Date(year, month, 1).getDay(); // 0=Dom
+    var offset    = primerDia === 0 ? 6 : primerDia - 1;
+    var totalDias = new Date(year, month + 1, 0).getDate();
+    var grid      = document.getElementById('grid-cal');
+    grid.innerHTML = '';
+
+    for (var i = 0; i < offset; i++) {
+      grid.appendChild(document.createElement('div'));
+    }
+    for (var d = 1; d <= totalDias; d++) {
+      var f    = new Date(year, month, d);
+      var diaSem = f.getDay() === 0 ? 6 : f.getDay() - 1; // lunes=0
+      var abierto  = diasAbiertos.indexOf(diaSem) !== -1;
+      var pasado   = f < hoy;
+      var esHoy    = f.getTime() === hoy.getTime();
+      var btn      = document.createElement(abierto && !pasado ? 'button' : 'div');
+      btn.textContent = d;
+      btn.className = 'h-10 flex items-center justify-center text-sm rounded-lg ';
+      if (!abierto || pasado) {
+        btn.className += 'text-on-surface-variant opacity-25';
+      } else {
+        btn.type = 'button';
+        btn.className += 'font-semibold text-on-surface hover:bg-surface-variant cursor-pointer transition-all' + (esHoy ? ' ring-2 ring-secondary' : '');
+        (function(fechaBtn, fObj) {
+          fechaBtn.addEventListener('click', function() {
+            document.querySelectorAll('#grid-cal button').forEach(function(b) { b.classList.remove('btn-seleccionado'); });
+            fechaBtn.classList.add('btn-seleccionado');
+            var yyyy = fObj.getFullYear();
+            var mm   = String(fObj.getMonth()+1).padStart(2,'0');
+            var dd   = String(fObj.getDate()).padStart(2,'0');
+            S.fecha  = yyyy+'-'+mm+'-'+dd;
+            document.getElementById('input-fecha').value = S.fecha;
+            document.getElementById('r-fecha').textContent = dd+' '+MESES_CORTOS[fObj.getMonth()]+' '+yyyy;
+            S.hora = null;
+            document.getElementById('input-hora').value = '';
+            cargarSlots();
+            mostrar('paso-hora');
+            actualizarBoton();
+          });
+        })(btn, f);
+      }
+      grid.appendChild(btn);
+    }
+  }
+
+  document.getElementById('btn-mes-ant').addEventListener('click', function() {
+    var hoy = new Date(); hoy.setDate(1); hoy.setHours(0,0,0,0);
+    calFecha.setMonth(calFecha.getMonth()-1);
+    if (calFecha < hoy) calFecha = new Date(hoy);
+    renderCal();
+  });
+  document.getElementById('btn-mes-sig').addEventListener('click', function() {
+    calFecha.setMonth(calFecha.getMonth()+1);
+    renderCal();
+  });
+
+  // ─ Slots ─
+  function cargarSlots() {
+    var cont = document.getElementById('slots');
+    var msg  = document.getElementById('slots-msg');
+    cont.innerHTML = '';
+    msg.textContent = 'Cargando horarios...';
+    var url = '/citas/slots/?barbero='+S.barbero.id+'&servicio='+S.servicio.id+'&fecha='+S.fecha;
+    fetch(url)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        msg.textContent = '';
+        if (!data.slots || !data.slots.length) {
+          msg.textContent = 'Sin horarios disponibles para este día.';
+          return;
+        }
+        data.slots.forEach(function(slot) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.textContent = slot;
+          b.className = 'slot-btn px-4 py-2 rounded-lg border-2 border-outline-variant bg-surface-container-low text-sm font-bold text-on-surface transition-all hover:opacity-80';
+          b.addEventListener('click', function() {
+            document.querySelectorAll('.slot-btn').forEach(function(x) { x.classList.remove('slot-activo'); });
+            b.classList.add('slot-activo');
+            S.hora = slot;
+            document.getElementById('input-hora').value = slot;
+            var partes = document.getElementById('r-fecha').textContent;
+            document.getElementById('r-fecha').textContent = partes.split(' · ')[0] + ' · ' + slot;
+            actualizarBoton();
+          });
+          cont.appendChild(b);
+        });
+      })
+      .catch(function() { msg.textContent = 'Error al cargar horarios.'; });
+  }
+
+  actualizarBoton();
+})();
 </script>
 {% endblock %}

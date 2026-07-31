@@ -10,8 +10,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    # Panel admin de Django (lo dejamos por si acaso, pero no lo usaremos en el frontend)
-    path('admin/', admin.site.urls),
+    # Panel admin de Django — renombrado para no colisionar con las rutas de la app
+    path('django-admin/', admin.site.urls),
     # Todas las URLs de nuestra app
     path('', include('agenda.urls')),
 ]

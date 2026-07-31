@@ -55,11 +55,17 @@
 
   <!-- Logo -->
   <div class="px-4 py-6 flex items-center gap-3">
-    <div class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0">
-      <span class="material-symbols-outlined text-on-secondary" style="font-variation-settings:'FILL' 1;">content_cut</span>
+    <div class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0 overflow-hidden">
+      {% if config_barberia and config_barberia.logo %}
+        <img src="{{ config_barberia.logo.url }}" class="w-full h-full object-cover" alt="Logo">
+      {% else %}
+        <span class="material-symbols-outlined text-on-secondary" style="font-variation-settings:'FILL' 1;">content_cut</span>
+      {% endif %}
     </div>
     <div>
-      <h1 class="text-lg font-bold text-secondary font-['Montserrat']">BarberHub</h1>
+      <h1 class="text-lg font-bold text-secondary font-['Montserrat']">
+        {{ config_barberia.nombre|default:"BarberHub" }}
+      </h1>
       <p class="text-xs text-on-surface-variant">Premium Management</p>
     </div>
   </div>
@@ -67,12 +73,21 @@
   <!-- Nav -->
   <nav class="flex-1 mt-2 space-y-1 overflow-y-auto custom-scrollbar px-2">
 
-    <a href="{% url 'dashboard' %}"
-       class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
-       {% if request.resolver_match.url_name == 'dashboard' %}bg-secondary text-on-secondary{% else %}text-on-surface-variant hover:bg-surface-variant hover:text-on-surface{% endif %}">
-      <span class="material-symbols-outlined">dashboard</span>
-      <span class="text-sm font-semibold">Dashboard</span>
-    </a>
+    {% if request.user.is_authenticated and request.user.perfil.rol == 'BARBERO' %}
+      <a href="{% url 'barbero_dashboard' %}"
+         class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
+         {% if request.resolver_match.url_name == 'barbero_dashboard' %}bg-secondary text-on-secondary{% else %}text-on-surface-variant hover:bg-surface-variant hover:text-on-surface{% endif %}">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span class="text-sm font-semibold">Dashboard</span>
+      </a>
+    {% else %}
+      <a href="{% url 'dashboard' %}"
+         class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
+         {% if request.resolver_match.url_name == 'dashboard' %}bg-secondary text-on-secondary{% else %}text-on-surface-variant hover:bg-surface-variant hover:text-on-surface{% endif %}">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span class="text-sm font-semibold">Dashboard</span>
+      </a>
+    {% endif %}
 
     {% if request.user.is_authenticated %}
       {% with rol=request.user.perfil.rol %}
@@ -119,7 +134,7 @@
         <p class="px-4 pt-4 pb-1 text-xs text-secondary/60 uppercase tracking-widest font-semibold">Mi Trabajo</p>
         <a href="{% url 'barbero_agenda' %}"
            class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all
-           {% if request.resolver_match.url_name == 'barbero_agenda' %}bg-secondary text-on-secondary{% else %}text-on-surface-variant hover:bg-surface-variant hover:text-on-surface{% endif %}">
+           {% if request.resolver_match.url_name == 'barbero_agenda' or request.resolver_match.url_name == 'barbero_cita_detalle' %}bg-secondary text-on-secondary{% else %}text-on-surface-variant hover:bg-surface-variant hover:text-on-surface{% endif %}">
           <span class="material-symbols-outlined">event_note</span><span class="text-sm font-semibold">Mi Agenda</span>
         </a>
         <a href="{% url 'barbero_historial' %}"
@@ -133,6 +148,12 @@
            {% if request.resolver_match.url_name == 'barbero_disponibilidad' %}bg-secondary text-on-secondary{% else %}text-on-surface-variant hover:bg-surface-variant hover:text-on-surface{% endif %}">
           <span class="material-symbols-outlined">toggle_on</span><span class="text-sm font-semibold">Mi Disponibilidad</span>
         </a>
+        <p class="px-4 pt-4 pb-1 text-xs text-secondary/60 uppercase tracking-widest font-semibold">Cuenta</p>
+        <a href="{% url 'barbero_perfil' %}"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all
+           {% if request.resolver_match.url_name == 'barbero_perfil' %}bg-secondary text-on-secondary{% else %}text-on-surface-variant hover:bg-surface-variant hover:text-on-surface{% endif %}">
+          <span class="material-symbols-outlined">manage_accounts</span><span class="text-sm font-semibold">Mi Perfil</span>
+        </a>
 
       {% elif rol == 'CLIENTE' %}
         <p class="px-4 pt-4 pb-1 text-xs text-secondary/60 uppercase tracking-widest font-semibold">Mis Citas</p>
@@ -141,7 +162,9 @@
            {% if request.resolver_match.url_name == 'agendar_cita' %}bg-secondary text-on-secondary{% else %}text-on-surface-variant hover:bg-surface-variant hover:text-on-surface{% endif %}">
           <span class="material-symbols-outlined">calendar_today</span><span class="text-sm font-semibold">Agendar Cita</span>
         </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant hover:text-on-surface rounded-lg transition-all">
+        <a href="{% url 'mis_citas' %}"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all
+           {% if request.resolver_match.url_name == 'mis_citas' %}bg-secondary text-on-secondary{% else %}text-on-surface-variant hover:bg-surface-variant hover:text-on-surface{% endif %}">
           <span class="material-symbols-outlined">event_available</span><span class="text-sm font-semibold">Mis Citas</span>
         </a>
       {% endif %}
@@ -153,9 +176,15 @@
 
   <!-- Footer sidebar -->
   <div class="mt-auto pt-4 border-t border-outline-variant px-4 space-y-1 pb-4">
-    <a href="{% url 'perfil' %}" class="flex items-center gap-3 py-2 text-on-surface-variant hover:text-secondary transition-all text-sm font-semibold">
-      <span class="material-symbols-outlined">person</span>Mi Perfil
-    </a>
+    {% if request.user.is_authenticated and request.user.perfil.rol == 'BARBERO' %}
+      <a href="{% url 'barbero_perfil' %}" class="flex items-center gap-3 py-2 text-on-surface-variant hover:text-secondary transition-all text-sm font-semibold">
+        <span class="material-symbols-outlined">person</span>Mi Perfil
+      </a>
+    {% else %}
+      <a href="{% url 'perfil' %}" class="flex items-center gap-3 py-2 text-on-surface-variant hover:text-secondary transition-all text-sm font-semibold">
+        <span class="material-symbols-outlined">person</span>Mi Perfil
+      </a>
+    {% endif %}
     <a href="{% url 'logout' %}" class="flex items-center gap-3 py-2 text-on-surface-variant hover:text-error transition-all text-sm font-semibold">
       <span class="material-symbols-outlined">logout</span>Cerrar Sesión
     </a>
@@ -198,9 +227,15 @@
         </button>
         <!-- Dropdown -->
         <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-surface-container border border-outline-variant rounded-xl shadow-xl z-50 py-1">
-          <a href="{% url 'perfil' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-variant transition-colors">
-            <span class="material-symbols-outlined text-[18px]">person</span>Mi Perfil
-          </a>
+          {% if request.user.is_authenticated and request.user.perfil.rol == 'BARBERO' %}
+            <a href="{% url 'barbero_perfil' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-variant transition-colors">
+              <span class="material-symbols-outlined text-[18px]">person</span>Mi Perfil
+            </a>
+          {% else %}
+            <a href="{% url 'perfil' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-variant transition-colors">
+              <span class="material-symbols-outlined text-[18px]">person</span>Mi Perfil
+            </a>
+          {% endif %}
           <a href="{% url 'cambiar_password' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-variant transition-colors">
             <span class="material-symbols-outlined text-[18px]">key</span>Cambiar contraseña
           </a>
@@ -247,18 +282,87 @@
 
 <!-- Bottom nav mobile -->
 <nav class="lg:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 bg-surface-container border-t border-outline-variant">
-  <a href="{% url 'dashboard' %}" class="flex flex-col items-center text-secondary">
-    <span class="material-symbols-outlined">home</span>
-    <span class="text-xs">Inicio</span>
-  </a>
-  <a href="{% url 'agendar_cita' %}" class="flex flex-col items-center text-on-surface-variant">
-    <span class="material-symbols-outlined">event</span>
-    <span class="text-xs">Citas</span>
-  </a>
-  <a href="{% url 'perfil' %}" class="flex flex-col items-center text-on-surface-variant">
-    <span class="material-symbols-outlined">person</span>
-    <span class="text-xs">Perfil</span>
-  </a>
+  {% if request.user.is_authenticated %}
+    {% with rol=request.user.perfil.rol %}
+
+    {% if rol == 'BARBERO' %}
+      <a href="{% url 'barbero_dashboard' %}" class="flex flex-col items-center
+        {% if request.resolver_match.url_name == 'barbero_dashboard' %}text-secondary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined">home</span>
+        <span class="text-xs">Inicio</span>
+      </a>
+      <a href="{% url 'barbero_agenda' %}" class="flex flex-col items-center
+        {% if request.resolver_match.url_name == 'barbero_agenda' or request.resolver_match.url_name == 'barbero_cita_detalle' %}text-secondary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined">event_note</span>
+        <span class="text-xs">Agenda</span>
+      </a>
+      <a href="{% url 'barbero_historial' %}" class="flex flex-col items-center
+        {% if request.resolver_match.url_name == 'barbero_historial' %}text-secondary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined">history</span>
+        <span class="text-xs">Historial</span>
+      </a>
+      <a href="{% url 'barbero_perfil' %}" class="flex flex-col items-center
+        {% if request.resolver_match.url_name == 'barbero_perfil' %}text-secondary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined">person</span>
+        <span class="text-xs">Perfil</span>
+      </a>
+
+    {% elif rol == 'ADMIN' %}
+      <a href="{% url 'dashboard' %}" class="flex flex-col items-center
+        {% if request.resolver_match.url_name == 'dashboard' %}text-secondary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined">home</span>
+        <span class="text-xs">Inicio</span>
+      </a>
+      <a href="{% url 'citas_admin' %}" class="flex flex-col items-center
+        {% if request.resolver_match.url_name == 'citas_admin' %}text-secondary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined">calendar_month</span>
+        <span class="text-xs">Citas</span>
+      </a>
+      <a href="{% url 'reportes' %}" class="flex flex-col items-center
+        {% if request.resolver_match.url_name == 'reportes' %}text-secondary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined">analytics</span>
+        <span class="text-xs">Reportes</span>
+      </a>
+      <a href="{% url 'perfil' %}" class="flex flex-col items-center
+        {% if request.resolver_match.url_name == 'perfil' %}text-secondary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined">person</span>
+        <span class="text-xs">Perfil</span>
+      </a>
+
+    {% else %}{# CLIENTE #}
+      <a href="{% url 'dashboard' %}" class="flex flex-col items-center
+        {% if request.resolver_match.url_name == 'dashboard' %}text-secondary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined">home</span>
+        <span class="text-xs">Inicio</span>
+      </a>
+      <a href="{% url 'agendar_cita' %}" class="flex flex-col items-center
+        {% if request.resolver_match.url_name == 'agendar_cita' %}text-secondary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined">event</span>
+        <span class="text-xs">Agendar</span>
+      </a>
+      <a href="{% url 'mis_citas' %}" class="flex flex-col items-center
+        {% if request.resolver_match.url_name == 'mis_citas' %}text-secondary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined">event_available</span>
+        <span class="text-xs">Mis Citas</span>
+      </a>
+      <a href="{% url 'perfil' %}" class="flex flex-col items-center
+        {% if request.resolver_match.url_name == 'perfil' %}text-secondary{% else %}text-on-surface-variant{% endif %}">
+        <span class="material-symbols-outlined">person</span>
+        <span class="text-xs">Perfil</span>
+      </a>
+    {% endif %}
+
+    {% endwith %}
+  {% else %}
+    <a href="{% url 'home' %}" class="flex flex-col items-center text-on-surface-variant">
+      <span class="material-symbols-outlined">home</span>
+      <span class="text-xs">Inicio</span>
+    </a>
+    <a href="{% url 'login' %}" class="flex flex-col items-center text-on-surface-variant">
+      <span class="material-symbols-outlined">login</span>
+      <span class="text-xs">Entrar</span>
+    </a>
+  {% endif %}
 </nav>
 
 <script>
@@ -278,6 +382,35 @@
     });
     document.addEventListener('click', () => dropdown.classList.add('hidden'));
   }
+
+  // Sidebar mobile toggle
+  const sidebarToggle = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+  // Crear overlay
+  const overlay = document.createElement('div');
+  overlay.id = 'sidebar-overlay';
+  overlay.className = 'fixed inset-0 bg-black/50 z-40 hidden lg:hidden';
+  document.body.appendChild(overlay);
+
+  function openSidebar() {
+    sidebar.classList.remove('hidden');
+    sidebar.classList.add('flex');
+    overlay.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+  }
+  function closeSidebar() {
+    sidebar.classList.add('hidden');
+    sidebar.classList.remove('flex');
+    overlay.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+  }
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (sidebar.classList.contains('hidden')) { openSidebar(); } else { closeSidebar(); }
+    });
+  }
+  overlay.addEventListener('click', closeSidebar);
 
   // Auto-dismiss mensajes
   document.querySelectorAll('.auto-dismiss-alert').forEach(el => {

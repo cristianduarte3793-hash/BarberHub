@@ -38,10 +38,14 @@
 
     <!-- Logo -->
     <div class="flex items-center justify-center gap-3 mb-8">
-      <div class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
-        <span class="material-symbols-outlined text-on-secondary" style="font-variation-settings:'FILL' 1;">content_cut</span>
+      <div class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center overflow-hidden flex-shrink-0">
+        {% if config_barberia and config_barberia.logo %}
+          <img src="{{ config_barberia.logo.url }}" class="w-full h-full object-cover" alt="Logo">
+        {% else %}
+          <span class="material-symbols-outlined text-on-secondary" style="font-variation-settings:'FILL' 1;">content_cut</span>
+        {% endif %}
       </div>
-      <span class="text-2xl font-bold text-secondary font-['Montserrat']">BarberHub</span>
+      <span class="text-2xl font-bold text-secondary font-['Montserrat']">{{ config_barberia.nombre|default:"BarberHub" }}</span>
     </div>
 
     <div class="bg-surface-container-low border border-outline-variant rounded-2xl p-8">

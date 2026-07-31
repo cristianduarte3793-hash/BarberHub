@@ -1,3 +1,4 @@
+﻿{% load barberhub_filters %}
 {% extends 'base.html' %}
 
 {% block title %}Cita #{{ cita.pk }} — BarberHub{% endblock %}
@@ -57,7 +58,7 @@
           </div>
           <div class="bg-surface-container-low p-3 rounded-lg border border-secondary/20">
             <p class="text-[10px] text-secondary uppercase font-bold mb-1">Precio</p>
-            <p class="font-bold text-secondary text-sm">${{ cita.precio }}</p>
+            <p class="font-bold text-secondary text-sm">{{ cita.precio|cop }}</p>
           </div>
         </div>
 
