@@ -150,7 +150,11 @@ def registro_view(request):
 
 @login_required
 def dashboard_view(request):
-    """Dashboard principal con datos reales según el rol."""
+    """Dashboard principal con datos reales según el rol.
+    Los barberos son redirigidos a su panel dedicado."""
+    if es_barbero(request.user):
+        return redirect('barbero_dashboard')
+
     hoy = timezone.localdate()
 
     # Datos comunes
@@ -262,7 +266,28 @@ def perfil_view(request):
         }
         form = EditarPerfilForm(instance=perfil, initial=initial)
 
-    return render(request, 'perfil.html', {'form': form, 'perfil': perfil})
+    contexto = {'form': form, 'perfil': perfil}
+
+    # Datos extra para barberos
+    if perfil.rol == 'BARBERO':
+        try:
+            barbero = perfil.barbero
+            from django.db.models import Avg, Count
+            calificacion_resultado = Calificacion.objects.filter(
+                barbero=barbero
+            ).aggregate(prom=Avg('puntuacion'))
+            contexto['calificacion_promedio'] = (
+                round(calificacion_resultado['prom'], 1)
+                if calificacion_resultado['prom'] else None
+            )
+            contexto['total_citas_realizadas'] = Cita.objects.filter(
+                barbero=barbero, estado='FINALIZADA'
+            ).count()
+        except Exception:
+            contexto['calificacion_promedio'] = None
+            contexto['total_citas_realizadas'] = 0
+
+    return render(request, 'perfil.html', contexto)
 
 
 # ---------------------------------------------------------------------------

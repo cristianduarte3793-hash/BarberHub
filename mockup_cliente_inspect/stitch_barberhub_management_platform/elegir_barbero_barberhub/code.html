@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-on-surface": "#2f3131",
+                    "tertiary-container": "#00160c",
+                    "on-error-container": "#ffdad6",
+                    "tertiary": "#4edea3",
+                    "on-tertiary-fixed-variant": "#005236",
+                    "surface-container-high": "#282a2b",
+                    "on-secondary-container": "#342800",
+                    "on-primary": "#313030",
+                    "error": "#ffb4ab",
+                    "surface-bright": "#38393a",
+                    "outline-variant": "#444748",
+                    "on-tertiary": "#003824",
+                    "on-surface": "#e2e2e2",
+                    "on-error": "#690005",
+                    "surface-tint": "#c8c6c5",
+                    "secondary-container": "#af8d11",
+                    "on-secondary-fixed-variant": "#574500",
+                    "surface-container": "#1e2020",
+                    "on-primary-container": "#7e7d7d",
+                    "on-secondary": "#3c2f00",
+                    "surface-container-lowest": "#0c0f0f",
+                    "secondary-fixed": "#ffe088",
+                    "error-container": "#93000a",
+                    "inverse-primary": "#5f5e5e",
+                    "on-primary-fixed-variant": "#474646",
+                    "inverse-surface": "#e2e2e2",
+                    "outline": "#8e9192",
+                    "surface-dim": "#121414",
+                    "primary": "#c8c6c5",
+                    "primary-fixed": "#e5e2e1",
+                    "on-primary-fixed": "#1c1b1b",
+                    "primary-fixed-dim": "#c8c6c5",
+                    "secondary": "#e9c349",
+                    "tertiary-fixed-dim": "#4edea3",
+                    "surface": "#121414",
+                    "on-tertiary-container": "#008f62",
+                    "surface-container-low": "#1a1c1c",
+                    "surface-container-highest": "#333535",
+                    "background": "#121414",
+                    "surface-variant": "#333535",
+                    "on-surface-variant": "#c4c7c7",
+                    "on-secondary-fixed": "#241a00",
+                    "primary-container": "#121212",
+                    "on-background": "#e2e2e2",
+                    "secondary-fixed-dim": "#e9c349",
+                    "on-tertiary-fixed": "#002113",
+                    "tertiary-fixed": "#6ffbbe"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "12px",
+                    "stack-lg": "48px",
+                    "base": "8px",
+                    "gutter": "16px",
+                    "container-padding": "24px",
+                    "stack-md": "24px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Montserrat"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Montserrat"],
+                    "headline-lg": ["Montserrat"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Montserrat"],
+                    "label-md": ["Inter"],
+                    "caption": ["Inter"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .glass-card {
+        background: rgba(30, 32, 32, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(233, 195, 73, 0.1);
+      }
+      .gold-gradient-text {
+        background: linear-gradient(135deg, #e9c349 0%, #af8d11 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #121414;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #333535;
+        border-radius: 10px;
+      }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen selection:bg-secondary selection:text-on-secondary">
+<!-- Top Navigation Anchor (As per JSON) -->
+<header class="sticky top-0 z-50 flex justify-between items-center px-container-padding h-16 w-full bg-surface-container-low border-b border-outline-variant shadow-sm">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary cursor-pointer hover:scale-110 transition-transform">arrow_back</span>
+<span class="text-headline-md font-headline-md font-bold text-secondary">BarberHub</span>
+</div>
+<div class="flex items-center gap-stack-md">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-secondary transition-colors">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-secondary transition-colors">settings</span>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center border border-secondary overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a stylish male user with a well-groomed beard and sharp haircut, looking directly into the camera with a confident smile. The background is a blurred high-end barber shop with warm lighting, maintaining a premium dark aesthetic with gold undertones. The photography is high-contrast and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATw7Rj_iq5MER7FbR2QrnjD6f0ERApzdMPrL8K5-VHvMbrcyifC0mhbpzjTZlUWPlRRyLBXxgWsG8UuqfKiQwbN4eaoRLx6a2tJxF_8URLa0SIHYvAeY9ykzJrrt8lVcFxtZTyfDiW759zedBNhEcvmFrtJL7p8nrOLBwFiCTS2Xa8mMsEZTdDZma6TKthSy0JjEvamCaGDJG9RtM4frG_KqvLhqmnWm5kWmK46Y7nwxdYc8TVvgMF"/>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-container-padding pt-stack-md pb-stack-lg">
+<!-- Progress Stepper Section -->
+<section class="mb-stack-lg">
+<div class="flex justify-between items-center mb-4">
+<h1 class="text-headline-lg font-headline-lg gold-gradient-text">Personaliza tu Experiencia</h1>
+<span class="text-label-md font-label-md text-on-surface-variant">Paso 2 de 5</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="w-[40%] h-full bg-secondary transition-all duration-500 ease-out"></div>
+</div>
+<div class="flex justify-between mt-2">
+<span class="text-caption font-caption text-secondary">Servicio</span>
+<span class="text-caption font-caption text-secondary font-bold">Barbero</span>
+<span class="text-caption font-caption text-on-surface-variant">Horario</span>
+<span class="text-caption font-caption text-on-surface-variant">Detalles</span>
+<span class="text-caption font-caption text-on-surface-variant">Confirmar</span>
+</div>
+</section>
+<!-- Main Selection Area -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Sidebar Selection Column -->
+<aside class="lg:col-span-4 space-y-stack-md">
+<div class="glass-card p-6 rounded-xl border-l-4 border-l-secondary">
+<h2 class="text-headline-md font-headline-md mb-2">Selección Rápida</h2>
+<p class="text-body-md text-on-surface-variant mb-6">¿Tienes prisa? Deja que nuestro sistema asigne al mejor profesional disponible para tu hora.</p>
+<button class="w-full group bg-secondary hover:bg-secondary-fixed transition-all duration-300 py-4 px-6 rounded-lg flex items-center justify-between text-on-secondary font-bold shadow-lg shadow-secondary/10 active:scale-[0.98]">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-secondary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="text-label-md">Asignar cualquier disponible</span>
+</div>
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">chevron_right</span>
+</button>
+</div>
+<div class="bg-surface-container p-6 rounded-xl border border-outline-variant">
+<h3 class="text-label-md font-label-md text-secondary uppercase tracking-widest mb-4">Resumen actual</h3>
+<div class="flex items-center gap-4 mb-4">
+<div class="w-12 h-12 bg-surface-container-high rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">content_cut</span>
+</div>
+<div>
+<p class="text-body-md font-bold">Corte Ejecutivo &amp; Barba</p>
+<p class="text-caption text-on-surface-variant">45 min • $35.00</p>
+</div>
+</div>
+<button class="text-label-md text-on-surface-variant hover:text-secondary transition-colors underline underline-offset-4">Cambiar servicio</button>
+</div>
+</aside>
+<!-- Barber Cards Grid -->
+<section class="lg:col-span-8">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-headline-md font-headline-md">Barberos Especialistas</h2>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="text-caption">Filtrar por:</span>
+<select class="bg-surface-container border-none text-caption font-label-md rounded-lg focus:ring-1 focus:ring-secondary cursor-pointer">
+<option>Populares</option>
+<option>Disponibilidad</option>
+<option>Experiencia</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Barber Card 1 -->
+<div class="glass-card rounded-xl overflow-hidden group hover:border-secondary transition-all duration-300">
+<div class="relative h-64">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" data-alt="A cinematic close-up of a professional barber with intricate tattoos on his arms, focused on his craft in a high-end, luxury barber shop with dark leather chairs and warm vintage lighting. The style is moody, prestigious, and high-contrast, highlighting textures of wood and metal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRKqkz7mQMBU2yE9WWiRi6M5V5e97hqBFh_DAXPPiP-V3ioJnRNeW1jT402HPGWQlawdalHmct9XIr3qUg0gLxjM4dXyW7HUjl0DhzXp6nJ06QNepAmopiYF2M4JMkKicUM64M6GctF3L7jy-QEXR9tqlFHZg4qPLlDLnbEfSCa5p9Ug56zQfhXkUdVE6ujUA-DRbkwEeT2iPBKBqUlVay3Qq8nLKdyoDvAaT1zFrFpCHjuV6ajIbt"/>
+<div class="absolute top-4 left-4 bg-tertiary-container/80 backdrop-blur-md px-3 py-1 rounded-full border border-tertiary/20">
+<span class="text-[10px] font-bold text-tertiary tracking-tighter uppercase flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-tertiary rounded-full animate-pulse"></span> Disponible
+                                </span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-headline-md font-headline-md leading-tight">Marco Aurelio</h3>
+<p class="text-caption text-on-surface-variant">Master Barber • 8 años exp.</p>
+</div>
+<div class="flex flex-col items-end">
+<div class="flex items-center text-secondary">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-md font-bold ml-1">5.0</span>
+</div>
+<span class="text-[10px] text-on-surface-variant">(124 reseñas)</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 my-4">
+<span class="px-3 py-1 bg-surface-container-highest text-[10px] rounded text-on-surface-variant">FADE</span>
+<span class="px-3 py-1 bg-surface-container-highest text-[10px] rounded text-on-surface-variant">SCISSORS</span>
+<span class="px-3 py-1 bg-surface-container-highest text-[10px] rounded text-on-surface-variant">SHAVE</span>
+</div>
+<button class="w-full py-3 border border-secondary text-secondary hover:bg-secondary hover:text-on-secondary transition-all duration-300 rounded-lg text-label-md font-bold active:scale-95">
+                                Seleccionar este barbero
+                            </button>
+</div>
+</div>
+<!-- Barber Card 2 -->
+<div class="glass-card rounded-xl overflow-hidden group hover:border-secondary transition-all duration-300">
+<div class="relative h-64">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" data-alt="Portrait of a sophisticated female barber with a sharp undercut and professional attire, standing confidently in a modern grooming studio with dark steel accents and amber lighting. The atmosphere is sleek and corporate-modern, emphasizing precision and style through high-contrast lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ1Q5wACfiUIExO0-sLKFgIH__voHWerBoUzd0ZovIQzdmjWrhz1g1TMyccnnucvhbbWXHua6B6wQx4sTuMBNcV5gM50O0Xh0bZjCQ3zsagQo8vVSEb1pyYfz4C-zHTI2U68H0gerDEfS3LzI4jVXOKylw_gmh8B_3BVtv_9K3jq0s19OkHo-vV3IEdA3lR7V58LEY-e0r0TN2Qr4eyKAZbFG3dKpOUYCm42DWEmWaPQU1sVOszH92"/>
+<div class="absolute top-4 left-4 bg-tertiary-container/80 backdrop-blur-md px-3 py-1 rounded-full border border-tertiary/20">
+<span class="text-[10px] font-bold text-tertiary tracking-tighter uppercase flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-tertiary rounded-full animate-pulse"></span> Disponible
+                                </span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-headline-md font-headline-md leading-tight">Elena Vargas</h3>
+<p class="text-caption text-on-surface-variant">Stylist Lead • 6 años exp.</p>
+</div>
+<div class="flex flex-col items-end">
+<div class="flex items-center text-secondary">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-md font-bold ml-1">4.9</span>
+</div>
+<span class="text-[10px] text-on-surface-variant">(98 reseñas)</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 my-4">
+<span class="px-3 py-1 bg-surface-container-highest text-[10px] rounded text-on-surface-variant">TEXTURE</span>
+<span class="px-3 py-1 bg-surface-container-highest text-[10px] rounded text-on-surface-variant">CLASSIC</span>
+<span class="px-3 py-1 bg-surface-container-highest text-[10px] rounded text-on-surface-variant">STYLING</span>
+</div>
+<button class="w-full py-3 border border-secondary text-secondary hover:bg-secondary hover:text-on-secondary transition-all duration-300 rounded-lg text-label-md font-bold active:scale-95">
+                                Seleccionar este barbero
+                            </button>
+</div>
+</div>
+<!-- Barber Card 3 -->
+<div class="glass-card rounded-xl overflow-hidden group hover:border-secondary transition-all duration-300">
+<div class="relative h-64">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" data-alt="A focused male barber with a neat mustache using classic scissors and comb, set against a dark background with dramatic spotlighting that creates deep shadows and brilliant highlights on metallic tools. The aesthetic is extremely premium, conveying surgical precision and high-end grooming expertise." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTpXdSkBs3ivKrJDz5Awoz4jV8eaEKaLiY-FwdvjX79sfe_bbBv0spsYPp_uhBMOZxewuLB58ClxtmB_Nzz4pRQXTdb6KyvLL43M5n-AgGmhES17WTlaUgDtBY0CE68f30nI4ndiD10-9wyo4d7Q7QCRNCilqDQGzn05Th_f9sKktSad0mQz5orc1QSjjuggSgaI_zFyiyxY1FUU-iMlGeLVKqJ-xadM1W3JcO6mOCieUVniB8280c"/>
+<div class="absolute top-4 left-4 bg-tertiary-container/80 backdrop-blur-md px-3 py-1 rounded-full border border-tertiary/20">
+<span class="text-[10px] font-bold text-tertiary tracking-tighter uppercase flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-tertiary rounded-full animate-pulse"></span> Disponible
+                                </span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-headline-md font-headline-md leading-tight">Julián Soto</h3>
+<p class="text-caption text-on-surface-variant">Senior Barber • 12 años exp.</p>
+</div>
+<div class="flex flex-col items-end">
+<div class="flex items-center text-secondary">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-md font-bold ml-1">5.0</span>
+</div>
+<span class="text-[10px] text-on-surface-variant">(310 reseñas)</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 my-4">
+<span class="px-3 py-1 bg-surface-container-highest text-[10px] rounded text-on-surface-variant">BEARD</span>
+<span class="px-3 py-1 bg-surface-container-highest text-[10px] rounded text-on-surface-variant">HOT TOWEL</span>
+<span class="px-3 py-1 bg-surface-container-highest text-[10px] rounded text-on-surface-variant">LUXURY</span>
+</div>
+<button class="w-full py-3 border border-secondary text-secondary hover:bg-secondary hover:text-on-secondary transition-all duration-300 rounded-lg text-label-md font-bold active:scale-95">
+                                Seleccionar este barbero
+                            </button>
+</div>
+</div>
+<!-- Barber Card 4 -->
+<div class="glass-card rounded-xl overflow-hidden group hover:border-secondary transition-all duration-300">
+<div class="relative h-64">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" data-alt="Portrait of a young, stylish barber in a black leather apron, standing in front of an illuminated mirror reflecting a modern, dark-themed barber shop. The image is crisp, with a cool color temperature and gold accents in the decor, embodying a luxury tech-forward grooming experience." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWfjPALJG24Yi7uRSagumZTxWXw2AFtseeVtPvp-NdppyRXZjuEX-UIxXWPTfUc4i4uxJGCkS5-aIT_EMPruGnSkHtWdUu5RAfYYQck7kVavFLYdgl7NEVD3yzQF0e5YzlqR7_ZCzU2fOtcRNSgjzN2_FCwdbLB6xJLDWNxFiOiOi74_xsl6rhKWZ5j6AkYDjd-mFrV0EuBxrQqWxlettEm3VCqm-w-unLUwnRPPjhwyp8oh2s8GCd"/>
+<div class="absolute top-4 left-4 bg-tertiary-container/80 backdrop-blur-md px-3 py-1 rounded-full border border-tertiary/20">
+<span class="text-[10px] font-bold text-tertiary tracking-tighter uppercase flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-tertiary rounded-full animate-pulse"></span> Disponible
+                                </span>
+</div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-headline-md font-headline-md leading-tight">Mateo Ruiz</h3>
+<p class="text-caption text-on-surface-variant">Creative Artist • 4 años exp.</p>
+</div>
+<div class="flex flex-col items-end">
+<div class="flex items-center text-secondary">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-md font-bold ml-1">4.8</span>
+</div>
+<span class="text-[10px] text-on-surface-variant">(45 reseñas)</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 my-4">
+<span class="px-3 py-1 bg-surface-container-highest text-[10px] rounded text-on-surface-variant">MODERN</span>
+<span class="px-3 py-1 bg-surface-container-highest text-[10px] rounded text-on-surface-variant">DESIGNS</span>
+<span class="px-3 py-1 bg-surface-container-highest text-[10px] rounded text-on-surface-variant">BUZZ</span>
+</div>
+<button class="w-full py-3 border border-secondary text-secondary hover:bg-secondary hover:text-on-secondary transition-all duration-300 rounded-lg text-label-md font-bold active:scale-95">
+                                Seleccionar este barbero
+                            </button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Bottom Nav Bar (Mobile Only as per JSON) -->
+<nav class="lg:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-4 pb-safe bg-surface-container border-t border-outline-variant shadow-lg">
+<div class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined">home</span>
+<span class="text-caption font-caption">Home</span>
+</div>
+<div class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined">event</span>
+<span class="text-caption font-caption">Schedule</span>
+</div>
+<div class="flex flex-col items-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+<span class="text-caption font-caption">Book</span>
+</div>
+<div class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined">person</span>
+<span class="text-caption font-caption">Profile</span>
+</div>
+</nav>
+<!-- Footer Section -->
+<footer class="w-full py-stack-md px-container-padding flex flex-col md:flex-row justify-between items-center bg-background border-t border-outline-variant mt-stack-lg mb-20 lg:mb-0">
+<div class="text-headline-md font-headline-md text-secondary mb-4 md:mb-0">BarberHub</div>
+<p class="text-caption font-caption text-on-surface-variant mb-4 md:mb-0">© 2024 BarberHub Premium. All rights reserved.</p>
+<div class="flex gap-stack-md">
+<a class="text-caption font-caption text-on-surface-variant hover:text-secondary transition-colors" href="#">Privacy Policy</a>
+<a class="text-caption font-caption text-on-surface-variant hover:text-secondary transition-colors" href="#">Terms of Service</a>
+<a class="text-caption font-caption text-on-surface-variant hover:text-secondary transition-colors" href="#">Contact Us</a>
+</div>
+</footer>
+<script>
+        // Micro-interaction for barber selection
+        document.querySelectorAll('button').forEach(button => {
+            if (button.textContent.includes('Seleccionar')) {
+                button.addEventListener('click', function() {
+                    const card = this.closest('.glass-card');
+                    // Reset all
+                    document.querySelectorAll('.glass-card').forEach(c => {
+                        c.classList.remove('ring-2', 'ring-secondary', 'bg-secondary/5');
+                        c.querySelector('button').textContent = 'Seleccionar este barbero';
+                    });
+                    // Select current
+                    card.classList.add('ring-2', 'ring-secondary', 'bg-secondary/5');
+                    this.textContent = 'Barbero Seleccionado';
+                    
+                    // Simple feedback pulse
+                    this.classList.add('animate-ping');
+                    setTimeout(() => this.classList.remove('animate-ping'), 500);
+                });
+            }
+        });
+    </script>
+</body></html>

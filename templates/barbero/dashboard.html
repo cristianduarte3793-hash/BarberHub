@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel Barbero — BarberHub{% endblock %}
+{% block page_title %}Panel del Barbero{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  {# ── Saludo ── #}
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-bold text-on-surface font-['Montserrat']">
+        Hola, {{ barbero.perfil.usuario.get_full_name }} 👋
+      </h2>
+      <p class="text-on-surface-variant mt-1 text-sm">
+        {{ barbero.especialidad|default:"Barbero profesional" }}
+      </p>
+    </div>
+    {# Indicador de disponibilidad #}
+    <div class="flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-bold
+      {% if barbero.disponibilidad == 'DISPONIBLE' %}bg-green-900/20 border-green-500/30 text-green-400
+      {% elif barbero.disponibilidad == 'OCUPADO' %}bg-yellow-900/20 border-yellow-500/30 text-yellow-400
+      {% else %}bg-red-900/20 border-red-500/30 text-red-400{% endif %}">
+      <span class="w-2 h-2 rounded-full animate-pulse
+        {% if barbero.disponibilidad == 'DISPONIBLE' %}bg-green-400
+        {% elif barbero.disponibilidad == 'OCUPADO' %}bg-yellow-400
+        {% else %}bg-red-400{% endif %}"></span>
+      {{ barbero.get_disponibilidad_display }}
+    </div>
+  </div>
+
+  {# ── Tarjetas de métricas ── #}
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+    {# Citas hoy #}
+    <div class="glass-card p-5 rounded-xl border border-outline-variant hover:border-secondary/50 transition-all group">
+      <div class="flex items-start justify-between mb-4">
+        <div class="p-2 bg-secondary/10 rounded-lg text-secondary">
+          <span class="material-symbols-outlined">event_available</span>
+        </div>
+      </div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">Citas hoy</p>
+      <p class="text-3xl font-bold text-on-surface group-hover:text-secondary transition-colors">{{ citas_hoy }}</p>
+    </div>
+
+    {# Próxima cita #}
+    <div class="glass-card p-5 rounded-xl border border-outline-variant hover:border-secondary/50 transition-all relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-20 h-20 -mr-6 -mt-6 bg-secondary/5 rounded-full blur-2xl"></div>
+      <div class="flex items-start justify-between mb-4">
+        <div class="p-2 bg-secondary/10 rounded-lg text-secondary">
+          <span class="material-symbols-outlined">schedule</span>
+        </div>
+      </div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">Próxima cita</p>
+      {% if proxima_cita %}
+        <p class="text-sm font-bold text-on-surface leading-tight">{{ proxima_cita.cliente.usuario.get_full_name }}</p>
+        <p class="text-secondary font-bold text-sm mt-0.5">{{ proxima_cita.hora_inicio|time:"H:i" }}</p>
+      {% else %}
+        <p class="text-sm text-on-surface-variant">Sin citas pendientes</p>
+      {% endif %}
+    </div>
+
+    {# Citas pendientes #}
+    <div class="glass-card p-5 rounded-xl border border-outline-variant hover:border-secondary/50 transition-all group">
+      <div class="flex items-start justify-between mb-4">
+        <div class="p-2 bg-secondary/10 rounded-lg text-secondary">
+          <span class="material-symbols-outlined">pending_actions</span>
+        </div>
+      </div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">Pendientes</p>
+      <p class="text-3xl font-bold text-on-surface group-hover:text-secondary transition-colors">{{ citas_pendientes }}</p>
+    </div>
+
+    {# Calificación promedio #}
+    <div class="glass-card p-5 rounded-xl border border-outline-variant hover:border-secondary/50 transition-all group">
+      <div class="flex items-start justify-between mb-4">
+        <div class="p-2 bg-secondary/10 rounded-lg text-secondary">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">star</span>
+        </div>
+      </div>
+      <p class="text-on-surface-variant text-xs font-bold uppercase tracking-wider mb-1">Calificación</p>
+      {% if calificacion_promedio %}
+        <div class="flex items-baseline gap-1">
+          <p class="text-3xl font-bold text-on-surface group-hover:text-secondary transition-colors">{{ calificacion_promedio }}</p>
+          <p class="text-on-surface-variant text-sm">/ 5.0</p>
+        </div>
+      {% else %}
+        <p class="text-on-surface-variant text-sm">Sin calificaciones</p>
+      {% endif %}
+    </div>
+
+  </div>
+
+  {# ── Grid principal ── #}
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    {# Timeline del día #}
+    <div class="lg:col-span-8 glass-card rounded-xl border border-outline-variant">
+      <div class="flex items-center justify-between p-6 border-b border-outline-variant">
+        <h3 class="text-lg font-bold text-on-surface font-['Montserrat']">Agenda de Hoy</h3>
+        <div class="flex items-center gap-2">
+          <span class="text-on-surface-variant text-sm" id="fecha-hoy"></span>
+          <a href="{% url 'barbero_agenda' %}"
+             class="text-xs text-secondary hover:underline font-semibold ml-4">Ver agenda completa →</a>
+        </div>
+      </div>
+
+      <div class="p-6">
+        {% if citas_hoy_lista %}
+          <div class="relative pl-8 space-y-4
+                      before:content-[''] before:absolute before:left-[11px] before:top-2
+                      before:bottom-2 before:w-[2px] before:bg-outline-variant">
+            {% for cita in citas_hoy_lista %}
+            <div class="relative group">
+              {# Punto en la línea de tiempo #}
+              <div class="absolute -left-[30px] top-1 w-4 h-4 rounded-full border-4 border-surface-container-lowest shadow-md
+                {% if cita.estado == 'CONFIRMADA' %}bg-tertiary
+                {% elif cita.estado == 'EN_PROCESO' %}bg-blue-400
+                {% elif cita.estado == 'FINALIZADA' %}bg-green-500
+                {% else %}bg-secondary{% endif %}"></div>
+
+              <div class="flex items-center justify-between p-4 rounded-lg border-l-4 bg-surface-container-low
+                   hover:bg-surface-container-high transition-all
+                   {% if cita.estado == 'CONFIRMADA' %}border-l-tertiary
+                   {% elif cita.estado == 'EN_PROCESO' %}border-l-blue-400
+                   {% elif cita.estado == 'FINALIZADA' %}border-l-green-500
+                   {% else %}border-l-secondary{% endif %}">
+                <div class="flex gap-4 min-w-0">
+                  <div class="text-center flex-shrink-0 w-14">
+                    <p class="text-base font-bold text-on-surface">{{ cita.hora_inicio|time:"H:i" }}</p>
+                    <p class="text-[10px] text-on-surface-variant uppercase font-bold">{{ cita.hora_inicio|time:"A" }}</p>
+                  </div>
+                  <div class="w-px bg-outline-variant self-stretch flex-shrink-0"></div>
+                  <div class="min-w-0">
+                    <h4 class="font-bold text-on-surface text-sm">{{ cita.cliente.usuario.get_full_name }}</h4>
+                    <p class="text-xs text-on-surface-variant">{{ cita.servicio.nombre }} · {{ cita.servicio.duracion }} min</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3 flex-shrink-0 ml-2">
+                  <span class="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide
+                    {% if cita.estado == 'CONFIRMADA' %}bg-tertiary/10 text-tertiary border border-tertiary/20
+                    {% elif cita.estado == 'EN_PROCESO' %}bg-blue-500/10 text-blue-400 border border-blue-500/20
+                    {% elif cita.estado == 'FINALIZADA' %}bg-green-500/10 text-green-400 border border-green-500/20
+                    {% elif cita.estado == 'PENDIENTE' %}bg-secondary/10 text-secondary border border-secondary/20
+                    {% else %}bg-red-500/10 text-red-400 border border-red-500/20{% endif %}">
+                    {{ cita.get_estado_display }}
+                  </span>
+                  <a href="{% url 'barbero_cita_detalle' cita.pk %}"
+                     class="bg-surface-container-highest text-on-surface text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-outline-variant transition-colors">
+                    Ver
+                  </a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="py-12 text-center">
+            <span class="material-symbols-outlined text-5xl text-on-surface-variant/30 block mb-2">event_busy</span>
+            <p class="text-on-surface-variant text-sm">No tienes citas para hoy.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {# Columna derecha #}
+    <div class="lg:col-span-4 space-y-4">
+
+      {# Widget de estado #}
+      <div class="glass-card rounded-xl border border-outline-variant p-5">
+        <h3 class="text-sm font-bold text-on-surface mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-secondary text-[18px]">toggle_on</span>
+          Mi Estado Actual
+        </h3>
+        <form method="post" action="{% url 'barbero_cambiar_estado' %}" class="space-y-2">
+          {% csrf_token %}
+          {% for val, label in disponibilidad_choices %}
+          <button type="submit" name="disponibilidad" value="{{ val }}"
+                  class="w-full flex items-center justify-between p-3 rounded-lg border-2 transition-all text-sm font-bold
+                  {% if barbero.disponibilidad == val %}
+                    {% if val == 'DISPONIBLE' %}bg-green-500/10 border-green-500 text-green-400
+                    {% elif val == 'OCUPADO' %}bg-yellow-500/10 border-yellow-500 text-yellow-400
+                    {% else %}bg-red-500/10 border-red-500 text-red-400{% endif %}
+                  {% else %}bg-surface-container-lowest border-outline-variant text-on-surface-variant hover:border-secondary/50{% endif %}">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-[20px]">
+                {% if val == 'DISPONIBLE' %}check_circle
+                {% elif val == 'OCUPADO' %}event_busy
+                {% else %}block{% endif %}
+              </span>
+              <span>{{ label }}</span>
+            </div>
+            {% if barbero.disponibilidad == val %}
+              <div class="w-4 h-4 rounded-full
+                {% if val == 'DISPONIBLE' %}bg-green-400
+                {% elif val == 'OCUPADO' %}bg-yellow-400
+                {% else %}bg-red-400{% endif %}"></div>
+            {% endif %}
+          </button>
+          {% endfor %}
+        </form>
+        <p class="mt-3 text-[11px] text-on-surface-variant text-center">
+          Tu estado afecta la recepción de nuevas citas.
+        </p>
+      </div>
+
+      {# Siguiente cliente #}
+      {% if proxima_cita %}
+      <div class="glass-card rounded-xl border border-outline-variant p-5 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-secondary/5 -mr-12 -mt-12 rounded-full blur-3xl"></div>
+        <h3 class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-4">Siguiente Cliente</h3>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-on-secondary font-bold text-sm flex-shrink-0">
+            {{ proxima_cita.cliente.usuario.first_name|first|upper }}{{ proxima_cita.cliente.usuario.last_name|first|upper }}
+          </div>
+          <div>
+            <h4 class="font-bold text-on-surface text-sm">{{ proxima_cita.cliente.usuario.get_full_name }}</h4>
+            {% if proxima_cita.cliente.telefono %}
+              <p class="text-xs text-on-surface-variant">{{ proxima_cita.cliente.telefono }}</p>
+            {% endif %}
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-4">
+          <div class="bg-surface-container-low p-2.5 rounded-lg border border-outline-variant">
+            <p class="text-[10px] text-on-surface-variant font-bold uppercase mb-1">Hora</p>
+            <p class="font-bold text-on-surface text-sm">{{ proxima_cita.hora_inicio|time:"H:i" }}</p>
+          </div>
+          <div class="bg-surface-container-low p-2.5 rounded-lg border border-outline-variant">
+            <p class="text-[10px] text-on-surface-variant font-bold uppercase mb-1">Servicio</p>
+            <p class="font-bold text-on-surface text-xs leading-tight">{{ proxima_cita.servicio.nombre }}</p>
+          </div>
+        </div>
+        <a href="{% url 'barbero_cita_detalle' proxima_cita.pk %}"
+           class="w-full flex items-center justify-center gap-2 py-2.5 bg-surface-container-highest text-on-surface text-sm font-bold rounded-lg hover:bg-outline-variant transition-colors">
+          Ver detalle
+          <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        </a>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const el = document.getElementById('fecha-hoy');
+  if (el) {
+    el.textContent = new Date().toLocaleDateString('es-CO', {
+      weekday:'long', day:'numeric', month:'long'
+    });
+  }
+</script>
+{% endblock %}

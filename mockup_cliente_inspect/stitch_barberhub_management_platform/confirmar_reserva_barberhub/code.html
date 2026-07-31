@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Confirmar Cita | BarberHub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-on-surface": "#2f3131",
+                    "tertiary-container": "#00160c",
+                    "on-error-container": "#ffdad6",
+                    "tertiary": "#4edea3",
+                    "on-tertiary-fixed-variant": "#005236",
+                    "surface-container-high": "#282a2b",
+                    "on-secondary-container": "#342800",
+                    "on-primary": "#313030",
+                    "error": "#ffb4ab",
+                    "surface-bright": "#38393a",
+                    "outline-variant": "#444748",
+                    "on-tertiary": "#003824",
+                    "on-surface": "#e2e2e2",
+                    "on-error": "#690005",
+                    "surface-tint": "#c8c6c5",
+                    "secondary-container": "#af8d11",
+                    "on-secondary-fixed-variant": "#574500",
+                    "surface-container": "#1e2020",
+                    "on-secondary": "#3c2f00",
+                    "surface-container-lowest": "#0c0f0f",
+                    "secondary-fixed": "#ffe088",
+                    "error-container": "#93000a",
+                    "inverse-primary": "#5f5e5e",
+                    "on-primary-fixed-variant": "#474646",
+                    "inverse-surface": "#e2e2e2",
+                    "outline": "#8e9192",
+                    "surface-dim": "#121414",
+                    "primary": "#c8c6c5",
+                    "primary-fixed": "#e5e2e1",
+                    "on-primary-fixed": "#1c1b1b",
+                    "primary-fixed-dim": "#c8c6c5",
+                    "secondary": "#e9c349",
+                    "tertiary-fixed-dim": "#4edea3",
+                    "surface": "#121414",
+                    "on-tertiary-container": "#008f62",
+                    "surface-container-low": "#1a1c1c",
+                    "surface-container-highest": "#333535",
+                    "background": "#121414",
+                    "surface-variant": "#333535",
+                    "on-surface-variant": "#c4c7c7",
+                    "on-secondary-fixed": "#241a00",
+                    "primary-container": "#121212",
+                    "on-background": "#e2e2e2",
+                    "secondary-fixed-dim": "#e9c349",
+                    "on-tertiary-fixed": "#002113",
+                    "tertiary-fixed": "#6ffbbe"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "12px",
+                    "stack-lg": "48px",
+                    "base": "8px",
+                    "gutter": "16px",
+                    "container-padding": "24px",
+                    "stack-md": "24px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Montserrat"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Montserrat"],
+                    "headline-lg": ["Montserrat"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Montserrat"],
+                    "label-md": ["Inter"],
+                    "caption": ["Inter"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #121414;
+            color: #e2e2e2;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(30, 32, 32, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(233, 195, 73, 0.1);
+        }
+        .gradient-border {
+            border: 1px solid transparent;
+            background: linear-gradient(#1e2020, #1e2020) padding-box,
+                        linear-gradient(135deg, #e9c349, transparent) border-box;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 flex justify-between items-center px-container-padding h-16 w-full bg-surface-container-low dark:bg-surface-container-low border-b border-outline-variant shadow-sm">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary transition-colors" onclick="history.back()">arrow_back</button>
+<span class="text-headline-md font-headline-md font-bold text-secondary dark:text-secondary">BarberHub</span>
+</div>
+<div class="flex items-center gap-base">
+<span class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-variant rounded-full cursor-pointer">notifications</span>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="text-on-secondary-fixed font-bold text-xs">JS</span>
+</div>
+</div>
+</header>
+<main class="flex-grow flex flex-col items-center py-stack-lg px-container-padding lg:max-w-5xl lg:mx-auto w-full">
+<!-- Progress Bar (Step 5 of 5) -->
+<div class="w-full max-w-2xl mb-stack-lg">
+<div class="flex justify-between items-center mb-2">
+<span class="text-label-md font-label-md text-secondary">PASO 5 DE 5</span>
+<span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-widest">Confirmación</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-full rounded-full transition-all duration-700 ease-out"></div>
+</div>
+</div>
+<section class="w-full grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Summary Card -->
+<div class="lg:col-span-7 flex flex-col gap-gutter">
+<div class="glass-panel p-stack-md rounded-xl shadow-lg border border-outline-variant">
+<h2 class="text-headline-md font-headline-md text-secondary mb-stack-md">Resumen de tu Cita</h2>
+<div class="space-y-6">
+<!-- Service & Barber -->
+<div class="flex items-start gap-gutter p-4 bg-surface-container-low rounded-lg border border-outline-variant/30">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A professional barber with stylish grooming, wearing a clean black apron, standing in a luxury barbershop environment with warm amber lighting and vintage wooden accents. High-contrast photography, premium aesthetic, shallow depth of field focusing on the barber's friendly expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOcokkfkSiFEW3DYkv3bjd17ZyGW9i4DcoEsrtOe_nPEfCkv66YMYcoR42cPYMLzebxK1TI6tuifrqA38XhVRxiQokQfNsAx5HPdOlK0cbjBOOrnjpQM--AiguUS3Qtfn2uJuXTTLw4JoqoGrd_OenHgJOxwL37ZWXAsnxfNhJ4JdDpQXLc4xcSEBYCV_OPtHoZz956nJEMEJrbeYZJVQz1D3B3CB2KFPItCvqjvdnhjB5ZPNu-Gl-"/>
+</div>
+<div class="flex flex-col">
+<span class="text-label-md font-label-md text-secondary uppercase tracking-tighter">Servicio Premium</span>
+<h3 class="text-headline-md font-headline-md text-on-surface">Corte Clásico &amp; Barba</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-on-surface-variant text-sm" style="font-variation-settings: 'opsz' 18;">person</span>
+<span class="text-body-md font-body-md text-on-surface-variant">Barbero: <span class="text-on-surface font-semibold">Marco Antonio</span></span>
+</div>
+</div>
+</div>
+<!-- Date, Time, Duration, Price -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="flex flex-col gap-1 p-3 bg-surface-container-highest/30 rounded-lg">
+<span class="text-caption font-caption text-on-surface-variant uppercase">Fecha</span>
+<span class="text-body-md font-bold text-on-surface">24 Oct, 2024</span>
+</div>
+<div class="flex flex-col gap-1 p-3 bg-surface-container-highest/30 rounded-lg">
+<span class="text-caption font-caption text-on-surface-variant uppercase">Hora</span>
+<span class="text-body-md font-bold text-on-surface">15:30 PM</span>
+</div>
+<div class="flex flex-col gap-1 p-3 bg-surface-container-highest/30 rounded-lg">
+<span class="text-caption font-caption text-on-surface-variant uppercase">Duración</span>
+<span class="text-body-md font-bold text-on-surface">60 min</span>
+</div>
+<div class="flex flex-col gap-1 p-3 bg-surface-container-highest/30 rounded-lg border border-secondary/20">
+<span class="text-caption font-caption text-secondary uppercase">Precio</span>
+<span class="text-body-md font-bold text-secondary">$35.00</span>
+</div>
+</div>
+<!-- Location & Contact -->
+<div class="space-y-3 pt-4 border-t border-outline-variant/30">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">location_on</span>
+<div class="flex flex-col">
+<span class="text-label-md font-label-md text-on-surface">BarberHub Centro</span>
+<span class="text-caption font-caption text-on-surface-variant">Av. de la Libertad 123, Madrid</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">phone</span>
+<span class="text-body-md font-body-md text-on-surface-variant">+34 912 345 678</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Observations -->
+<div class="flex flex-col gap-3">
+<label class="text-label-md font-label-md text-on-surface-variant uppercase px-1" for="observations">Observaciones (Opcional)</label>
+<textarea class="w-full bg-surface-container border border-outline-variant rounded-xl p-4 text-on-surface focus:border-secondary focus:ring-1 focus:ring-secondary transition-all outline-none resize-none placeholder:text-on-surface-variant/40" id="observations" placeholder="Ej: Quiero un degradado bajo o tengo la piel sensible..." rows="3"></textarea>
+</div>
+</div>
+<!-- Side Action Panel / Map -->
+<div class="lg:col-span-5 flex flex-col gap-gutter">
+<div class="rounded-xl overflow-hidden h-64 bg-surface-container border border-outline-variant shadow-md">
+<img class="w-full h-full object-cover grayscale opacity-80 contrast-125" data-alt="A stylized, dark-themed digital map showing a specific city location in Madrid. The map uses a minimalist aesthetic with deep charcoals, blacks, and gold pin markers. Sophisticated UI design with clear street demarcations and a premium corporate feel." data-location="Madrid" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTkFJihda0kIlHjIMrkQMP3QW7mNYFDJ2y4eflh-0Vr-2cQ3PIgcYWN1CXEG6XYFWfctNy_Td3j020P9Y-ocS7kLdHYrGqfo3KvSXQAgf7sYqb5EL3srnOM-gabZTs352POj7-SdRfcXGucUYgvODy8Nw-U8k00O44HOICb6s8hmtyq7E8BJwfdGfsq2po9YcQNS0725Abuacq3iZ1xGcbPcdvfP_TS01P6CFDCVdHSRpf7o2ySdt5"/>
+</div>
+<div class="glass-panel p-6 rounded-xl border border-secondary/20 flex flex-col gap-stack-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="text-label-md font-label-md text-secondary">RESERVA PROTEGIDA</span>
+</div>
+<p class="text-body-md text-on-surface-variant">Al confirmar, garantizas tu espacio en nuestra agenda. Por favor, llega 5 minutos antes de tu hora programada.</p>
+<button class="w-full py-4 bg-secondary text-on-secondary font-headline-md font-bold rounded-xl shadow-lg hover:shadow-secondary/20 active:scale-95 transition-all duration-200">
+                        Confirmar cita
+                    </button>
+<p class="text-caption font-caption text-center text-on-surface-variant">Puedes cancelar o reprogramar hasta 24 horas antes sin costo adicional.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Component -->
+<footer class="w-full py-stack-md px-container-padding flex flex-col md:flex-row justify-between items-center bg-background border-t border-outline-variant mt-stack-lg">
+<span class="text-caption font-caption text-on-surface-variant">© 2024 BarberHub Premium. All rights reserved.</span>
+<div class="flex gap-stack-md mt-4 md:mt-0">
+<a class="text-caption font-caption text-on-surface-variant hover:text-secondary transition-colors" href="#">Privacy Policy</a>
+<a class="text-caption font-caption text-on-surface-variant hover:text-secondary transition-colors" href="#">Terms of Service</a>
+<a class="text-caption font-caption text-on-surface-variant hover:text-secondary transition-colors" href="#">Contact Us</a>
+</div>
+</footer>
+<!-- Bottom Mobile Nav -->
+<nav class="lg:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-4 pb-safe bg-surface-container border-t border-outline-variant shadow-lg">
+<div class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined">home</span>
+<span class="text-caption font-caption">Home</span>
+</div>
+<div class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined">event</span>
+<span class="text-caption font-caption">Schedule</span>
+</div>
+<div class="flex flex-col items-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+<span class="text-caption font-caption">Book</span>
+</div>
+<div class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined">person</span>
+<span class="text-caption font-caption">Profile</span>
+</div>
+</nav>
+<script>
+        // Micro-interaction for the CTA button
+        const confirmBtn = document.querySelector('button.bg-secondary');
+        confirmBtn.addEventListener('click', function() {
+            this.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-5 w-5 text-on-secondary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Procesando...</span>';
+            this.disabled = true;
+            this.classList.add('opacity-80', 'cursor-not-allowed');
+            
+            setTimeout(() => {
+                this.innerHTML = '<span class="flex items-center justify-center gap-2"><span class="material-symbols-outlined">check_circle</span>¡Cita Confirmada!</span>';
+                this.classList.remove('bg-secondary');
+                this.classList.add('bg-tertiary', 'text-on-tertiary');
+            }, 1500);
+        });
+
+        // Hover effect for summary card items
+        const listItems = document.querySelectorAll('.bg-surface-container-highest\\/30');
+        listItems.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.classList.add('scale-[1.02]', 'bg-surface-container-highest/50');
+                item.style.transition = 'all 0.3s ease';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.classList.remove('scale-[1.02]', 'bg-surface-container-highest/50');
+            });
+        });
+    </script>
+</body></html>

@@ -111,6 +111,12 @@ class Barbero(models.Model):
         ('VACACIONES', 'En Vacaciones'),
     ]
 
+    DISPONIBILIDAD_CHOICES = [
+        ('DISPONIBLE',     'Disponible'),
+        ('OCUPADO',        'Ocupado'),
+        ('NO_DISPONIBLE',  'No disponible'),
+    ]
+
     # Relación con el perfil del usuario (que tiene rol BARBERO)
     perfil      = models.OneToOneField(PerfilUsuario, on_delete=models.CASCADE, related_name='barbero')
     especialidad = models.CharField(max_length=100, blank=True, null=True)
@@ -118,6 +124,12 @@ class Barbero(models.Model):
     # Servicios que este barbero puede realizar
     servicios    = models.ManyToManyField(Servicio, blank=True, related_name='barberos')
     estado       = models.CharField(max_length=15, choices=ESTADO_CHOICES, default='ACTIVO')
+    disponibilidad = models.CharField(
+        max_length=20,
+        choices=DISPONIBILIDAD_CHOICES,
+        default='DISPONIBLE',
+        help_text='Estado de disponibilidad visible para los clientes',
+    )
 
     def __str__(self):
         return self.perfil.usuario.get_full_name() or self.perfil.usuario.username

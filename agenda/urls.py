@@ -4,6 +4,7 @@ URLs de la app agenda (BarberHub).
 
 from django.urls import path
 from . import views
+from . import views_barbero
 
 urlpatterns = [
     # --- Raíz → landing page ---
@@ -53,4 +54,15 @@ urlpatterns = [
 
     # Configuración
     path('admin/configuracion/',              views.configuracion_view,  name='configuracion'),
+
+    # -----------------------------------------------------------------------
+    # MÓDULO BARBERO
+    # -----------------------------------------------------------------------
+    path('barbero/',                              views_barbero.barbero_dashboard,     name='barbero_dashboard'),
+    path('barbero/agenda/',                       views_barbero.barbero_agenda,        name='barbero_agenda'),
+    path('barbero/agenda/<int:pk>/',              views_barbero.barbero_cita_detalle,  name='barbero_cita_detalle'),
+    path('barbero/agenda/<int:pk>/accion/',       views_barbero.barbero_cita_accion,   name='barbero_cita_accion'),
+    path('barbero/historial/',                    views_barbero.barbero_historial,     name='barbero_historial'),
+    path('barbero/disponibilidad/',               views_barbero.barbero_disponibilidad,name='barbero_disponibilidad'),
+    path('barbero/estado/',                       views_barbero.barbero_cambiar_estado,name='barbero_cambiar_estado'),
 ]

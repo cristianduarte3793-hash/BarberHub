@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Agenda — BarberHub{% endblock %}
+{% block page_title %}Mi Agenda{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  {# ── Cabecera con controles de vista ── #}
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-bold text-on-surface font-['Montserrat']">Mi Agenda</h2>
+      <p class="text-on-surface-variant text-sm mt-1">Citas asignadas a ti</p>
+    </div>
+    <div class="flex bg-surface-container-low rounded-lg p-1 border border-outline-variant self-start">
+      <a href="?vista=dia" class="px-5 py-2 rounded-md text-xs font-bold transition-all
+        {% if vista == 'dia' %}bg-secondary text-on-secondary shadow{% else %}text-on-surface-variant hover:text-on-surface{% endif %}">
+        Día
+      </a>
+      <a href="?vista=semana" class="px-5 py-2 rounded-md text-xs font-bold transition-all
+        {% if vista == 'semana' %}bg-secondary text-on-secondary shadow{% else %}text-on-surface-variant hover:text-on-surface{% endif %}">
+        Semana
+      </a>
+      <a href="?vista=mes" class="px-5 py-2 rounded-md text-xs font-bold transition-all
+        {% if vista == 'mes' %}bg-secondary text-on-secondary shadow{% else %}text-on-surface-variant hover:text-on-surface{% endif %}">
+        Mes
+      </a>
+    </div>
+  </div>
+
+  {# ── Navegación de fecha ── #}
+  <div class="glass-card rounded-xl border border-outline-variant p-4 flex items-center justify-between">
+    <a href="?vista={{ vista }}&offset={{ offset_anterior }}"
+       class="p-2 hover:bg-surface-variant rounded-lg transition-colors text-on-surface-variant hover:text-on-surface">
+      <span class="material-symbols-outlined">chevron_left</span>
+    </a>
+    <div class="text-center">
+      <p class="font-bold text-on-surface font-['Montserrat']">{{ titulo_periodo }}</p>
+      <p class="text-xs text-on-surface-variant mt-0.5">
+        {% if vista == 'dia' %}
+          {{ citas|length }} cita{{ citas|length|pluralize:"s" }} programada{{ citas|length|pluralize:"s" }}
+        {% else %}
+          {{ total_citas_periodo }} citas en el período
+        {% endif %}
+      </p>
+    </div>
+    <a href="?vista={{ vista }}&offset={{ offset_siguiente }}"
+       class="p-2 hover:bg-surface-variant rounded-lg transition-colors text-on-surface-variant hover:text-on-surface">
+      <span class="material-symbols-outlined">chevron_right</span>
+    </a>
+  </div>
+
+  {# ═══════════════════════ VISTA DÍA ═══════════════════════ #}
+  {% if vista == 'dia' %}
+  <div class="glass-card rounded-xl border border-outline-variant overflow-hidden">
+    <div class="p-5 border-b border-outline-variant bg-surface-container-low">
+      <h3 class="font-bold text-on-surface">{{ titulo_periodo }}</h3>
+    </div>
+
+    {% if citas %}
+      <div class="relative pl-10 py-6 pr-6 space-y-4
+                  before:content-[''] before:absolute before:left-[19px] before:top-6
+                  before:bottom-6 before:w-[2px] before:bg-outline-variant">
+        {% for cita in citas %}
+        <div class="relative group">
+          <div class="absolute -left-[34px] top-2 w-4 h-4 rounded-full border-4 border-surface-container-lowest shadow
+            {% if cita.estado == 'CONFIRMADA' %}bg-tertiary
+            {% elif cita.estado == 'EN_PROCESO' %}bg-blue-400
+            {% elif cita.estado == 'FINALIZADA' %}bg-green-500
+            {% else %}bg-secondary{% endif %}"></div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg border-l-4 bg-surface-container-low hover:bg-surface-container-high transition-all
+               {% if cita.estado == 'CONFIRMADA' %}border-l-tertiary
+               {% elif cita.estado == 'EN_PROCESO' %}border-l-blue-400
+               {% elif cita.estado == 'FINALIZADA' %}border-l-green-500
+               {% else %}border-l-secondary{% endif %}">
+            <div class="flex items-start gap-4">
+              <div class="text-center flex-shrink-0 w-14">
+                <p class="text-lg font-bold text-on-surface leading-none">{{ cita.hora_inicio|time:"H:i" }}</p>
+                <p class="text-[10px] text-on-surface-variant uppercase">{{ cita.hora_inicio|time:"A" }}</p>
+              </div>
+              <div class="w-px bg-outline-variant self-stretch"></div>
+              <div>
+                <h4 class="font-bold text-on-surface">{{ cita.cliente.usuario.get_full_name }}</h4>
+                <p class="text-sm text-on-surface-variant">{{ cita.servicio.nombre }}</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">
+                  {{ cita.servicio.duracion }} min &nbsp;·&nbsp; ${{ cita.precio }}
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 flex-shrink-0">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase
+                {% if cita.estado == 'CONFIRMADA' %}bg-tertiary/10 text-tertiary border border-tertiary/20
+                {% elif cita.estado == 'EN_PROCESO' %}bg-blue-500/10 text-blue-400 border border-blue-500/20
+                {% elif cita.estado == 'FINALIZADA' %}bg-green-500/10 text-green-400 border border-green-500/20
+                {% elif cita.estado == 'PENDIENTE' %}bg-secondary/10 text-secondary border border-secondary/20
+                {% else %}bg-red-500/10 text-red-400 border border-red-500/20{% endif %}">
+                {{ cita.get_estado_display }}
+              </span>
+              <a href="{% url 'barbero_cita_detalle' cita.pk %}"
+                 class="bg-secondary text-on-secondary text-xs font-bold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity">
+                Ver detalle
+              </a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="py-16 text-center">
+        <span class="material-symbols-outlined text-5xl text-on-surface-variant/30 block mb-3">event_busy</span>
+        <p class="text-on-surface-variant">Sin citas para este día.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  {# ═══════════════════════ VISTA SEMANA / MES ═══════════════════════ #}
+  {% else %}
+  <div class="glass-card rounded-xl border border-outline-variant overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
+          <tr>
+            <th class="px-5 py-4">Fecha</th>
+            <th class="px-5 py-4">Hora</th>
+            <th class="px-5 py-4">Cliente</th>
+            <th class="px-5 py-4">Servicio</th>
+            <th class="px-5 py-4">Duración</th>
+            <th class="px-5 py-4">Estado</th>
+            <th class="px-5 py-4"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant">
+          {% for cita in citas %}
+          <tr class="hover:bg-surface-variant/30 transition-colors">
+            <td class="px-5 py-4 text-sm text-on-surface font-semibold whitespace-nowrap">
+              {{ cita.fecha|date:"d/m/Y" }}
+            </td>
+            <td class="px-5 py-4 text-sm text-on-surface whitespace-nowrap">
+              {{ cita.hora_inicio|time:"H:i" }}
+            </td>
+            <td class="px-5 py-4">
+              <div class="flex items-center gap-3">
+                <div class="w-7 h-7 rounded-full bg-secondary/20 flex items-center justify-center text-xs font-bold text-secondary flex-shrink-0">
+                  {{ cita.cliente.usuario.first_name|first|upper }}{{ cita.cliente.usuario.last_name|first|upper }}
+                </div>
+                <span class="text-sm text-on-surface">{{ cita.cliente.usuario.get_full_name }}</span>
+              </div>
+            </td>
+            <td class="px-5 py-4 text-sm text-on-surface">{{ cita.servicio.nombre }}</td>
+            <td class="px-5 py-4 text-sm text-on-surface-variant">{{ cita.servicio.duracion }} min</td>
+            <td class="px-5 py-4">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase
+                {% if cita.estado == 'CONFIRMADA' %}bg-tertiary/10 text-tertiary
+                {% elif cita.estado == 'EN_PROCESO' %}bg-blue-500/10 text-blue-400
+                {% elif cita.estado == 'FINALIZADA' %}bg-green-500/10 text-green-400
+                {% elif cita.estado == 'PENDIENTE' %}bg-secondary/10 text-secondary
+                {% else %}bg-red-500/10 text-red-400{% endif %}">
+                {{ cita.get_estado_display }}
+              </span>
+            </td>
+            <td class="px-5 py-4">
+              <a href="{% url 'barbero_cita_detalle' cita.pk %}"
+                 class="text-secondary text-xs font-bold hover:underline whitespace-nowrap">Ver →</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="px-6 py-12 text-center text-on-surface-variant text-sm">
+              <span class="material-symbols-outlined text-4xl block mb-2 opacity-30">event_busy</span>
+              No hay citas en este período.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

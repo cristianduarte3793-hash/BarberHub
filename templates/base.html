@@ -116,9 +116,22 @@
         </a>
 
       {% elif rol == 'BARBERO' %}
-        <p class="px-4 pt-4 pb-1 text-xs text-secondary/60 uppercase tracking-widest font-semibold">Mis Citas</p>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant hover:text-on-surface rounded-lg transition-all">
-          <span class="material-symbols-outlined">calendar_month</span><span class="text-sm font-semibold">Mis Citas</span>
+        <p class="px-4 pt-4 pb-1 text-xs text-secondary/60 uppercase tracking-widest font-semibold">Mi Trabajo</p>
+        <a href="{% url 'barbero_agenda' %}"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all
+           {% if request.resolver_match.url_name == 'barbero_agenda' %}bg-secondary text-on-secondary{% else %}text-on-surface-variant hover:bg-surface-variant hover:text-on-surface{% endif %}">
+          <span class="material-symbols-outlined">event_note</span><span class="text-sm font-semibold">Mi Agenda</span>
+        </a>
+        <a href="{% url 'barbero_historial' %}"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all
+           {% if request.resolver_match.url_name == 'barbero_historial' %}bg-secondary text-on-secondary{% else %}text-on-surface-variant hover:bg-surface-variant hover:text-on-surface{% endif %}">
+          <span class="material-symbols-outlined">history</span><span class="text-sm font-semibold">Historial</span>
+        </a>
+        <p class="px-4 pt-4 pb-1 text-xs text-secondary/60 uppercase tracking-widest font-semibold">Estado</p>
+        <a href="{% url 'barbero_disponibilidad' %}"
+           class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all
+           {% if request.resolver_match.url_name == 'barbero_disponibilidad' %}bg-secondary text-on-secondary{% else %}text-on-surface-variant hover:bg-surface-variant hover:text-on-surface{% endif %}">
+          <span class="material-symbols-outlined">toggle_on</span><span class="text-sm font-semibold">Mi Disponibilidad</span>
         </a>
 
       {% elif rol == 'CLIENTE' %}
