@@ -1,0 +1,138 @@
+﻿{% extends 'agenda/base.html' %}
+{% block title %}Horarios — BarberHub{% endblock %}
+{% block page_title %}Gestión de Horarios{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div>
+      <h2 class="text-2xl font-bold text-on-surface font-['Montserrat']">Horarios</h2>
+      <p class="text-on-surface-variant mt-1 text-sm">Configura la disponibilidad semanal y bloquea fechas específicas.</p>
+    </div>
+    <a href="{% url 'horario_crear' %}"
+       class="bg-secondary text-on-secondary px-5 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 hover:opacity-90 transition-opacity">
+      <span class="material-symbols-outlined text-[20px]">add</span> Nuevo horario
+    </a>
+  </div>
+
+  <!-- Horarios semanales -->
+  <div class="glass-card rounded-xl overflow-hidden border border-outline-variant">
+    <div class="px-6 py-4 border-b border-outline-variant bg-surface-container-high/40 flex items-center gap-2">
+      <span class="material-symbols-outlined text-secondary text-[20px]">date_range</span>
+      <h3 class="font-bold text-on-surface">Horario semanal</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
+          <tr>
+            <th class="px-6 py-3">Día</th>
+            <th class="px-6 py-3">Hora inicio</th>
+            <th class="px-6 py-3">Hora fin</th>
+            <th class="px-6 py-3">Estado</th>
+            <th class="px-6 py-3 text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant">
+          {% for h in horarios_semana %}
+          <tr class="hover:bg-surface-variant/20 transition-colors">
+            <td class="px-6 py-3 text-sm font-semibold text-on-surface">{{ h.get_dia_semana_display }}</td>
+            <td class="px-6 py-3 text-sm text-on-surface">{{ h.hora_inicio|time:"H:i" }}</td>
+            <td class="px-6 py-3 text-sm text-on-surface">{{ h.hora_fin|time:"H:i" }}</td>
+            <td class="px-6 py-3">
+              {% if h.abierto %}
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-tertiary/10 text-tertiary">
+                  <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Abierto
+                </span>
+              {% else %}
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-900/20 text-error">
+                  <span class="w-1.5 h-1.5 rounded-full bg-error"></span> Cerrado
+                </span>
+              {% endif %}
+            </td>
+            <td class="px-6 py-3 text-right">
+              <div class="flex justify-end gap-1">
+                <a href="{% url 'horario_editar' h.pk %}"
+                   class="p-2 text-on-surface-variant hover:text-secondary hover:bg-secondary/10 rounded-lg transition-all">
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                </a>
+                <a href="{% url 'horario_eliminar' h.pk %}"
+                   class="p-2 text-on-surface-variant hover:text-error hover:bg-red-900/20 rounded-lg transition-all">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="px-6 py-10 text-center text-on-surface-variant text-sm">
+              No hay horarios semanales configurados.
+              <a href="{% url 'horario_crear' %}" class="text-secondary font-semibold hover:underline ml-1">Crear ahora</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Días especiales / bloqueos -->
+  <div class="glass-card rounded-xl overflow-hidden border border-outline-variant">
+    <div class="px-6 py-4 border-b border-outline-variant bg-surface-container-high/40 flex items-center gap-2">
+      <span class="material-symbols-outlined text-error text-[20px]">event_busy</span>
+      <h3 class="font-bold text-on-surface">Días especiales y bloqueos</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
+          <tr>
+            <th class="px-6 py-3">Fecha</th>
+            <th class="px-6 py-3">Hora inicio</th>
+            <th class="px-6 py-3">Hora fin</th>
+            <th class="px-6 py-3">Estado</th>
+            <th class="px-6 py-3">Motivo</th>
+            <th class="px-6 py-3 text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant">
+          {% for h in horarios_especiales %}
+          <tr class="hover:bg-surface-variant/20 transition-colors">
+            <td class="px-6 py-3 text-sm font-semibold text-on-surface">{{ h.fecha_especifica|date:"d/m/Y" }}</td>
+            <td class="px-6 py-3 text-sm text-on-surface">{{ h.hora_inicio|time:"H:i" }}</td>
+            <td class="px-6 py-3 text-sm text-on-surface">{{ h.hora_fin|time:"H:i" }}</td>
+            <td class="px-6 py-3">
+              {% if h.abierto %}
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-tertiary/10 text-tertiary">Disponible</span>
+              {% else %}
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-900/20 text-error">Bloqueado</span>
+              {% endif %}
+            </td>
+            <td class="px-6 py-3 text-sm text-on-surface-variant">{{ h.motivo_bloqueo|default:"—" }}</td>
+            <td class="px-6 py-3 text-right">
+              <div class="flex justify-end gap-1">
+                <a href="{% url 'horario_editar' h.pk %}"
+                   class="p-2 text-on-surface-variant hover:text-secondary hover:bg-secondary/10 rounded-lg transition-all">
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                </a>
+                <a href="{% url 'horario_eliminar' h.pk %}"
+                   class="p-2 text-on-surface-variant hover:text-error hover:bg-red-900/20 rounded-lg transition-all">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="px-6 py-10 text-center text-on-surface-variant text-sm">
+              No hay días especiales o bloqueos registrados.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

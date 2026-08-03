@@ -1,0 +1,147 @@
+{% extends 'agenda/base.html' %}
+{% load barberhub_filters %}
+{% block title %}{{ cliente.usuario.get_full_name }} — BarberHub{% endblock %}
+{% block page_title %}Detalle de Cliente{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  <!-- Back -->
+  <a href="{% url 'clientes' %}" class="inline-flex items-center gap-2 text-sm text-on-surface-variant hover:text-secondary transition-colors">
+    <span class="material-symbols-outlined text-[18px]">arrow_back</span> Volver a Clientes
+  </a>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Columna izquierda: perfil -->
+    <div class="space-y-4">
+      <div class="glass-card rounded-xl p-6 text-center">
+        {% if cliente.foto_perfil %}
+          <img src="{{ cliente.foto_perfil.url }}" class="w-24 h-24 rounded-full object-cover border-2 border-secondary mx-auto mb-4" alt="">
+        {% else %}
+          <div class="w-24 h-24 rounded-full bg-secondary flex items-center justify-center text-on-secondary text-3xl font-bold mx-auto mb-4">
+            {{ cliente.usuario.first_name|first|upper }}{{ cliente.usuario.last_name|first|upper }}
+          </div>
+        {% endif %}
+        <h3 class="text-lg font-bold text-on-surface font-['Montserrat']">
+          {{ cliente.usuario.get_full_name|default:cliente.usuario.username }}
+        </h3>
+        <p class="text-sm text-on-surface-variant">@{{ cliente.usuario.username }}</p>
+        <div class="mt-3">
+          {% if cliente.activo %}
+            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-tertiary/10 text-tertiary">
+              <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Cuenta activa
+            </span>
+          {% else %}
+            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-surface-container-high text-on-surface-variant">
+              <span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Cuenta inactiva
+            </span>
+          {% endif %}
+        </div>
+        <div class="mt-4">
+          <a href="{% url 'cliente_toggle' cliente.pk %}"
+             class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border transition-colors
+             {% if cliente.activo %}border-red-500/40 text-error hover:bg-red-900/20{% else %}border-tertiary/40 text-tertiary hover:bg-tertiary/10{% endif %}">
+            <span class="material-symbols-outlined text-[16px]">{% if cliente.activo %}person_off{% else %}person_check{% endif %}</span>
+            {% if cliente.activo %}Desactivar cuenta{% else %}Activar cuenta{% endif %}
+          </a>
+        </div>
+      </div>
+
+      <!-- Info de contacto -->
+      <div class="glass-card rounded-xl p-5 space-y-3">
+        <h4 class="text-xs font-bold text-secondary uppercase tracking-widest">Información</h4>
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-[18px] text-on-surface-variant">mail</span>
+          <span class="text-sm text-on-surface">{{ cliente.usuario.email|default:"Sin correo" }}</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-[18px] text-on-surface-variant">phone</span>
+          <span class="text-sm text-on-surface">{{ cliente.telefono|default:"Sin teléfono" }}</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-[18px] text-on-surface-variant">calendar_today</span>
+          <span class="text-sm text-on-surface">Registrado el {{ cliente.creado_en|date:"d/m/Y" }}</span>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="glass-card rounded-xl p-5 space-y-3">
+        <h4 class="text-xs font-bold text-secondary uppercase tracking-widest">Estadísticas</h4>
+        <div class="flex justify-between items-center py-2 border-b border-outline-variant">
+          <span class="text-sm text-on-surface-variant">Total citas</span>
+          <span class="text-sm font-bold text-on-surface">{{ total_citas }}</span>
+        </div>
+        <div class="flex justify-between items-center py-2 border-b border-outline-variant">
+          <span class="text-sm text-on-surface-variant">Finalizadas</span>
+          <span class="text-sm font-bold text-tertiary">{{ citas_finalizadas }}</span>
+        </div>
+        <div class="flex justify-between items-center py-2 border-b border-outline-variant">
+          <span class="text-sm text-on-surface-variant">Canceladas</span>
+          <span class="text-sm font-bold text-error">{{ citas_canceladas }}</span>
+        </div>
+        <div class="flex justify-between items-center py-2">
+          <span class="text-sm text-on-surface-variant">Total gastado</span>
+          <span class="text-sm font-bold text-secondary">{{ total_gastado|cop }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna derecha: historial de citas -->
+    <div class="lg:col-span-2">
+      <div class="glass-card rounded-xl overflow-hidden border border-outline-variant">
+        <div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between">
+          <h4 class="text-sm font-bold text-on-surface">Historial de Citas</h4>
+          <span class="text-xs text-on-surface-variant">{{ total_citas }} cita(s) en total</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="bg-surface-container-high text-on-surface-variant text-xs uppercase tracking-wider border-b border-outline-variant">
+              <tr>
+                <th class="px-5 py-3">Fecha</th>
+                <th class="px-5 py-3">Servicio</th>
+                <th class="px-5 py-3">Barbero</th>
+                <th class="px-5 py-3">Precio</th>
+                <th class="px-5 py-3">Estado</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant">
+              {% for cita in citas %}
+              <tr class="hover:bg-surface-variant/20 transition-colors">
+                <td class="px-5 py-3 text-sm text-on-surface">
+                  {{ cita.fecha|date:"d/m/Y" }}
+                  <span class="block text-xs text-on-surface-variant">{{ cita.hora_inicio|time:"H:i" }}</span>
+                </td>
+                <td class="px-5 py-3 text-sm text-on-surface">{{ cita.servicio.nombre }}</td>
+                <td class="px-5 py-3 text-sm text-on-surface-variant">
+                  {{ cita.barbero.perfil.usuario.get_full_name }}
+                </td>
+                <td class="px-5 py-3 text-sm font-bold text-secondary">{{ cita.precio|cop }}</td>
+                <td class="px-5 py-3">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase
+                    {% if cita.estado == 'FINALIZADA' %}bg-tertiary/10 text-tertiary
+                    {% elif cita.estado == 'CANCELADA' %}bg-red-900/20 text-error
+                    {% elif cita.estado == 'CONFIRMADA' %}bg-secondary/10 text-secondary
+                    {% elif cita.estado == 'EN_PROCESO' %}bg-blue-500/10 text-blue-400
+                    {% else %}bg-surface-container-high text-on-surface-variant{% endif %}">
+                    {{ cita.get_estado_display }}
+                  </span>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="5" class="px-5 py-12 text-center text-on-surface-variant">
+                  <span class="material-symbols-outlined text-4xl block mb-2 opacity-30">event_busy</span>
+                  <p class="text-sm">Sin citas registradas.</p>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

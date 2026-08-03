@@ -1,0 +1,151 @@
+﻿{% extends 'agenda/base.html' %}
+{% load barberhub_filters %}
+
+{% block title %}Historial — BarberHub{% endblock %}
+{% block page_title %}Mi Historial{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  <div>
+    <h2 class="text-2xl font-bold text-on-surface font-['Montserrat']">Mi Historial</h2>
+    <p class="text-on-surface-variant text-sm mt-1">Servicios realizados y estadísticas de tu trabajo</p>
+  </div>
+
+  {# ── Estadísticas ── #}
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="glass-card p-5 rounded-xl border border-outline-variant">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="p-2 bg-secondary/10 rounded-lg text-secondary">
+          <span class="material-symbols-outlined">task_alt</span>
+        </div>
+      </div>
+      <p class="text-xs text-on-surface-variant uppercase font-bold tracking-wider mb-1">Total realizadas</p>
+      <p class="text-3xl font-bold text-on-surface">{{ total_realizadas }}</p>
+    </div>
+
+    <div class="glass-card p-5 rounded-xl border border-outline-variant">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="p-2 bg-secondary/10 rounded-lg text-secondary">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">star</span>
+        </div>
+      </div>
+      <p class="text-xs text-on-surface-variant uppercase font-bold tracking-wider mb-1">Calificación promedio</p>
+      {% if promedio_calificacion %}
+        <div class="flex items-baseline gap-1">
+          <p class="text-3xl font-bold text-on-surface">{{ promedio_calificacion }}</p>
+          <p class="text-on-surface-variant text-sm">/ 5.0</p>
+        </div>
+      {% else %}
+        <p class="text-on-surface-variant text-sm">Sin calificaciones aún</p>
+      {% endif %}
+    </div>
+
+    <div class="glass-card p-5 rounded-xl border border-outline-variant">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="p-2 bg-secondary/10 rounded-lg text-secondary">
+          <span class="material-symbols-outlined">content_cut</span>
+        </div>
+      </div>
+      <p class="text-xs text-on-surface-variant uppercase font-bold tracking-wider mb-1">Servicio más frecuente</p>
+      {% if servicio_top %}
+        <p class="font-bold text-on-surface text-base leading-tight">{{ servicio_top.servicio__nombre }}</p>
+        <p class="text-xs text-on-surface-variant mt-0.5">{{ servicio_top.total }} veces</p>
+      {% else %}
+        <p class="text-on-surface-variant text-sm">Sin datos aún</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {# ── Servicios más realizados ── #}
+  {% if servicios_top %}
+  <div class="glass-card rounded-xl border border-outline-variant p-6">
+    <h3 class="text-sm font-bold text-on-surface-variant uppercase tracking-wider mb-5">Servicios más realizados</h3>
+    <div class="space-y-4">
+      {% for item in servicios_top %}
+      <div>
+        <div class="flex justify-between text-sm mb-1.5">
+          <span class="text-on-surface font-semibold">{{ item.servicio__nombre }}</span>
+          <span class="text-secondary font-bold">{{ item.total }} veces</span>
+        </div>
+        <div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+          <div class="h-full bg-secondary rounded-full transition-all duration-500"
+               style="width: {% widthratio item.total total_realizadas 100 %}%"></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {# ── Tabla de historial ── #}
+  <div class="glass-card rounded-xl border border-outline-variant overflow-hidden">
+    <div class="p-5 border-b border-outline-variant flex items-center justify-between">
+      <h3 class="text-lg font-bold text-on-surface font-['Montserrat']">Citas Finalizadas</h3>
+      <span class="text-xs text-on-surface-variant">{{ citas|length }} registro{{ citas|length|pluralize:"s" }}</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
+          <tr>
+            <th class="px-5 py-4">Fecha</th>
+            <th class="px-5 py-4">Cliente</th>
+            <th class="px-5 py-4">Servicio</th>
+            <th class="px-5 py-4">Precio</th>
+            <th class="px-5 py-4">Estado</th>
+            <th class="px-5 py-4">Calificación</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant">
+          {% for cita in citas %}
+          <tr class="hover:bg-surface-variant/30 transition-colors">
+            <td class="px-5 py-4 text-sm text-on-surface whitespace-nowrap">{{ cita.fecha|date:"d/m/Y" }}</td>
+            <td class="px-5 py-4">
+              <div class="flex items-center gap-3">
+                <div class="w-7 h-7 rounded-full bg-secondary/20 flex items-center justify-center text-xs font-bold text-secondary flex-shrink-0">
+                  {{ cita.cliente.usuario.first_name|first|upper }}{{ cita.cliente.usuario.last_name|first|upper }}
+                </div>
+                <span class="text-sm text-on-surface">{{ cita.cliente.usuario.get_full_name }}</span>
+              </div>
+            </td>
+            <td class="px-5 py-4 text-sm text-on-surface">{{ cita.servicio.nombre }}</td>
+            <td class="px-5 py-4 text-sm font-semibold text-secondary">{{ cita.precio|cop }}</td>
+            <td class="px-5 py-4">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold
+                {% if cita.estado == 'FINALIZADA' %}bg-green-500/10 text-green-400
+                {% else %}bg-red-500/10 text-red-400{% endif %}">
+                {{ cita.get_estado_display }}
+              </span>
+            </td>
+            <td class="px-5 py-4">
+              {% if cita.calificacion %}
+                <div class="flex items-center gap-1">
+                  {% for i in "12345" %}
+                    <span class="material-symbols-outlined text-[14px]
+                      {% if forloop.counter <= cita.calificacion.puntuacion %}text-secondary{% else %}text-outline{% endif %}"
+                      style="font-variation-settings:'FILL' {% if forloop.counter <= cita.calificacion.puntuacion %}1{% else %}0{% endif %};">
+                      star
+                    </span>
+                  {% endfor %}
+                  <span class="text-xs text-on-surface-variant ml-1">{{ cita.calificacion.puntuacion }}/5</span>
+                </div>
+              {% else %}
+                <span class="text-xs text-on-surface-variant">—</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="px-6 py-12 text-center text-on-surface-variant text-sm">
+              <span class="material-symbols-outlined text-4xl block mb-2 opacity-30">history</span>
+              No hay citas finalizadas aún.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

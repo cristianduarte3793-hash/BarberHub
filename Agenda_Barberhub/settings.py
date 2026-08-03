@@ -46,8 +46,8 @@ ROOT_URLCONF = 'Agenda_Barberhub.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # Los templates están en la carpeta /templates/ en la raíz del proyecto
-        'DIRS': [BASE_DIR / 'templates'],
+        # Templates dentro de cada app (agenda/templates/)
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

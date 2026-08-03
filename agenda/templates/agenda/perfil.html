@@ -1,0 +1,260 @@
+﻿{% extends 'agenda/base.html' %}
+{% load barberhub_filters %}
+
+{% block title %}Mi Perfil — BarberHub{% endblock %}
+{% block page_title %}Mi Perfil{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+{# ═══════════ SECCIÓN SUPERIOR: foto + datos editables ═══════════ #}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+  <!-- Tarjeta identidad -->
+  <div class="glass-card rounded-xl p-6 flex flex-col items-center text-center border border-outline-variant">
+    <div class="mb-4 relative">
+      {% if perfil.foto_perfil %}
+        <img src="{{ perfil.foto_perfil.url }}" alt="Foto de perfil"
+             class="w-28 h-28 rounded-full object-cover border-4 border-secondary shadow-lg">
+      {% else %}
+        <div class="w-28 h-28 rounded-full bg-secondary flex items-center justify-center text-on-secondary text-3xl font-bold shadow-lg">
+          {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
+        </div>
+      {% endif %}
+      {% if perfil.rol == 'BARBERO' %}
+        <div class="absolute bottom-1 right-1 w-8 h-8 rounded-full bg-secondary border-4 border-surface-container-lowest flex items-center justify-center">
+          <span class="material-symbols-outlined text-on-secondary text-[14px]" style="font-variation-settings:'FILL' 1;">verified</span>
+        </div>
+      {% endif %}
+    </div>
+    <h3 class="text-lg font-bold text-on-surface font-['Montserrat']">
+      {{ request.user.get_full_name|default:request.user.username }}
+    </h3>
+    {% if perfil.rol == 'BARBERO' and perfil.barbero.especialidad %}
+      <p class="text-xs text-secondary mt-1">{{ perfil.barbero.especialidad }}</p>
+    {% endif %}
+    <span class="mt-2 px-3 py-1 rounded-full text-xs font-bold
+      {% if perfil.rol == 'ADMIN' %}bg-red-900/30 text-red-400
+      {% elif perfil.rol == 'BARBERO' %}bg-secondary/20 text-secondary
+      {% else %}bg-tertiary/10 text-tertiary{% endif %}">
+      {{ perfil.get_rol_display }}
+    </span>
+    <div class="mt-4 space-y-2 w-full text-sm text-on-surface-variant">
+      <p class="flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[16px]">mail</span>
+        {{ request.user.email|default:"Sin correo" }}
+      </p>
+      <p class="flex items-center justify-center gap-2">
+        <span class="material-symbols-outlined text-[16px]">phone</span>
+        {{ perfil.telefono|default:"Sin teléfono" }}
+      </p>
+    </div>
+    <a href="{% url 'cambiar_password' %}"
+       class="mt-6 w-full flex items-center justify-center gap-2 px-4 py-2 border border-outline-variant rounded-lg text-sm text-on-surface-variant hover:border-secondary hover:text-secondary transition-all">
+      <span class="material-symbols-outlined text-[18px]">key</span> Cambiar contraseña
+    </a>
+  </div>
+
+  <!-- Formulario edición -->
+  <div class="md:col-span-2 glass-card rounded-xl p-6 border border-outline-variant">
+    <h4 class="text-base font-bold text-on-surface mb-6 flex items-center gap-2">
+      <span class="material-symbols-outlined text-secondary">edit</span> Editar información
+    </h4>
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+        <div>
+          <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Nombre</label>
+          <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}"
+                 class="w-full h-11 bg-surface-container border border-outline-variant rounded-lg px-4 text-on-surface focus:outline-none focus:border-secondary text-sm">
+          {% if form.first_name.errors %}<p class="text-error text-xs mt-1">{{ form.first_name.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Apellido</label>
+          <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}"
+                 class="w-full h-11 bg-surface-container border border-outline-variant rounded-lg px-4 text-on-surface focus:outline-none focus:border-secondary text-sm">
+          {% if form.last_name.errors %}<p class="text-error text-xs mt-1">{{ form.last_name.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Correo electrónico</label>
+          <input type="email" name="email" value="{{ form.email.value|default:'' }}"
+                 class="w-full h-11 bg-surface-container border border-outline-variant rounded-lg px-4 text-on-surface focus:outline-none focus:border-secondary text-sm">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Teléfono</label>
+          <input type="text" name="telefono" value="{{ form.telefono.value|default:'' }}"
+                 class="w-full h-11 bg-surface-container border border-outline-variant rounded-lg px-4 text-on-surface focus:outline-none focus:border-secondary text-sm">
+        </div>
+
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Foto de perfil</label>
+          <input type="file" name="foto_perfil" accept="image/*"
+                 class="w-full text-sm text-on-surface-variant file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-secondary file:text-on-secondary file:font-semibold file:text-xs hover:file:opacity-90 cursor-pointer">
+        </div>
+
+      </div>
+
+      <div class="mt-6 flex gap-3">
+        <button type="submit"
+                class="bg-secondary text-on-secondary px-6 py-2.5 rounded-lg text-sm font-bold hover:opacity-90 transition-opacity flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">check</span> Guardar cambios
+        </button>
+        <a href="{% url 'dashboard' %}"
+           class="px-6 py-2.5 rounded-lg text-sm font-semibold border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-all">
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+{# ═══════════ SECCIÓN BARBERO: especialidades, servicios, métricas ═══════════ #}
+{% if perfil.rol == 'BARBERO' %}
+{% with barbero=perfil.barbero %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+  <!-- Especialidad y descripción (solo lectura) -->
+  <div class="glass-card rounded-xl border border-outline-variant p-6">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-base font-bold text-on-surface flex items-center gap-2">
+        <span class="material-symbols-outlined text-secondary text-[20px]">military_tech</span>
+        Especialidad
+      </h3>
+      <span class="text-xs text-on-surface-variant italic px-3 py-1 bg-surface-container rounded-full border border-outline-variant">
+        Solo lectura
+      </span>
+    </div>
+    {% if barbero.especialidad %}
+      <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-4 py-2 bg-surface-container-highest border border-outline-variant rounded-lg text-sm font-semibold text-on-surface flex items-center gap-2">
+          <span class="material-symbols-outlined text-secondary text-[16px]">content_cut</span>
+          {{ barbero.especialidad }}
+        </span>
+      </div>
+    {% else %}
+      <p class="text-sm text-on-surface-variant">Sin especialidad asignada.</p>
+    {% endif %}
+    {% if barbero.descripcion %}
+      <p class="text-sm text-on-surface-variant leading-relaxed mt-3">{{ barbero.descripcion }}</p>
+    {% endif %}
+    <div class="mt-4 p-3 bg-secondary/5 rounded-lg border border-secondary/10">
+      <p class="text-xs text-on-surface-variant">Las especialidades son asignadas por el administrador según tu formación.</p>
+    </div>
+  </div>
+
+  <!-- Servicios asignados (solo lectura) -->
+  <div class="glass-card rounded-xl border border-outline-variant p-6">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-base font-bold text-on-surface flex items-center gap-2">
+        <span class="material-symbols-outlined text-secondary text-[20px]">list_alt</span>
+        Servicios Asignados
+      </h3>
+    </div>
+    <div class="space-y-2 max-h-64 overflow-y-auto custom-scrollbar pr-1">
+      {% for servicio in barbero.servicios.all %}
+      <div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low border border-outline-variant hover:border-secondary/30 transition-colors">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded bg-surface-container flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-on-surface-variant text-[16px]">content_cut</span>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-on-surface">{{ servicio.nombre }}</p>
+            <p class="text-xs text-on-surface-variant">{{ servicio.duracion }} min</p>
+          </div>
+        </div>
+        <span class="font-bold text-secondary text-sm">{{ servicio.precio|cop }}</span>
+      </div>
+      {% empty %}
+      <p class="text-sm text-on-surface-variant text-center py-4">Sin servicios asignados aún.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+
+{# Métricas profesionales #}
+<div class="glass-card rounded-xl border border-l-4 border-outline-variant border-l-secondary p-6">
+  <h3 class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-5">Métricas Profesionales</h3>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+    <div class="flex items-center gap-4">
+      <div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary flex-shrink-0">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">star</span>
+      </div>
+      <div>
+        <p class="text-xs text-on-surface-variant">Calificación promedio</p>
+        {% if calificacion_promedio %}
+          <p class="text-xl font-bold text-on-surface">{{ calificacion_promedio }} <span class="text-sm font-normal text-on-surface-variant">/ 5.0</span></p>
+        {% else %}
+          <p class="text-sm text-on-surface-variant">Sin datos</p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary flex-shrink-0">
+        <span class="material-symbols-outlined">task_alt</span>
+      </div>
+      <div>
+        <p class="text-xs text-on-surface-variant">Citas realizadas</p>
+        <p class="text-xl font-bold text-on-surface">{{ total_citas_realizadas }}</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary flex-shrink-0">
+        <span class="material-symbols-outlined">toggle_on</span>
+      </div>
+      <div>
+        <p class="text-xs text-on-surface-variant">Estado de disponibilidad</p>
+        <p class="text-sm font-bold
+          {% if barbero.disponibilidad == 'DISPONIBLE' %}text-green-400
+          {% elif barbero.disponibilidad == 'OCUPADO' %}text-yellow-400
+          {% else %}text-red-400{% endif %}">
+          {{ barbero.get_disponibilidad_display }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  {# Accesos rápidos #}
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 pt-6 border-t border-outline-variant">
+    <a href="{% url 'barbero_agenda' %}"
+       class="flex items-center gap-3 p-4 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant hover:border-secondary/30 transition-all group">
+      <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-on-surface group-hover:bg-secondary group-hover:text-on-secondary transition-all">
+        <span class="material-symbols-outlined text-[18px]">event_note</span>
+      </div>
+      <div>
+        <p class="text-sm font-bold text-on-surface">Mi Agenda</p>
+        <p class="text-xs text-on-surface-variant">Ver citas</p>
+      </div>
+    </a>
+    <a href="{% url 'barbero_historial' %}"
+       class="flex items-center gap-3 p-4 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant hover:border-secondary/30 transition-all group">
+      <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-on-surface group-hover:bg-secondary group-hover:text-on-secondary transition-all">
+        <span class="material-symbols-outlined text-[18px]">history</span>
+      </div>
+      <div>
+        <p class="text-sm font-bold text-on-surface">Historial</p>
+        <p class="text-xs text-on-surface-variant">Servicios realizados</p>
+      </div>
+    </a>
+    <a href="{% url 'barbero_disponibilidad' %}"
+       class="flex items-center gap-3 p-4 rounded-lg bg-surface-container hover:bg-surface-container-high border border-outline-variant hover:border-secondary/30 transition-all group">
+      <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-on-surface group-hover:bg-secondary group-hover:text-on-secondary transition-all">
+        <span class="material-symbols-outlined text-[18px]">toggle_on</span>
+      </div>
+      <div>
+        <p class="text-sm font-bold text-on-surface">Disponibilidad</p>
+        <p class="text-xs text-on-surface-variant">Cambiar estado</p>
+      </div>
+    </a>
+  </div>
+</div>
+{% endwith %}
+{% endif %}
+
+</div>
+{% endblock %}

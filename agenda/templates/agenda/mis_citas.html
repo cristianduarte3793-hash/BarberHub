@@ -1,0 +1,179 @@
+﻿{% extends 'agenda/base.html' %}
+{% load barberhub_filters %}
+
+{% block title %}Mis Citas — BarberHub{% endblock %}
+{% block page_title %}Mis Citas{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-bold text-on-surface font-['Montserrat']">Mis Citas</h2>
+      <p class="text-on-surface-variant text-sm mt-0.5">Tu historial y próximas reservas</p>
+    </div>
+    <a href="{% url 'agendar_cita' %}"
+       class="flex items-center gap-2 px-5 py-2.5 bg-secondary text-on-secondary rounded-lg text-sm font-bold hover:opacity-90 transition-opacity self-start">
+      <span class="material-symbols-outlined text-[18px]">add</span>
+      Nueva cita
+    </a>
+  </div>
+
+  {# ── Métricas rápidas ── #}
+  <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+    <div class="glass-card p-5 rounded-xl border border-outline-variant">
+      <div class="p-2 bg-secondary/10 rounded-lg text-secondary w-fit mb-3">
+        <span class="material-symbols-outlined">event_upcoming</span>
+      </div>
+      <p class="text-xs text-on-surface-variant uppercase font-bold tracking-wider mb-1">Próximas</p>
+      <p class="text-3xl font-bold text-on-surface">{{ total_proximas }}</p>
+    </div>
+    <div class="glass-card p-5 rounded-xl border border-outline-variant">
+      <div class="p-2 bg-secondary/10 rounded-lg text-secondary w-fit mb-3">
+        <span class="material-symbols-outlined">task_alt</span>
+      </div>
+      <p class="text-xs text-on-surface-variant uppercase font-bold tracking-wider mb-1">Realizadas</p>
+      <p class="text-3xl font-bold text-on-surface">{{ total_realizadas }}</p>
+    </div>
+    <div class="glass-card p-5 rounded-xl border border-outline-variant col-span-2 sm:col-span-1">
+      <div class="p-2 bg-secondary/10 rounded-lg text-secondary w-fit mb-3">
+        <span class="material-symbols-outlined">content_cut</span>
+      </div>
+      <p class="text-xs text-on-surface-variant uppercase font-bold tracking-wider mb-1">Total citas</p>
+      <p class="text-3xl font-bold text-on-surface">{{ total_proximas|add:total_realizadas }}</p>
+    </div>
+  </div>
+
+  {# ── Próximas citas ── #}
+  <div class="glass-card rounded-xl border border-outline-variant overflow-hidden">
+    <div class="p-5 border-b border-outline-variant flex items-center justify-between">
+      <h3 class="font-bold text-on-surface font-['Montserrat'] flex items-center gap-2">
+        <span class="material-symbols-outlined text-secondary text-[20px]">upcoming</span>
+        Próximas citas
+      </h3>
+      <span class="text-xs text-on-surface-variant">{{ total_proximas }} reserva{{ total_proximas|pluralize:"s" }}</span>
+    </div>
+
+    {% if proximas %}
+    <div class="divide-y divide-outline-variant">
+      {% for cita in proximas %}
+      <div class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-container-low transition-colors">
+        <div class="flex items-start gap-4">
+          {# Avatar barbero #}
+          <div class="w-11 h-11 rounded-full bg-secondary flex items-center justify-center text-on-secondary font-bold text-sm flex-shrink-0 overflow-hidden">
+            {% if cita.barbero.perfil.foto_perfil %}
+              <img src="{{ cita.barbero.perfil.foto_perfil.url }}" class="w-full h-full object-cover" alt="{{ cita.barbero.perfil.usuario.get_full_name }}">
+            {% else %}
+              {{ cita.barbero.perfil.usuario.first_name|first|upper }}{{ cita.barbero.perfil.usuario.last_name|first|upper }}
+            {% endif %}
+          </div>
+          <div class="min-w-0">
+            <p class="font-bold text-on-surface">{{ cita.servicio.nombre }}</p>
+            <p class="text-sm text-on-surface-variant">con {{ cita.barbero.perfil.usuario.get_full_name }}</p>
+            <div class="flex items-center gap-3 mt-1.5 flex-wrap">
+              <span class="flex items-center gap-1 text-xs text-on-surface-variant">
+                <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                {{ cita.fecha|date:"d \d\e M, Y" }}
+              </span>
+              <span class="flex items-center gap-1 text-xs text-on-surface-variant">
+                <span class="material-symbols-outlined text-[14px]">schedule</span>
+                {{ cita.hora_inicio|time:"H:i" }} — {{ cita.hora_fin|time:"H:i" }}
+              </span>
+              <span class="flex items-center gap-1 text-xs font-bold text-secondary">
+                <span class="material-symbols-outlined text-[14px]">attach_money</span>
+                {{ cita.precio|cop }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase
+            {% if cita.estado == 'CONFIRMADA' %}bg-tertiary/10 text-tertiary border border-tertiary/20
+            {% elif cita.estado == 'EN_PROCESO' %}bg-blue-500/10 text-blue-400 border border-blue-500/20
+            {% else %}bg-secondary/10 text-secondary border border-secondary/20{% endif %}">
+            {{ cita.get_estado_display }}
+          </span>
+          {% if cita.estado in 'PENDIENTE,CONFIRMADA' %}
+          <form method="post" action="{% url 'cancelar_cita' cita.pk %}" onsubmit="return confirm('¿Seguro que quieres cancelar esta cita?')">
+            {% csrf_token %}
+            <button type="submit"
+                    class="flex items-center gap-1 px-3 py-1.5 border border-red-500/30 text-red-400 rounded-lg text-xs font-bold hover:bg-red-500/10 transition-colors">
+              <span class="material-symbols-outlined text-[14px]">cancel</span>
+              Cancelar
+            </button>
+          </form>
+          {% endif %}
+          <a href="{% url 'comprobante_cita' cita.pk %}"
+             class="flex items-center gap-1 px-3 py-1.5 border border-secondary/30 text-secondary rounded-lg text-xs font-bold hover:bg-secondary/10 transition-colors"
+             title="Ver comprobante">
+            <span class="material-symbols-outlined text-[14px]">receipt_long</span>
+            Comprobante
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="py-14 text-center">
+      <span class="material-symbols-outlined text-5xl text-on-surface-variant/20 block mb-3">event_busy</span>
+      <p class="text-on-surface-variant font-semibold">No tienes citas próximas</p>
+      <a href="{% url 'agendar_cita' %}" class="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-secondary text-on-secondary rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
+        <span class="material-symbols-outlined text-[18px]">add</span>Agendar ahora
+      </a>
+    </div>
+    {% endif %}
+  </div>
+
+  {# ── Historial ── #}
+  {% if historial %}
+  <div class="glass-card rounded-xl border border-outline-variant overflow-hidden">
+    <div class="p-5 border-b border-outline-variant">
+      <h3 class="font-bold text-on-surface font-['Montserrat'] flex items-center gap-2">
+        <span class="material-symbols-outlined text-secondary text-[20px]">history</span>
+        Historial
+      </h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
+          <tr>
+            <th class="px-5 py-3">Fecha</th>
+            <th class="px-5 py-3">Servicio</th>
+            <th class="px-5 py-3">Barbero</th>
+            <th class="px-5 py-3">Precio</th>
+            <th class="px-5 py-3">Estado</th>
+            <th class="px-5 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant">
+          {% for cita in historial %}
+          <tr class="hover:bg-surface-variant/20 transition-colors">
+            <td class="px-5 py-3 text-sm text-on-surface whitespace-nowrap">{{ cita.fecha|date:"d/m/Y" }}</td>
+            <td class="px-5 py-3 text-sm font-semibold text-on-surface">{{ cita.servicio.nombre }}</td>
+            <td class="px-5 py-3 text-sm text-on-surface-variant">{{ cita.barbero.perfil.usuario.get_full_name }}</td>
+            <td class="px-5 py-3 text-sm font-bold text-secondary">{{ cita.precio|cop }}</td>
+            <td class="px-5 py-3">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase
+                {% if cita.estado == 'FINALIZADA' %}bg-green-500/10 text-green-400
+                {% elif cita.estado == 'CANCELADA' %}bg-red-500/10 text-red-400
+                {% else %}bg-secondary/10 text-secondary{% endif %}">
+                {{ cita.get_estado_display }}
+              </span>
+            </td>
+            <td class="px-5 py-3">
+              <a href="{% url 'comprobante_cita' cita.pk %}"
+                 class="flex items-center gap-1 px-2.5 py-1 border border-secondary/30 text-secondary rounded-lg text-xs font-bold hover:bg-secondary/10 transition-colors whitespace-nowrap">
+                <span class="material-symbols-outlined text-[13px]">receipt_long</span>
+                Comprobante
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,189 @@
+﻿{% extends 'agenda/base.html' %}
+{% block title %}Reportes — BarberHub{% endblock %}
+{% block page_title %}Reportes y Estadísticas{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  <div>
+    <h2 class="text-2xl font-bold text-on-surface font-['Montserrat']">Reportes</h2>
+    <p class="text-on-surface-variant mt-1 text-sm">Estadísticas calculadas en tiempo real desde la base de datos.</p>
+  </div>
+
+  <!-- KPI cards fila 1 -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="glass-card p-5 rounded-xl border border-outline-variant space-y-2">
+      <span class="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-lg">event</span>
+      <p class="text-xs text-on-surface-variant">Citas hoy</p>
+      <p class="text-3xl font-bold text-on-surface">{{ citas_hoy }}</p>
+    </div>
+    <div class="glass-card p-5 rounded-xl border border-outline-variant space-y-2">
+      <span class="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-lg">calendar_month</span>
+      <p class="text-xs text-on-surface-variant">Citas este mes</p>
+      <p class="text-3xl font-bold text-on-surface">{{ citas_mes }}</p>
+    </div>
+    <div class="glass-card p-5 rounded-xl border border-outline-variant space-y-2">
+      <span class="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-lg">event_available</span>
+      <p class="text-xs text-on-surface-variant">Total finalizadas</p>
+      <p class="text-3xl font-bold text-on-surface">{{ citas_finalizadas }}</p>
+    </div>
+    <div class="glass-card p-5 rounded-xl border border-outline-variant space-y-2">
+      <span class="material-symbols-outlined text-error bg-red-900/20 p-2 rounded-lg">event_busy</span>
+      <p class="text-xs text-on-surface-variant">Canceladas</p>
+      <p class="text-3xl font-bold text-on-surface">{{ citas_canceladas }}</p>
+    </div>
+  </div>
+
+  <!-- KPI cards fila 2 -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="glass-card p-5 rounded-xl border border-outline-variant space-y-2">
+      <span class="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-lg">groups</span>
+      <p class="text-xs text-on-surface-variant">Clientes registrados</p>
+      <p class="text-3xl font-bold text-on-surface">{{ total_clientes }}</p>
+    </div>
+    <div class="glass-card p-5 rounded-xl border border-outline-variant space-y-2">
+      <span class="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-lg">content_cut</span>
+      <p class="text-xs text-on-surface-variant">Barberos activos</p>
+      <p class="text-3xl font-bold text-on-surface">{{ total_barberos }}</p>
+    </div>
+    <div class="glass-card p-5 rounded-xl border border-outline-variant space-y-2">
+      <span class="material-symbols-outlined text-tertiary bg-tertiary/10 p-2 rounded-lg">payments</span>
+      <p class="text-xs text-on-surface-variant">Ingresos este mes</p>
+      <p class="text-3xl font-bold text-on-surface">${{ ingresos_mes|floatformat:0 }}</p>
+    </div>
+    <div class="glass-card p-5 rounded-xl border border-outline-variant space-y-2">
+      <span class="material-symbols-outlined text-tertiary bg-tertiary/10 p-2 rounded-lg">account_balance_wallet</span>
+      <p class="text-xs text-on-surface-variant">Ingresos totales</p>
+      <p class="text-3xl font-bold text-on-surface">${{ ingresos_total|floatformat:0 }}</p>
+    </div>
+  </div>
+
+  <!-- Gráficas y tablas -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- Servicios más solicitados -->
+    <div class="glass-card p-6 rounded-xl border border-outline-variant">
+      <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider mb-5 flex items-center gap-2">
+        <span class="material-symbols-outlined text-secondary text-[18px]">bar_chart</span>
+        Servicios más solicitados
+      </h3>
+      {% if servicios_top %}
+        <div class="space-y-4">
+          {% for s in servicios_top %}
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="text-on-surface font-medium">{{ s.servicio__nombre }}</span>
+              <span class="text-secondary font-bold">{{ s.total }} citas · ${{ s.ingresos|floatformat:0 }}</span>
+            </div>
+            <div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+              {% with max_total=servicios_top.0.total %}
+              <div class="h-full bg-secondary rounded-full" style="width: {% widthratio s.total max_total 100 %}%;"></div>
+              {% endwith %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-on-surface-variant text-sm text-center py-6">Sin datos aún.</p>
+      {% endif %}
+    </div>
+
+    <!-- Top barberos -->
+    <div class="glass-card p-6 rounded-xl border border-outline-variant">
+      <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider mb-5 flex items-center gap-2">
+        <span class="material-symbols-outlined text-secondary text-[18px]">military_tech</span>
+        Barberos por rendimiento
+      </h3>
+      {% if barberos_top %}
+        <div class="space-y-3">
+          {% for b in barberos_top %}
+          <div class="flex items-center gap-3 p-3 bg-surface-container rounded-lg border border-outline-variant">
+            <div class="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-on-secondary font-bold text-sm flex-shrink-0">
+              {{ b.barbero__perfil__usuario__first_name|first|upper }}
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-on-surface truncate">
+                {{ b.barbero__perfil__usuario__first_name }} {{ b.barbero__perfil__usuario__last_name }}
+              </p>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <p class="text-sm font-bold text-secondary">{{ b.total }} citas</p>
+              <p class="text-xs text-on-surface-variant">${{ b.ingresos|floatformat:0 }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-on-surface-variant text-sm text-center py-6">Sin datos aún.</p>
+      {% endif %}
+    </div>
+
+    <!-- Citas por estado -->
+    <div class="glass-card p-6 rounded-xl border border-outline-variant">
+      <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider mb-5 flex items-center gap-2">
+        <span class="material-symbols-outlined text-secondary text-[18px]">donut_small</span>
+        Citas por estado
+      </h3>
+      <canvas id="chartEstados" height="160"></canvas>
+    </div>
+
+    <!-- Calificaciones por barbero -->
+    <div class="glass-card p-6 rounded-xl border border-outline-variant">
+      <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider mb-5 flex items-center gap-2">
+        <span class="material-symbols-outlined text-secondary text-[18px]">star</span>
+        Calificación promedio por barbero
+      </h3>
+      {% if calificaciones_barbero %}
+        <div class="space-y-3">
+          {% for c in calificaciones_barbero %}
+          <div class="flex items-center justify-between p-3 bg-surface-container rounded-lg border border-outline-variant">
+            <div>
+              <p class="text-sm font-semibold text-on-surface">
+                {{ c.barbero__perfil__usuario__first_name }} {{ c.barbero__perfil__usuario__last_name }}
+              </p>
+              <p class="text-xs text-on-surface-variant">{{ c.total }} calificaciones</p>
+            </div>
+            <div class="flex items-center gap-1 text-secondary font-bold">
+              <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>
+              {{ c.promedio|floatformat:1 }}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-on-surface-variant text-sm text-center py-6">Sin calificaciones aún.</p>
+      {% endif %}
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script>
+const ctx = document.getElementById('chartEstados');
+if (ctx) {
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: [{% for label, count in citas_por_estado.items %}'{{ label }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+      datasets: [{
+        data: [{% for label, count in citas_por_estado.items %}{{ count }}{% if not forloop.last %},{% endif %}{% endfor %}],
+        backgroundColor: ['#e9c349','#4edea3','#60a5fa','#34d399','#f87171'],
+        borderWidth: 0,
+        hoverOffset: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#c4c7c7', padding: 16, font: { size: 12 } } }
+      },
+      cutout: '65%',
+    }
+  });
+}
+</script>
+{% endblock %}

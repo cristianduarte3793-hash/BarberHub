@@ -1,0 +1,183 @@
+{% extends 'agenda/base.html' %}
+{% load barberhub_filters %}
+{% block title %}Comprobante {{ cita.codigo_reserva }} — BarberHub{% endblock %}
+{% block page_title %}Comprobante de Reserva{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-4">
+
+  <!-- Volver -->
+  <a href="{% url 'mis_citas' %}"
+     class="inline-flex items-center gap-2 text-sm text-on-surface-variant hover:text-secondary transition-colors">
+    <span class="material-symbols-outlined text-[18px]">arrow_back</span> Volver a Mis Citas
+  </a>
+
+  <!-- Recibo -->
+  <div id="recibo" class="glass-card rounded-2xl border border-outline-variant overflow-hidden print:shadow-none">
+
+    <!-- Cabecera dorada -->
+    <div class="bg-secondary px-8 py-7 text-on-secondary">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-4xl" style="font-variation-settings:'FILL' 1;">content_cut</span>
+          <div>
+            <h1 class="text-xl font-bold font-['Montserrat']">
+              {{ config_barberia.nombre|default:"BarberHub" }}
+            </h1>
+            <p class="text-xs opacity-70">Comprobante de reserva</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-2xl font-bold font-['Montserrat'] tracking-widest">{{ cita.codigo_reserva }}</p>
+          <p class="text-xs opacity-70 mt-0.5">Código de reserva</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado -->
+    <div class="px-8 py-3 bg-surface-container-high border-b border-outline-variant flex items-center justify-between">
+      <span class="text-xs text-on-surface-variant">Estado de la reserva</span>
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase
+        {% if cita.estado == 'CONFIRMADA' %}bg-tertiary/15 text-tertiary border border-tertiary/30
+        {% elif cita.estado == 'EN_PROCESO' %}bg-blue-500/15 text-blue-400 border border-blue-500/30
+        {% elif cita.estado == 'FINALIZADA' %}bg-green-500/15 text-green-400 border border-green-500/30
+        {% elif cita.estado == 'CANCELADA' %}bg-red-500/15 text-error border border-red-500/30
+        {% else %}bg-secondary/15 text-secondary border border-secondary/30{% endif %}">
+        <span class="w-1.5 h-1.5 rounded-full
+          {% if cita.estado == 'CONFIRMADA' %}bg-tertiary
+          {% elif cita.estado == 'EN_PROCESO' %}bg-blue-400
+          {% elif cita.estado == 'FINALIZADA' %}bg-green-400
+          {% elif cita.estado == 'CANCELADA' %}bg-error
+          {% else %}bg-secondary{% endif %}">
+        </span>
+        {{ cita.get_estado_display }}
+      </span>
+    </div>
+
+    <!-- Cuerpo del recibo -->
+    <div class="px-8 py-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+      <!-- Columna info -->
+      <div class="space-y-5">
+        <div>
+          <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Cliente</p>
+          <p class="text-sm font-semibold text-on-surface">
+            {{ cita.cliente.usuario.get_full_name|default:cita.cliente.usuario.username }}
+          </p>
+          <p class="text-xs text-on-surface-variant">{{ cita.cliente.usuario.email }}</p>
+        </div>
+
+        <div>
+          <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Barbero</p>
+          <div class="flex items-center gap-2">
+            {% if cita.barbero.perfil.foto_perfil %}
+              <img src="{{ cita.barbero.perfil.foto_perfil.url }}"
+                   class="w-8 h-8 rounded-full object-cover border border-outline-variant" alt="">
+            {% else %}
+              <div class="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary text-xs font-bold flex-shrink-0">
+                {{ cita.barbero.perfil.usuario.first_name|first|upper }}{{ cita.barbero.perfil.usuario.last_name|first|upper }}
+              </div>
+            {% endif %}
+            <div>
+              <p class="text-sm font-semibold text-on-surface">{{ cita.barbero.perfil.usuario.get_full_name }}</p>
+              {% if cita.barbero.especialidad %}
+                <p class="text-xs text-on-surface-variant">{{ cita.barbero.especialidad }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Servicio</p>
+          <p class="text-sm font-semibold text-on-surface">{{ cita.servicio.nombre }}</p>
+          <p class="text-xs text-on-surface-variant">Duración: {{ cita.servicio.duracion }} min</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Fecha</p>
+            <p class="text-sm font-semibold text-on-surface">{{ cita.fecha|date:"d/m/Y" }}</p>
+            <p class="text-xs text-on-surface-variant">{{ cita.fecha|date:"l" }}</p>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Hora</p>
+            <p class="text-sm font-semibold text-on-surface">{{ cita.hora_inicio|time:"H:i" }}</p>
+            <p class="text-xs text-on-surface-variant">hasta {{ cita.hora_fin|time:"H:i" }}</p>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Precio</p>
+          <p class="text-2xl font-bold text-secondary">{{ cita.precio|cop }}</p>
+        </div>
+
+        <div>
+          <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Reservado el</p>
+          <p class="text-sm text-on-surface-variant">{{ cita.creado_en|date:"d/m/Y" }} a las {{ cita.creado_en|time:"H:i" }}</p>
+        </div>
+      </div>
+
+      <!-- Columna QR -->
+      <div class="flex flex-col items-center justify-center gap-4">
+        <div class="bg-secondary p-3 rounded-xl shadow-lg">
+          <img src="data:image/png;base64,{{ qr_base64 }}"
+               alt="QR Reserva {{ cita.codigo_reserva }}"
+               class="w-44 h-44 block">
+        </div>
+        <div class="text-center">
+          <p class="text-lg font-bold text-on-surface tracking-widest font-['Montserrat']">{{ cita.codigo_reserva }}</p>
+          <p class="text-xs text-on-surface-variant mt-1">Presenta este código al llegar</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Pie del recibo -->
+    <div class="px-8 py-4 bg-surface-container-low border-t border-outline-variant text-center">
+      <p class="text-xs text-on-surface-variant">
+        Este comprobante es válido únicamente para la reserva <span class="font-bold text-secondary">{{ cita.codigo_reserva }}</span>.
+        Preséntalo al llegar a la barbería.
+      </p>
+      {% if config_barberia and config_barberia.direccion %}
+      <p class="text-xs text-on-surface-variant mt-1">
+        <span class="material-symbols-outlined text-[12px] align-middle">location_on</span>
+        {{ config_barberia.direccion }}
+      </p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Botones de acción -->
+  <div class="flex flex-wrap gap-3 justify-center print:hidden">
+    <button onclick="window.print()"
+            class="flex items-center gap-2 px-5 py-2.5 bg-secondary text-on-secondary rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
+      <span class="material-symbols-outlined text-[18px]">print</span>
+      Imprimir / Guardar PDF
+    </button>
+    <a href="{% url 'mis_citas' %}"
+       class="flex items-center gap-2 px-5 py-2.5 border border-outline-variant text-on-surface-variant rounded-lg text-sm font-semibold hover:bg-surface-variant transition-colors">
+      <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+      Volver
+    </a>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  @media print {
+    body { background: white !important; color: black !important; }
+    aside, header, nav, .print\:hidden { display: none !important; }
+    .lg\:ml-\[280px\] { margin-left: 0 !important; }
+    #recibo { border: 1px solid #ccc !important; box-shadow: none !important; }
+    .bg-secondary { background-color: #e9c349 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .text-on-secondary { color: #3c2f00 !important; }
+    .glass-card { background: white !important; }
+    .bg-surface-container-high, .bg-surface-container-low { background: #f5f5f5 !important; }
+    .text-on-surface { color: #1a1a1a !important; }
+    .text-on-surface-variant { color: #555 !important; }
+    .border-outline-variant { border-color: #ddd !important; }
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,346 @@
+﻿{% extends 'agenda/base.html' %}
+{% load barberhub_filters %}
+
+{% block title %}Agendar Cita — BarberHub{% endblock %}
+{% block page_title %}Agendar Cita{% endblock %}
+
+{% block extra_css %}
+<style>
+  .paso-oculto { display: none !important; }
+  .btn-seleccionado { border-color: #e9c349 !important; background: rgba(233,195,73,0.08) !important; }
+  .slot-activo { background: #e9c349 !important; color: #3c2f00 !important; border-color: #e9c349 !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+
+  <div>
+    <h2 class="text-2xl font-bold text-on-surface font-['Montserrat']">Reservar una cita</h2>
+    <p class="text-on-surface-variant text-sm mt-1">Elige servicio, barbero, fecha y hora</p>
+  </div>
+
+  <form method="post" action="{% url 'agendar_cita' %}" id="form-cita">
+    {% csrf_token %}
+    <input type="hidden" name="servicio_id" id="input-servicio">
+    <input type="hidden" name="barbero_id"  id="input-barbero">
+    <input type="hidden" name="fecha"       id="input-fecha">
+    <input type="hidden" name="hora_inicio" id="input-hora">
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      {# ══ IZQUIERDA ══ #}
+      <div class="lg:col-span-2 space-y-5">
+
+        {# PASO 1: Servicio #}
+        <div class="glass-card rounded-xl border border-outline-variant overflow-hidden">
+          <div class="px-5 py-4 border-b border-outline-variant flex items-center gap-3">
+            <div class="w-7 h-7 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-xs font-bold">1</div>
+            <h3 class="font-bold text-on-surface">Selecciona el servicio</h3>
+          </div>
+          <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {% for s in servicios %}
+            <button type="button"
+                    class="servicio-btn text-left p-4 rounded-xl border-2 border-outline-variant bg-surface-container-low hover:opacity-80 transition-all"
+                    data-id="{{ s.pk }}"
+                    data-nombre="{{ s.nombre }}"
+                    data-duracion="{{ s.duracion }}"
+                    data-precio="{{ s.precio }}"
+                    data-servicios-ids="{{ s.pk }}">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <p class="font-bold text-on-surface text-sm">{{ s.nombre }}</p>
+                  <p class="text-xs text-on-surface-variant mt-0.5">{{ s.duracion }} min</p>
+                </div>
+                <span class="font-bold text-secondary text-sm">{{ s.precio|cop }}</span>
+              </div>
+              {% if s.descripcion %}
+              <p class="text-xs text-on-surface-variant mt-2">{{ s.descripcion|truncatewords:8 }}</p>
+              {% endif %}
+            </button>
+            {% endfor %}
+          </div>
+        </div>
+
+        {# PASO 2: Barbero #}
+        <div id="paso-barbero" class="paso-oculto glass-card rounded-xl border border-outline-variant overflow-hidden">
+          <div class="px-5 py-4 border-b border-outline-variant flex items-center gap-3">
+            <div class="w-7 h-7 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-xs font-bold">2</div>
+            <h3 class="font-bold text-on-surface">Selecciona el barbero</h3>
+          </div>
+          <div class="p-5 space-y-3">
+            {% for b in barberos %}
+            <button type="button"
+                    class="barbero-btn w-full text-left flex items-center gap-4 p-4 rounded-xl border-2 border-outline-variant bg-surface-container-low hover:opacity-80 transition-all"
+                    data-id="{{ b.pk }}"
+                    data-nombre="{{ b.perfil.usuario.get_full_name }}"
+                    data-servicios-ids="{% for s in b.servicios.all %}{{ s.pk }}{% if not forloop.last %},{% endif %}{% endfor %}">
+              <div class="w-11 h-11 rounded-full bg-secondary flex items-center justify-center text-on-secondary font-bold text-sm flex-shrink-0 overflow-hidden">
+                {% if b.perfil.foto_perfil %}
+                  <img src="{{ b.perfil.foto_perfil.url }}" class="w-full h-full object-cover" alt="{{ b.perfil.usuario.get_full_name }}">
+                {% else %}
+                  {{ b.perfil.usuario.first_name|first|upper }}{{ b.perfil.usuario.last_name|first|upper }}
+                {% endif %}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-bold text-on-surface text-sm">{{ b.perfil.usuario.get_full_name }}</p>
+                {% if b.especialidad %}<p class="text-xs text-on-surface-variant truncate">{{ b.especialidad }}</p>{% endif %}
+              </div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border
+                {% if b.disponibilidad == 'DISPONIBLE' %}bg-green-500/10 text-green-400 border-green-500/20
+                {% else %}bg-yellow-500/10 text-yellow-400 border-yellow-500/20{% endif %}">
+                {{ b.get_disponibilidad_display }}
+              </span>
+            </button>
+            {% endfor %}
+          </div>
+        </div>
+
+        {# PASO 3: Fecha #}
+        <div id="paso-fecha" class="paso-oculto glass-card rounded-xl border border-outline-variant overflow-hidden">
+          <div class="px-5 py-4 border-b border-outline-variant flex items-center gap-3">
+            <div class="w-7 h-7 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-xs font-bold">3</div>
+            <h3 class="font-bold text-on-surface">Selecciona la fecha</h3>
+          </div>
+          <div class="p-5">
+            <div class="flex items-center justify-between mb-4">
+              <button type="button" id="btn-mes-ant" class="p-2 hover:bg-surface-variant rounded-lg transition-colors text-on-surface-variant">
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+              <h4 id="titulo-mes" class="font-bold text-on-surface text-sm"></h4>
+              <button type="button" id="btn-mes-sig" class="p-2 hover:bg-surface-variant rounded-lg transition-colors text-on-surface-variant">
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+            <div class="grid grid-cols-7 mb-1 text-center text-xs font-bold text-on-surface-variant">
+              <div>Lu</div><div>Ma</div><div>Mi</div><div>Ju</div><div>Vi</div><div>Sá</div><div>Do</div>
+            </div>
+            <div id="grid-cal" class="grid grid-cols-7 gap-1"></div>
+          </div>
+        </div>
+
+        {# PASO 4: Hora #}
+        <div id="paso-hora" class="paso-oculto glass-card rounded-xl border border-outline-variant overflow-hidden">
+          <div class="px-5 py-4 border-b border-outline-variant flex items-center gap-3">
+            <div class="w-7 h-7 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-xs font-bold">4</div>
+            <h3 class="font-bold text-on-surface">Selecciona la hora</h3>
+          </div>
+          <div class="p-5">
+            <div id="slots" class="flex flex-wrap gap-2"></div>
+            <p id="slots-msg" class="text-sm text-on-surface-variant"></p>
+          </div>
+        </div>
+
+      </div>
+
+      {# ══ DERECHA: resumen ══ #}
+      <div>
+        <div class="glass-card rounded-xl border border-outline-variant p-5 sticky top-6">
+          <h3 class="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-5">Tu reserva</h3>
+          <div class="space-y-4">
+            <div>
+              <p class="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Servicio</p>
+              <p id="r-servicio" class="text-sm font-bold text-on-surface">—</p>
+              <p id="r-duracion" class="text-xs text-on-surface-variant"></p>
+            </div>
+            <div>
+              <p class="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Barbero</p>
+              <p id="r-barbero" class="text-sm font-bold text-on-surface">—</p>
+            </div>
+            <div>
+              <p class="text-[10px] text-on-surface-variant uppercase font-bold mb-1">Fecha y hora</p>
+              <p id="r-fecha" class="text-sm font-bold text-on-surface">—</p>
+            </div>
+            <div class="pt-4 border-t border-outline-variant flex justify-between items-center">
+              <span class="text-sm text-on-surface-variant font-semibold">Total</span>
+              <span id="r-precio" class="text-xl font-bold text-secondary">—</span>
+            </div>
+          </div>
+          <button type="submit" id="btn-ok" disabled
+                  class="mt-5 w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all"
+                  style="background:#e9c349;color:#3c2f00;opacity:0.35;cursor:not-allowed;">
+            <span class="material-symbols-outlined text-[18px]">check_circle</span>
+            Confirmar reserva
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </form>
+</div>
+
+<script>
+(function() {
+  var S = { servicio:null, barbero:null, fecha:null, hora:null };
+  var diasAbiertos = {{ dias_abiertos|safe }};
+  var calFecha = new Date(); calFecha.setDate(1); calFecha.setHours(0,0,0,0);
+  var MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var MESES_CORTOS = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+  function mostrar(id) { document.getElementById(id).classList.remove('paso-oculto'); }
+  function ocultar(id) { document.getElementById(id).classList.add('paso-oculto'); }
+
+  function actualizarBoton() {
+    var btn = document.getElementById('btn-ok');
+    var ok = S.servicio && S.barbero && S.fecha && S.hora;
+    btn.disabled = !ok;
+    btn.style.opacity = ok ? '1' : '0.35';
+    btn.style.cursor  = ok ? 'pointer' : 'not-allowed';
+  }
+
+  // ─ Servicios ─
+  document.querySelectorAll('.servicio-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.servicio-btn').forEach(function(b) { b.classList.remove('btn-seleccionado'); });
+      btn.classList.add('btn-seleccionado');
+
+      S.servicio = { id: btn.dataset.id, nombre: btn.dataset.nombre, duracion: btn.dataset.duracion, precio: btn.dataset.precio };
+      document.getElementById('input-servicio').value = S.servicio.id;
+      document.getElementById('r-servicio').textContent = S.servicio.nombre;
+      document.getElementById('r-duracion').textContent  = S.servicio.duracion + ' min';
+      document.getElementById('r-precio').textContent    = '$ ' + parseInt(S.servicio.precio).toLocaleString('es-CO') + ' COP';
+
+      // Filtrar barberos
+      var alguno = false;
+      document.querySelectorAll('.barbero-btn').forEach(function(b) {
+        var ids = (b.dataset.serviciosIds || '').split(',').map(function(x){return x.trim();});
+        if (ids.indexOf(String(S.servicio.id)) !== -1) { b.style.display = ''; alguno = true; }
+        else { b.style.display = 'none'; }
+      });
+      if (alguno) mostrar('paso-barbero'); else ocultar('paso-barbero');
+
+      // Reset pasos siguientes
+      S.barbero = null; S.fecha = null; S.hora = null;
+      document.getElementById('input-barbero').value = '';
+      document.getElementById('input-fecha').value   = '';
+      document.getElementById('input-hora').value    = '';
+      document.getElementById('r-barbero').textContent = '—';
+      document.getElementById('r-fecha').textContent   = '—';
+      ocultar('paso-fecha'); ocultar('paso-hora');
+      actualizarBoton();
+    });
+  });
+
+  // ─ Barberos ─
+  document.querySelectorAll('.barbero-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.barbero-btn').forEach(function(b) { b.classList.remove('btn-seleccionado'); });
+      btn.classList.add('btn-seleccionado');
+
+      S.barbero = { id: btn.dataset.id, nombre: btn.dataset.nombre };
+      document.getElementById('input-barbero').value = S.barbero.id;
+      document.getElementById('r-barbero').textContent = S.barbero.nombre;
+
+      S.fecha = null; S.hora = null;
+      document.getElementById('input-fecha').value = '';
+      document.getElementById('input-hora').value  = '';
+      document.getElementById('r-fecha').textContent = '—';
+      ocultar('paso-hora');
+      renderCal();
+      mostrar('paso-fecha');
+      actualizarBoton();
+    });
+  });
+
+  // ─ Calendario ─
+  function renderCal() {
+    var hoy   = new Date(); hoy.setHours(0,0,0,0);
+    var year  = calFecha.getFullYear();
+    var month = calFecha.getMonth();
+    document.getElementById('titulo-mes').textContent = MESES[month] + ' ' + year;
+
+    var primerDia = new Date(year, month, 1).getDay(); // 0=Dom
+    var offset    = primerDia === 0 ? 6 : primerDia - 1;
+    var totalDias = new Date(year, month + 1, 0).getDate();
+    var grid      = document.getElementById('grid-cal');
+    grid.innerHTML = '';
+
+    for (var i = 0; i < offset; i++) {
+      grid.appendChild(document.createElement('div'));
+    }
+    for (var d = 1; d <= totalDias; d++) {
+      var f    = new Date(year, month, d);
+      var diaSem = f.getDay() === 0 ? 6 : f.getDay() - 1; // lunes=0
+      var abierto  = diasAbiertos.indexOf(diaSem) !== -1;
+      var pasado   = f < hoy;
+      var esHoy    = f.getTime() === hoy.getTime();
+      var btn      = document.createElement(abierto && !pasado ? 'button' : 'div');
+      btn.textContent = d;
+      btn.className = 'h-10 flex items-center justify-center text-sm rounded-lg ';
+      if (!abierto || pasado) {
+        btn.className += 'text-on-surface-variant opacity-25';
+      } else {
+        btn.type = 'button';
+        btn.className += 'font-semibold text-on-surface hover:bg-surface-variant cursor-pointer transition-all' + (esHoy ? ' ring-2 ring-secondary' : '');
+        (function(fechaBtn, fObj) {
+          fechaBtn.addEventListener('click', function() {
+            document.querySelectorAll('#grid-cal button').forEach(function(b) { b.classList.remove('btn-seleccionado'); });
+            fechaBtn.classList.add('btn-seleccionado');
+            var yyyy = fObj.getFullYear();
+            var mm   = String(fObj.getMonth()+1).padStart(2,'0');
+            var dd   = String(fObj.getDate()).padStart(2,'0');
+            S.fecha  = yyyy+'-'+mm+'-'+dd;
+            document.getElementById('input-fecha').value = S.fecha;
+            document.getElementById('r-fecha').textContent = dd+' '+MESES_CORTOS[fObj.getMonth()]+' '+yyyy;
+            S.hora = null;
+            document.getElementById('input-hora').value = '';
+            cargarSlots();
+            mostrar('paso-hora');
+            actualizarBoton();
+          });
+        })(btn, f);
+      }
+      grid.appendChild(btn);
+    }
+  }
+
+  document.getElementById('btn-mes-ant').addEventListener('click', function() {
+    var hoy = new Date(); hoy.setDate(1); hoy.setHours(0,0,0,0);
+    calFecha.setMonth(calFecha.getMonth()-1);
+    if (calFecha < hoy) calFecha = new Date(hoy);
+    renderCal();
+  });
+  document.getElementById('btn-mes-sig').addEventListener('click', function() {
+    calFecha.setMonth(calFecha.getMonth()+1);
+    renderCal();
+  });
+
+  // ─ Slots ─
+  function cargarSlots() {
+    var cont = document.getElementById('slots');
+    var msg  = document.getElementById('slots-msg');
+    cont.innerHTML = '';
+    msg.textContent = 'Cargando horarios...';
+    var url = '/citas/slots/?barbero='+S.barbero.id+'&servicio='+S.servicio.id+'&fecha='+S.fecha;
+    fetch(url)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        msg.textContent = '';
+        if (!data.slots || !data.slots.length) {
+          msg.textContent = 'Sin horarios disponibles para este día.';
+          return;
+        }
+        data.slots.forEach(function(slot) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.textContent = slot;
+          b.className = 'slot-btn px-4 py-2 rounded-lg border-2 border-outline-variant bg-surface-container-low text-sm font-bold text-on-surface transition-all hover:opacity-80';
+          b.addEventListener('click', function() {
+            document.querySelectorAll('.slot-btn').forEach(function(x) { x.classList.remove('slot-activo'); });
+            b.classList.add('slot-activo');
+            S.hora = slot;
+            document.getElementById('input-hora').value = slot;
+            var partes = document.getElementById('r-fecha').textContent;
+            document.getElementById('r-fecha').textContent = partes.split(' · ')[0] + ' · ' + slot;
+            actualizarBoton();
+          });
+          cont.appendChild(b);
+        });
+      })
+      .catch(function() { msg.textContent = 'Error al cargar horarios.'; });
+  }
+
+  actualizarBoton();
+})();
+</script>
+{% endblock %}

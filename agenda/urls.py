@@ -3,8 +3,7 @@ URLs de la app agenda (BarberHub).
 """
 
 from django.urls import path
-from . import views
-from . import views_barbero
+from . import views  # Importa desde el módulo views/ restructurado
 
 urlpatterns = [
     # --- Raíz → landing page ---
@@ -35,6 +34,17 @@ urlpatterns = [
     # MÓDULO ADMINISTRADOR
     # -----------------------------------------------------------------------
 
+    # Comprobante / recibo de cita
+    path('citas/<int:pk>/comprobante/',           views.comprobante_view,          name='comprobante_cita'),
+
+    # Validación de comprobante (Admin)
+    path('admin/validar/',                        views.validar_comprobante_view,  name='validar_comprobante'),
+
+    # Clientes
+    path('admin/clientes/',                       views.clientes_view,       name='clientes'),
+    path('admin/clientes/<int:pk>/toggle/',        views.cliente_toggle,      name='cliente_toggle'),
+    path('admin/clientes/<int:pk>/',               views.cliente_detalle,     name='cliente_detalle'),
+
     # Servicios
     path('admin/servicios/',                  views.servicios_view,      name='servicios'),
     path('admin/servicios/crear/',            views.servicio_crear,      name='servicio_crear'),
@@ -61,12 +71,12 @@ urlpatterns = [
     # -----------------------------------------------------------------------
     # MÓDULO BARBERO
     # -----------------------------------------------------------------------
-    path('barbero/',                              views_barbero.barbero_dashboard,     name='barbero_dashboard'),
-    path('barbero/agenda/',                       views_barbero.barbero_agenda,        name='barbero_agenda'),
-    path('barbero/agenda/<int:pk>/',              views_barbero.barbero_cita_detalle,  name='barbero_cita_detalle'),
-    path('barbero/agenda/<int:pk>/accion/',       views_barbero.barbero_cita_accion,   name='barbero_cita_accion'),
-    path('barbero/historial/',                    views_barbero.barbero_historial,     name='barbero_historial'),
-    path('barbero/disponibilidad/',               views_barbero.barbero_disponibilidad,name='barbero_disponibilidad'),
-    path('barbero/estado/',                       views_barbero.barbero_cambiar_estado,name='barbero_cambiar_estado'),
-    path('barbero/perfil/',                       views_barbero.barbero_perfil,        name='barbero_perfil'),
+    path('barbero/',                              views.barbero_dashboard,     name='barbero_dashboard'),
+    path('barbero/agenda/',                       views.barbero_agenda,        name='barbero_agenda'),
+    path('barbero/agenda/<int:pk>/',              views.barbero_cita_detalle,  name='barbero_cita_detalle'),
+    path('barbero/agenda/<int:pk>/accion/',       views.barbero_cita_accion,   name='barbero_cita_accion'),
+    path('barbero/historial/',                    views.barbero_historial,     name='barbero_historial'),
+    path('barbero/disponibilidad/',               views.barbero_disponibilidad,name='barbero_disponibilidad'),
+    path('barbero/estado/',                       views.barbero_cambiar_estado,name='barbero_cambiar_estado'),
+    path('barbero/perfil/',                       views.barbero_perfil,        name='barbero_perfil'),
 ]

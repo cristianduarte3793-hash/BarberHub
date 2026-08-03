@@ -91,7 +91,7 @@ class ServicioForm(forms.ModelForm):
         widgets = {
             'nombre':      forms.TextInput(attrs={'placeholder': 'Ej: Corte Clásico'}),
             'descripcion': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Descripción del servicio...'}),
-            'precio':      forms.NumberInput(attrs={'step': '0.01', 'min': '0', 'placeholder': '0.00'}),
+            'precio':      forms.NumberInput(attrs={'min': '0', 'step': '1000', 'placeholder': '35000'}),
             'duracion':    forms.NumberInput(attrs={'min': '5', 'step': '5', 'placeholder': 'Minutos'}),
         }
         labels = {

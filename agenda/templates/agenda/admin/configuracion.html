@@ -1,0 +1,141 @@
+﻿{% extends 'agenda/base.html' %}
+{% block title %}Configuración — BarberHub{% endblock %}
+{% block page_title %}Configuración de la Barbería{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  <div>
+    <h2 class="text-2xl font-bold text-on-surface font-['Montserrat']">Configuración</h2>
+    <p class="text-on-surface-variant mt-1 text-sm">Información general y redes sociales de la barbería.</p>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Columna izquierda: logo actual + info básica -->
+      <div class="space-y-6">
+
+        <!-- Logo actual -->
+        <div class="glass-card rounded-xl p-6 border border-outline-variant text-center">
+          {% if config.logo %}
+            <img src="{{ config.logo.url }}" alt="Logo" class="w-24 h-24 rounded-xl object-contain mx-auto mb-4 border border-outline-variant">
+          {% else %}
+            <div class="w-24 h-24 rounded-xl bg-secondary/10 flex items-center justify-center mx-auto mb-4 border border-outline-variant">
+              <span class="material-symbols-outlined text-secondary text-4xl">content_cut</span>
+            </div>
+          {% endif %}
+          <p class="text-sm font-bold text-on-surface">{{ config.nombre|default:"BarberHub" }}</p>
+          <p class="text-xs text-on-surface-variant mt-1">{{ config.direccion|default:"Sin dirección"|truncatechars:50 }}</p>
+        </div>
+
+        <!-- Logo upload -->
+        <div class="glass-card rounded-xl p-5 border border-outline-variant">
+          <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-3">Logo</label>
+          <input type="file" name="logo" accept="image/*"
+                 class="w-full text-sm text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-secondary file:text-on-secondary file:font-semibold file:text-xs hover:file:opacity-90 cursor-pointer">
+          <p class="text-xs text-on-surface-variant mt-2">PNG, JPG o SVG. Recomendado 200×200px.</p>
+        </div>
+      </div>
+
+      <!-- Columna derecha: formulario -->
+      <div class="lg:col-span-2 space-y-6">
+
+        <!-- Info básica -->
+        <div class="glass-card rounded-xl p-6 border border-outline-variant space-y-4">
+          <h4 class="font-bold text-on-surface flex items-center gap-2 text-sm uppercase tracking-wider">
+            <span class="material-symbols-outlined text-secondary text-[18px]">store</span> Información básica
+          </h4>
+
+          <div>
+            <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Nombre *</label>
+            <input type="text" name="nombre" value="{{ form.nombre.value|default:'' }}" placeholder="Nombre de la barbería"
+                   class="w-full h-11 bg-surface-container border border-outline-variant rounded-lg px-4 text-on-surface focus:outline-none focus:border-secondary text-sm {% if form.nombre.errors %}border-error{% endif %}">
+            {% if form.nombre.errors %}<p class="text-error text-xs mt-1">{{ form.nombre.errors.0 }}</p>{% endif %}
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Descripción</label>
+            <textarea name="descripcion" rows="3" placeholder="Descripción breve de la barbería..."
+                      class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:border-secondary text-sm resize-none">{{ form.descripcion.value|default:'' }}</textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Dirección</label>
+            <textarea name="direccion" rows="2" placeholder="Dirección completa..."
+                      class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:border-secondary text-sm resize-none">{{ form.direccion.value|default:'' }}</textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Teléfono</label>
+              <input type="text" name="telefono" value="{{ form.telefono.value|default:'' }}" placeholder="+57 310 000 0000"
+                     class="w-full h-11 bg-surface-container border border-outline-variant rounded-lg px-4 text-on-surface focus:outline-none focus:border-secondary text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Correo</label>
+              <input type="email" name="correo" value="{{ form.correo.value|default:'' }}" placeholder="hola@barberhub.co"
+                     class="w-full h-11 bg-surface-container border border-outline-variant rounded-lg px-4 text-on-surface focus:outline-none focus:border-secondary text-sm">
+            </div>
+          </div>
+        </div>
+
+        <!-- Redes sociales -->
+        <div class="glass-card rounded-xl p-6 border border-outline-variant space-y-4">
+          <h4 class="font-bold text-on-surface flex items-center gap-2 text-sm uppercase tracking-wider">
+            <span class="material-symbols-outlined text-secondary text-[18px]">share</span> Redes sociales
+          </h4>
+
+          <!-- Instagram -->
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-surface-container-high rounded-lg flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-on-surface-variant text-[20px]">photo_camera</span>
+            </div>
+            <input type="url" name="instagram" value="{{ form.instagram.value|default:'' }}"
+                   placeholder="https://instagram.com/barberhub"
+                   class="flex-1 h-11 bg-surface-container border border-outline-variant rounded-lg px-4 text-on-surface focus:outline-none focus:border-secondary text-sm">
+          </div>
+          <!-- Facebook -->
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-surface-container-high rounded-lg flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-on-surface-variant text-[20px]">thumb_up</span>
+            </div>
+            <input type="url" name="facebook" value="{{ form.facebook.value|default:'' }}"
+                   placeholder="https://facebook.com/barberhub"
+                   class="flex-1 h-11 bg-surface-container border border-outline-variant rounded-lg px-4 text-on-surface focus:outline-none focus:border-secondary text-sm">
+          </div>
+          <!-- TikTok -->
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-surface-container-high rounded-lg flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-on-surface-variant text-[20px]">music_note</span>
+            </div>
+            <input type="url" name="tiktok" value="{{ form.tiktok.value|default:'' }}"
+                   placeholder="https://tiktok.com/@barberhub"
+                   class="flex-1 h-11 bg-surface-container border border-outline-variant rounded-lg px-4 text-on-surface focus:outline-none focus:border-secondary text-sm">
+          </div>
+          <!-- WhatsApp -->
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-surface-container-high rounded-lg flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-on-surface-variant text-[20px]">chat</span>
+            </div>
+            <input type="text" name="whatsapp" value="{{ form.whatsapp.value|default:'' }}"
+                   placeholder="+573100000000"
+                   class="flex-1 h-11 bg-surface-container border border-outline-variant rounded-lg px-4 text-on-surface focus:outline-none focus:border-secondary text-sm">
+          </div>
+        </div>
+
+        <!-- Guardar -->
+        <div class="flex gap-3">
+          <button type="submit"
+                  class="bg-secondary text-on-secondary px-8 py-3 rounded-lg text-sm font-bold hover:opacity-90 transition-opacity flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">save</span> Guardar configuración
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </form>
+
+</div>
+{% endblock %}

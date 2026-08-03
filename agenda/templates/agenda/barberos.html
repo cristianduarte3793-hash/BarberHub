@@ -1,0 +1,180 @@
+﻿{% extends 'agenda/base.html' %}
+
+{% block title %}Barberos — BarberHub{% endblock %}
+{% block page_title %}Gestión de Barberos{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h2 class="text-2xl font-bold text-on-surface font-['Montserrat']">Gestión de Barberos</h2>
+      <p class="text-on-surface-variant mt-1">Administra el equipo de profesionales y sus especialidades.</p>
+    </div>
+    <button class="bg-secondary text-on-secondary px-6 py-3 rounded-lg text-sm font-bold flex items-center gap-2 shadow-lg hover:scale-[0.98] transition-all">
+      <span class="material-symbols-outlined">person_add</span>
+      Nuevo barbero
+    </button>
+  </div>
+
+  <!-- Stats rápidas -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="glass-card p-4 rounded-xl flex items-center gap-4">
+      <div class="w-12 h-12 bg-surface-variant rounded-lg flex items-center justify-center text-secondary">
+        <span class="material-symbols-outlined">groups</span>
+      </div>
+      <div>
+        <p class="text-xs text-on-surface-variant">Total Personal</p>
+        <p class="text-2xl font-bold text-on-surface">{{ total_barberos|default:"—" }}</p>
+      </div>
+    </div>
+    <div class="glass-card p-4 rounded-xl flex items-center gap-4">
+      <div class="w-12 h-12 bg-tertiary/10 rounded-lg flex items-center justify-center text-tertiary">
+        <span class="material-symbols-outlined">check_circle</span>
+      </div>
+      <div>
+        <p class="text-xs text-on-surface-variant">Activos</p>
+        <p class="text-2xl font-bold text-on-surface">{{ barberos_activos|default:"—" }}</p>
+      </div>
+    </div>
+    <div class="glass-card p-4 rounded-xl flex items-center gap-4">
+      <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center text-secondary">
+        <span class="material-symbols-outlined">star</span>
+      </div>
+      <div>
+        <p class="text-xs text-on-surface-variant">Top Performance</p>
+        <p class="text-sm font-bold text-on-surface">
+          {% if top_barbero %}
+            {{ top_barbero.barbero__perfil__usuario__first_name }} {{ top_barbero.barbero__perfil__usuario__last_name }}
+          {% else %}—{% endif %}
+        </p>
+      </div>
+    </div>
+    <div class="glass-card p-4 rounded-xl flex items-center gap-4">
+      <div class="w-12 h-12 bg-red-900/20 rounded-lg flex items-center justify-center text-error">
+        <span class="material-symbols-outlined">schedule</span>
+      </div>
+      <div>
+        <p class="text-xs text-on-surface-variant">Citas Pendientes</p>
+        <p class="text-2xl font-bold text-on-surface">{{ citas_pendientes|default:"0" }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de barberos -->
+  <div class="glass-card rounded-xl overflow-hidden border border-outline-variant">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-surface-container-high border-b border-outline-variant">
+            <th class="px-6 py-4 text-xs font-semibold text-on-surface-variant">Foto</th>
+            <th class="px-6 py-4 text-xs font-semibold text-on-surface-variant">Nombre</th>
+            <th class="px-6 py-4 text-xs font-semibold text-on-surface-variant">Teléfono</th>
+            <th class="px-6 py-4 text-xs font-semibold text-on-surface-variant">Especialidad</th>
+            <th class="px-6 py-4 text-xs font-semibold text-on-surface-variant">Estado</th>
+            <th class="px-6 py-4 text-xs font-semibold text-on-surface-variant text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant">
+          {% for barbero in barberos %}
+          <tr class="hover:bg-surface-variant/30 transition-colors">
+            <td class="px-6 py-4">
+              {% if barbero.perfil.foto_perfil %}
+                <img src="{{ barbero.perfil.foto_perfil.url }}" class="w-12 h-12 rounded-full object-cover border border-outline" alt="">
+              {% else %}
+                <div class="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-on-secondary font-bold text-lg">
+                  {{ barbero.perfil.usuario.first_name|first|upper }}
+                </div>
+              {% endif %}
+            </td>
+            <td class="px-6 py-4">
+              <p class="text-sm font-semibold text-on-surface">{{ barbero.perfil.usuario.get_full_name }}</p>
+              <p class="text-xs text-on-surface-variant">{{ barbero.especialidad|default:"—" }}</p>
+            </td>
+            <td class="px-6 py-4 text-sm text-on-surface-variant">{{ barbero.perfil.telefono|default:"—" }}</td>
+            <td class="px-6 py-4">
+              <div class="flex flex-wrap gap-2">
+                {% for servicio in barbero.servicios.all %}
+                  <span class="px-2 py-0.5 bg-surface-container-highest text-on-surface text-[11px] font-bold rounded uppercase tracking-wider border border-outline-variant">
+                    {{ servicio.nombre }}
+                  </span>
+                {% empty %}
+                  <span class="text-xs text-on-surface-variant">Sin servicios</span>
+                {% endfor %}
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
+                {% if barbero.estado == 'ACTIVO' %}bg-tertiary/10 text-tertiary
+                {% elif barbero.estado == 'VACACIONES' %}bg-secondary/10 text-secondary
+                {% else %}bg-red-900/20 text-error{% endif %}">
+                {{ barbero.get_estado_display }}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <div class="flex justify-end gap-2">
+                <button class="p-2 text-on-surface-variant hover:text-secondary hover:bg-secondary/10 rounded-lg transition-all">
+                  <span class="material-symbols-outlined text-xl">edit</span>
+                </button>
+                <button class="p-2 text-on-surface-variant hover:text-error hover:bg-red-900/20 rounded-lg transition-all">
+                  <span class="material-symbols-outlined text-xl">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <!-- Filas de ejemplo -->
+          <tr class="hover:bg-surface-variant/30 transition-colors">
+            <td class="px-6 py-4">
+              <div class="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-on-secondary font-bold text-lg">M</div>
+            </td>
+            <td class="px-6 py-4">
+              <p class="text-sm font-semibold text-on-surface">Marco Antonio</p>
+              <p class="text-xs text-on-surface-variant">Senior Barber</p>
+            </td>
+            <td class="px-6 py-4 text-sm text-on-surface-variant">+57 312 345 6789</td>
+            <td class="px-6 py-4">
+              <div class="flex flex-wrap gap-2">
+                <span class="px-2 py-0.5 bg-surface-container-highest text-on-surface text-[11px] font-bold rounded uppercase tracking-wider border border-outline-variant">Fade</span>
+                <span class="px-2 py-0.5 bg-surface-container-highest text-on-surface text-[11px] font-bold rounded uppercase tracking-wider border border-outline-variant">Beard</span>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-tertiary/10 text-tertiary">Activo</span>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <div class="flex justify-end gap-2">
+                <button class="p-2 text-on-surface-variant hover:text-secondary hover:bg-secondary/10 rounded-lg transition-all">
+                  <span class="material-symbols-outlined text-xl">edit</span>
+                </button>
+                <button class="p-2 text-on-surface-variant hover:text-error hover:bg-red-900/20 rounded-lg transition-all">
+                  <span class="material-symbols-outlined text-xl">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="bg-surface-container px-6 py-4 border-t border-outline-variant flex items-center justify-between">
+      <p class="text-xs text-on-surface-variant">
+        {% if barberos %}Mostrando {{ barberos|length }} barbero(s){% else %}Sin registros aún{% endif %}
+      </p>
+      <div class="flex gap-2">
+        <button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-variant transition-colors">
+          <span class="material-symbols-outlined text-sm">chevron_left</span>
+        </button>
+        <button class="w-8 h-8 flex items-center justify-center rounded bg-secondary text-on-secondary text-xs font-bold">1</button>
+        <button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-variant transition-colors">
+          <span class="material-symbols-outlined text-sm">chevron_right</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

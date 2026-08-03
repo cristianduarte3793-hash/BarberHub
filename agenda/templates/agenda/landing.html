@@ -1,0 +1,392 @@
+﻿{% load static %}
+{% load barberhub_filters %}
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>{{ config_barberia.nombre|default:"BarberHub" }} | Barbería Premium</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "secondary": "#e9c349",
+            "on-secondary": "#3c2f00",
+            "secondary-container": "#af8d11",
+            "tertiary": "#4edea3",
+            "background": "#121414",
+            "surface": "#121414",
+            "surface-container": "#1e2020",
+            "surface-container-low": "#1a1c1c",
+            "surface-container-lowest": "#0c0f0f",
+            "surface-container-high": "#282a2b",
+            "surface-container-highest": "#333535",
+            "surface-variant": "#333535",
+            "on-surface": "#e2e2e2",
+            "on-surface-variant": "#c4c7c7",
+            "outline": "#8e9192",
+            "outline-variant": "#444748",
+            "error": "#ffb4ab",
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #121414; color: #e2e2e2; font-family: 'Inter', sans-serif; }
+    .glass-card { background: rgba(30,32,32,0.7); backdrop-filter: blur(10px); }
+    .gold-glow { box-shadow: 0 0 20px rgba(233,195,73,0.2); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; display:inline-block; line-height:1; vertical-align:middle; }
+  </style>
+</head>
+<body class="text-on-surface selection:bg-secondary selection:text-on-secondary">
+
+<!-- ═══ NAVBAR ═══════════════════════════════════════════════════════════ -->
+<header id="top-nav" class="sticky top-0 z-50 flex justify-between items-center px-6 h-16 w-full bg-surface-container-low border-b border-outline-variant shadow-sm transition-all duration-300">
+  <div class="flex items-center gap-8">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center overflow-hidden flex-shrink-0">
+        {% if config_barberia and config_barberia.logo %}
+          <img src="{{ config_barberia.logo.url }}" class="w-full h-full object-cover" alt="Logo">
+        {% else %}
+          <span class="material-symbols-outlined text-on-secondary text-[18px]" style="font-variation-settings:'FILL' 1;">content_cut</span>
+        {% endif %}
+      </div>
+      <span class="text-2xl font-bold text-secondary font-['Montserrat'] tracking-tight">{{ config_barberia.nombre|default:"BarberHub" }}</span>
+    </div>
+    <nav class="hidden md:flex items-center gap-6">
+      <a class="text-secondary font-semibold text-sm" href="#inicio">Inicio</a>
+      <a class="text-on-surface-variant hover:text-secondary transition-colors text-sm font-semibold" href="#servicios">Servicios</a>
+      <a class="text-on-surface-variant hover:text-secondary transition-colors text-sm font-semibold" href="#barberos">Barberos</a>
+      <a class="text-on-surface-variant hover:text-secondary transition-colors text-sm font-semibold" href="#contacto">Contacto</a>
+    </nav>
+  </div>
+  <div class="flex items-center gap-3">
+    {% if user.is_authenticated %}
+      <a href="{% url 'dashboard' %}" class="hidden md:flex items-center gap-2 text-sm font-semibold text-on-surface-variant hover:text-secondary transition-colors">
+        <span class="material-symbols-outlined text-[20px]">dashboard</span> Dashboard
+      </a>
+    {% else %}
+      <a href="{% url 'login' %}" class="hidden md:block text-sm font-semibold text-on-surface-variant hover:text-secondary transition-colors px-4 py-2">
+        Iniciar sesión
+      </a>
+    {% endif %}
+    <a href="{% url 'agendar_cita' %}" class="bg-secondary text-on-secondary px-5 py-2 rounded-lg text-sm font-bold hover:scale-105 active:scale-95 transition-transform gold-glow">
+      Reservar Cita
+    </a>
+    <button id="mobile-menu-btn" class="md:hidden p-2 text-on-surface">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile menu -->
+<div id="mobile-menu" class="hidden md:hidden fixed inset-0 z-40 bg-background/95 flex flex-col items-center justify-center gap-8">
+  <button id="mobile-menu-close" class="absolute top-5 right-6 text-on-surface-variant">
+    <span class="material-symbols-outlined text-3xl">close</span>
+  </button>
+  <a class="text-2xl font-bold text-on-surface hover:text-secondary" href="#inicio" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Inicio</a>
+  <a class="text-2xl font-bold text-on-surface hover:text-secondary" href="#servicios" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Servicios</a>
+  <a class="text-2xl font-bold text-on-surface hover:text-secondary" href="#barberos" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Barberos</a>
+  <a class="text-2xl font-bold text-on-surface hover:text-secondary" href="#contacto" onclick="document.getElementById('mobile-menu').classList.add('hidden')">Contacto</a>
+  <a href="{% url 'agendar_cita' %}" class="bg-secondary text-on-secondary px-8 py-3 rounded-xl text-sm font-bold">Reservar Cita</a>
+</div>
+
+<main>
+<!-- ═══ HERO ══════════════════════════════════════════════════════════════ -->
+<section id="inicio" class="relative min-h-[870px] flex items-center px-6 overflow-hidden py-20">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full max-w-7xl mx-auto">
+    <div class="z-10 space-y-6">
+      <span class="inline-block px-4 py-1 rounded-full bg-secondary-container text-on-secondary text-xs font-bold border border-secondary/20 uppercase tracking-widest">
+        Barbería Premium
+      </span>
+      <h1 class="text-5xl lg:text-[56px] leading-tight font-bold font-['Montserrat'] text-on-surface">
+        Tu estilo, nuestro <span class="text-secondary">compromiso</span>.
+      </h1>
+      <p class="text-lg text-on-surface-variant max-w-lg">
+        Agenda tu cita con los mejores barberos de forma rápida y sencilla. Descubre una experiencia de lujo diseñada para el hombre moderno.
+      </p>
+      <div class="flex flex-wrap gap-4 pt-4">
+        <a href="{% url 'agendar_cita' %}" class="bg-secondary text-on-secondary px-8 py-4 rounded-xl text-sm font-bold flex items-center gap-2 hover:scale-105 active:scale-95 transition-all gold-glow">
+          Reservar cita <span class="material-symbols-outlined">calendar_today</span>
+        </a>
+        <a href="#servicios" class="border border-secondary text-secondary px-8 py-4 rounded-xl text-sm font-bold hover:bg-secondary/10 transition-all">
+          Conocer servicios
+        </a>
+      </div>
+    </div>
+    <div class="relative group">
+      <div class="absolute -inset-4 bg-secondary/10 rounded-2xl blur-2xl group-hover:bg-secondary/20 transition-all"></div>
+      <div class="relative h-[500px] w-full rounded-2xl overflow-hidden border border-outline-variant shadow-2xl">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYmlZyuwxyS9gkUXwDCNh2kRWjmwUCTgRWy6TEXfcgTi8vQZGaJ44B2d58YOjsTBEYr94O2L1cdfuMlqOeKJKagcBGx_Jda4G7VLnfIjt89_w3FDLWv_9LzcGJ4GEQ93SttmFUi-N9UUxpdW5vm6PU9nrgG_SMARlQia8HientzipZePjDgbs-CAnLfNL6RvF2CNVSj94-wZNQTdYp4aGlI-V01itdSpzKt79tjcHWsaSDIlralwY0"
+             alt="Interior barbería BarberHub" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent"></div>
+      </div>
+    </div>
+  </div>
+  <div class="absolute top-1/4 -right-20 w-96 h-96 bg-secondary/5 rounded-full blur-[120px] -z-10"></div>
+</section>
+
+<!-- Stats rápidas -->
+<div class="bg-surface-container-low border-y border-outline-variant py-8 px-6">
+  <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+    <div>
+      <p class="text-3xl font-bold text-secondary">{{ total_clientes|default:"0" }}+</p>
+      <p class="text-sm text-on-surface-variant mt-1">Clientes felices</p>
+    </div>
+    <div>
+      <p class="text-3xl font-bold text-secondary">{{ total_barberos_activos|default:"0" }}</p>
+      <p class="text-sm text-on-surface-variant mt-1">Barberos expertos</p>
+    </div>
+    <div>
+      <p class="text-3xl font-bold text-secondary">{{ total_citas|default:"0" }}+</p>
+      <p class="text-sm text-on-surface-variant mt-1">Citas completadas</p>
+    </div>
+    <div>
+      <p class="text-3xl font-bold text-secondary">
+        {% if promedio_calificacion %}{{ promedio_calificacion }}★{% else %}—{% endif %}
+      </p>
+      <p class="text-sm text-on-surface-variant mt-1">Calificación promedio</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SERVICIOS ════════════════════════════════════════════════════════ -->
+<section id="servicios" class="py-24 px-6 bg-surface-container-lowest">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16 space-y-2">
+      <h2 class="text-3xl font-bold font-['Montserrat'] text-on-surface">Nuestros Servicios</h2>
+      <div class="w-20 h-1 bg-secondary mx-auto rounded-full"></div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      {% for servicio in servicios %}
+      <div class="group flex flex-col bg-surface-container border border-outline-variant rounded-xl overflow-hidden hover:border-secondary transition-all duration-300">
+        <div class="p-6 flex flex-col flex-grow space-y-4">
+          <div class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary mb-2">
+            <span class="material-symbols-outlined">content_cut</span>
+          </div>
+          <div class="flex justify-between items-start">
+            <h3 class="text-xl font-bold text-on-surface font-['Montserrat']">{{ servicio.nombre }}</h3>
+            <span class="text-secondary font-bold">{{ servicio.precio|cop }}</span>
+          </div>
+          <div class="flex items-center gap-2 text-on-surface-variant text-xs">
+            <span class="material-symbols-outlined text-[16px]">schedule</span>{{ servicio.duracion }} min
+          </div>
+          <p class="text-on-surface-variant text-sm flex-grow">{{ servicio.descripcion|default:"Servicio premium de barbería." }}</p>
+          <a href="{% url 'agendar_cita' %}" class="mt-auto block text-center py-3 bg-surface-variant text-on-surface text-sm font-bold rounded-lg group-hover:bg-secondary group-hover:text-on-secondary transition-colors">
+            Reservar
+          </a>
+        </div>
+      </div>
+      {% empty %}
+      <!-- Cards de ejemplo cuando no hay servicios en BD -->
+      {% for item in "1234" %}
+      <div class="group flex flex-col bg-surface-container border border-outline-variant rounded-xl overflow-hidden hover:border-secondary transition-all duration-300">
+        {% if forloop.counter == 1 %}
+          <div class="h-48 overflow-hidden"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOYMKI3KG_kD9jyhtW4Uc3Ooho97gITF6jcc5poBaSUZq9abvYUKJTCcSmaHBqTB3LskU-Zuw73VcmGqY-PDkFwmnFkuxMbEoq_MvLnKCzHCyVhpclQo7uopKa4_LDdxfsGlyAVuxn7AIUwJcK2JJuzLey3X6UKiCan8sugqvcrjvQKxBWXFzC-OIT0I55jp--wvm5f1aJAh7G_QfPc-WcRkvpyI8_DYtj_t2uqXNL5U2rpW7DCdKm" alt="" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"></div>
+          <div class="p-6 flex flex-col flex-grow space-y-4"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-on-surface font-['Montserrat']">Corte Clásico</h3><span class="text-secondary font-bold">$25</span></div><div class="flex items-center gap-2 text-on-surface-variant text-xs"><span class="material-symbols-outlined text-[16px]">schedule</span>45 min</div><p class="text-on-surface-variant text-sm flex-grow">Acabado impecable y estilo atemporal para el caballero moderno.</p><a href="{% url 'agendar_cita' %}" class="mt-auto block text-center py-3 bg-surface-variant text-on-surface text-sm font-bold rounded-lg group-hover:bg-secondary group-hover:text-on-secondary transition-colors">Reservar</a></div>
+        {% elif forloop.counter == 2 %}
+          <div class="h-48 overflow-hidden"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5g3y_WxhZ5S692mnBBb0OEuteyeE4Mcbvsp-jOk10FMHvBKSVylUui2Xm9dxdb0yCqlS5qU-rqrS2pTsKLMPkofK5HMPp3u14V_HXa9LAdviRoyODqeJnHtyB0D0sDa0kvJg4O5oDY_LXcKI5L0_jgq2UbUI6JJuP8kOck_8N7mG4yI6jwvrp3pkocv-2hZ0VjmRR9652O8l57KddXVhQKgq3uwzuHQW7nSoHVzz0l4ndTNGAFk8T" alt="" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"></div>
+          <div class="p-6 flex flex-col flex-grow space-y-4"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-on-surface font-['Montserrat']">Corte Degradado</h3><span class="text-secondary font-bold">$30</span></div><div class="flex items-center gap-2 text-on-surface-variant text-xs"><span class="material-symbols-outlined text-[16px]">schedule</span>60 min</div><p class="text-on-surface-variant text-sm flex-grow">Técnicas de fade precisas para un look contemporáneo y nítido.</p><a href="{% url 'agendar_cita' %}" class="mt-auto block text-center py-3 bg-surface-variant text-on-surface text-sm font-bold rounded-lg group-hover:bg-secondary group-hover:text-on-secondary transition-colors">Reservar</a></div>
+        {% elif forloop.counter == 3 %}
+          <div class="h-48 overflow-hidden"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfYYNQ7F0VbONwbUwp__VzfELoZXheAMBxcDoct6vNgpVtUWcZ5S8NUxyGg2d5Ey87ONGavSsDXvIcQ4Vmeb5Rp2Yv4WbXNfKVm4xxqqjJp4Emq09rHVU-VtPGTDcm0AMhF1jYbuemnN9gsCwj1FplkHvP9H5bxJbLuhAzBG0NBhu69SLGX6suNPCF827l2vSg0B0adAXU9VOSM0JgVYjcaYajkxpxegVu9EW9k8yxnZywTfCyoC6-" alt="" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"></div>
+          <div class="p-6 flex flex-col flex-grow space-y-4"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-on-surface font-['Montserrat']">Barba Pro</h3><span class="text-secondary font-bold">$20</span></div><div class="flex items-center gap-2 text-on-surface-variant text-xs"><span class="material-symbols-outlined text-[16px]">schedule</span>30 min</div><p class="text-on-surface-variant text-sm flex-grow">Ritual de toalla caliente y perfilado con navaja clásica.</p><a href="{% url 'agendar_cita' %}" class="mt-auto block text-center py-3 bg-surface-variant text-on-surface text-sm font-bold rounded-lg group-hover:bg-secondary group-hover:text-on-secondary transition-colors">Reservar</a></div>
+        {% else %}
+          <div class="h-48 overflow-hidden"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTEGIJUgxvDd3-Bb0X_ij8yDWZ8nNiLJ5YLb_Alz02X4dbfsYTyvYf5ipyA-82FPuMhJD0T7qFN8KIl4shsl6pxtVoOrwvi0exRgBsFV1euDuufkpqv3mnLMKNPtnA_lR1vI1d4Hv2jyGgXFn8G8c5906OaLJeSq997TrpLS2zU15TY4fBwfLqxiiOsS19x8Ijweq9nLlsETQmCR7As_LZSYrF_J0dB6qfcuhnwZlLgjvWtnoqUz08" alt="" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"></div>
+          <div class="p-6 flex flex-col flex-grow space-y-4"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-on-surface font-['Montserrat']">Corte + Barba</h3><span class="text-secondary font-bold">$45</span></div><div class="flex items-center gap-2 text-on-surface-variant text-xs"><span class="material-symbols-outlined text-[16px]">schedule</span>90 min</div><p class="text-on-surface-variant text-sm flex-grow">La experiencia completa de transformación y cuidado personal.</p><a href="{% url 'agendar_cita' %}" class="mt-auto block text-center py-3 bg-surface-variant text-on-surface text-sm font-bold rounded-lg group-hover:bg-secondary group-hover:text-on-secondary transition-colors">Reservar</a></div>
+        {% endif %}
+      </div>
+      {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BARBEROS ══════════════════════════════════════════════════════════ -->
+<section id="barberos" class="py-24 px-6 bg-surface">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
+      <div class="space-y-2">
+        <h2 class="text-3xl font-bold font-['Montserrat'] text-on-surface">Expertos en Estilo</h2>
+        <p class="text-on-surface-variant">Nuestros maestros barberos combinan tradición y vanguardia.</p>
+      </div>
+      <a href="#" class="text-secondary text-sm font-semibold hover:underline">Ver todo el equipo</a>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-12">
+
+      {% for barbero in barberos %}
+      <div class="text-center group">
+        <div class="relative w-32 h-32 md:w-48 md:h-48 mx-auto mb-6">
+          <div class="absolute inset-0 rounded-full border-2 border-secondary scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+          {% if barbero.perfil.foto_perfil %}
+            <img src="{{ barbero.perfil.foto_perfil.url }}" class="w-full h-full rounded-full object-cover border-4 border-surface-container-high shadow-xl" alt="{{ barbero }}">
+          {% else %}
+            <div class="w-full h-full rounded-full border-4 border-surface-container-high shadow-xl bg-surface-container-highest flex items-center justify-center text-4xl font-bold text-secondary">
+              {{ barbero.perfil.usuario.first_name|first|upper }}
+            </div>
+          {% endif %}
+        </div>
+        <h4 class="text-xl font-bold text-on-surface font-['Montserrat']">{{ barbero.perfil.usuario.get_full_name }}</h4>
+        <p class="text-on-surface-variant text-sm font-semibold mb-2">{{ barbero.especialidad|default:"Barbero Profesional" }}</p>
+        <div class="flex justify-center gap-1 text-secondary">
+          {% for i in "12345" %}<span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>{% endfor %}
+        </div>
+      </div>
+      {% empty %}
+      <!-- Ejemplo cuando no hay barberos en BD -->
+      {% for nombre, especialidad, img in barberos_ejemplo %}
+      <div class="text-center group">
+        <div class="relative w-32 h-32 md:w-48 md:h-48 mx-auto mb-6">
+          <div class="absolute inset-0 rounded-full border-2 border-secondary scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+          <img src="{{ img }}" class="w-full h-full rounded-full object-cover border-4 border-surface-container-high shadow-xl" alt="{{ nombre }}">
+        </div>
+        <h4 class="text-xl font-bold text-on-surface font-['Montserrat']">{{ nombre }}</h4>
+        <p class="text-on-surface-variant text-sm font-semibold mb-2">{{ especialidad }}</p>
+        <div class="flex justify-center gap-1 text-secondary">
+          {% for i in "12345" %}<span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1;">star</span>{% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+      {% endfor %}
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIOS ═══════════════════════════════════════════════════════ -->
+<section class="py-24 px-6 bg-surface-container-low overflow-hidden">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl font-bold font-['Montserrat'] text-on-surface mb-4">Lo que dicen nuestros clientes</h2>
+      <p class="text-on-surface-variant">Calidad y servicio garantizado por nuestra comunidad.</p>
+    </div>
+
+    {% if testimonios %}
+    <div class="flex gap-4 overflow-x-auto no-scrollbar pb-4">
+      {% for cal in testimonios %}
+      <div class="min-w-[320px] md:min-w-[380px] glass-card p-8 rounded-2xl border border-outline-variant hover:border-secondary transition-colors flex-shrink-0">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-14 h-14 rounded-full bg-secondary flex items-center justify-center text-on-secondary text-xl font-bold flex-shrink-0">
+            {{ cal.cliente.usuario.first_name|first|upper }}{{ cal.cliente.usuario.last_name|first|upper }}
+          </div>
+          <div>
+            <p class="font-semibold text-on-surface">{{ cal.cliente.usuario.get_full_name|default:cal.cliente.usuario.username }}</p>
+            <div class="flex text-secondary gap-0.5">
+              {% for i in "12345" %}
+                {% if forloop.counter <= cal.puntuacion %}
+                  <span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1;">star</span>
+                {% else %}
+                  <span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 0;">star</span>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <p class="text-on-surface-variant italic">"{{ cal.comentario }}"</p>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <!-- Sin testimonios aún -->
+    <div class="text-center py-12 text-on-surface-variant">
+      <span class="material-symbols-outlined text-5xl block mb-3 opacity-30">star</span>
+      <p class="text-sm">Sé el primero en dejar una reseña después de tu cita.</p>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<!-- ═══ CTA ═══════════════════════════════════════════════════════════════ -->
+<section class="py-24 px-6 bg-surface-container-lowest">
+  <div class="max-w-3xl mx-auto text-center space-y-6">
+    <span class="inline-block px-4 py-1 rounded-full bg-secondary-container text-on-secondary text-xs font-bold uppercase tracking-widest">¿Listo para tu cambio?</span>
+    <h2 class="text-4xl font-bold font-['Montserrat'] text-on-surface">Tu cita, a un click de distancia.</h2>
+    <p class="text-on-surface-variant text-lg">Reserva en segundos, sin llamadas ni esperas. Elige tu barbero, tu servicio y tu horario favorito.</p>
+    <div class="flex flex-wrap justify-center gap-4 pt-4">
+      <a href="{% url 'agendar_cita' %}" class="bg-secondary text-on-secondary px-10 py-4 rounded-xl font-bold text-sm flex items-center gap-2 hover:scale-105 transition-all gold-glow">
+        Reservar ahora <span class="material-symbols-outlined">arrow_forward</span>
+      </a>
+      {% if not user.is_authenticated %}
+      <a href="{% url 'registro' %}" class="border border-secondary text-secondary px-10 py-4 rounded-xl font-bold text-sm hover:bg-secondary/10 transition-all">
+        Crear cuenta gratis
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTACTO / FOOTER ═════════════════════════════════════════════════ -->
+<footer id="contacto" class="bg-surface-container-low border-t border-outline-variant px-6 py-16">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
+    <div>
+      <h3 class="text-2xl font-bold text-secondary font-['Montserrat'] mb-4">{{ config_barberia.nombre|default:"BarberHub" }}</h3>
+      <p class="text-on-surface-variant text-sm">
+        {{ config_barberia.descripcion|default:"Experiencia premium de barbería. Donde el estilo se encuentra con la precisión." }}
+      </p>
+    </div>
+    <div>
+      <h4 class="font-bold text-on-surface mb-4">Horario</h4>
+      <ul class="space-y-2 text-sm text-on-surface-variant">
+        <li class="flex justify-between"><span>Lunes — Viernes</span><span>9:00 — 20:00</span></li>
+        <li class="flex justify-between"><span>Sábado</span><span>9:00 — 18:00</span></li>
+        <li class="flex justify-between"><span>Domingo</span><span class="text-error">Cerrado</span></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-bold text-on-surface mb-4">Contacto</h4>
+      <ul class="space-y-3 text-sm text-on-surface-variant">
+        {% if config_barberia and config_barberia.direccion %}
+        <li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-[18px]">location_on</span>{{ config_barberia.direccion }}</li>
+        {% else %}
+        <li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-[18px]">location_on</span>Calle 123 #45-67, Bogotá</li>
+        {% endif %}
+        {% if config_barberia and config_barberia.telefono %}
+        <li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-[18px]">phone</span>{{ config_barberia.telefono }}</li>
+        {% else %}
+        <li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-[18px]">phone</span>+57 310 000 0000</li>
+        {% endif %}
+        {% if config_barberia and config_barberia.correo %}
+        <li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-[18px]">mail</span>{{ config_barberia.correo }}</li>
+        {% else %}
+        <li class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-[18px]">mail</span>hola@barberhub.co</li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+  <div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-4">
+    <p class="text-xs text-on-surface-variant">© 2026 {{ config_barberia.nombre|default:"BarberHub" }}. Todos los derechos reservados.</p>
+    <div class="flex gap-4">
+      <a href="{% url 'login' %}" class="text-xs text-on-surface-variant hover:text-secondary transition-colors">Iniciar sesión</a>
+      <a href="{% url 'registro' %}" class="text-xs text-on-surface-variant hover:text-secondary transition-colors">Registrarse</a>
+    </div>
+  </div>
+</footer>
+</main>
+
+<script>
+  // Mobile menu
+  const mBtn = document.getElementById('mobile-menu-btn');
+  const mMenu = document.getElementById('mobile-menu');
+  const mClose = document.getElementById('mobile-menu-close');
+  if (mBtn) mBtn.addEventListener('click', () => mMenu.classList.toggle('hidden'));
+  if (mClose) mClose.addEventListener('click', () => mMenu.classList.add('hidden'));
+
+  // Smooth scroll para anclas
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+</script>
+</body>
+</html>

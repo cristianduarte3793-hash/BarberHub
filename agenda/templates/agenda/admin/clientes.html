@@ -1,0 +1,165 @@
+{% extends 'agenda/base.html' %}
+{% block title %}Clientes — BarberHub{% endblock %}
+{% block page_title %}Gestión de Clientes{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div>
+      <h2 class="text-2xl font-bold text-on-surface font-['Montserrat']">Clientes</h2>
+      <p class="text-on-surface-variant mt-1 text-sm">Administra los clientes registrados en la plataforma.</p>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="glass-card p-4 rounded-xl flex items-center gap-4">
+      <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center text-secondary">
+        <span class="material-symbols-outlined">groups</span>
+      </div>
+      <div>
+        <p class="text-xs text-on-surface-variant">Total Clientes</p>
+        <p class="text-2xl font-bold text-on-surface">{{ total_clientes }}</p>
+      </div>
+    </div>
+    <div class="glass-card p-4 rounded-xl flex items-center gap-4">
+      <div class="w-12 h-12 bg-tertiary/10 rounded-lg flex items-center justify-center text-tertiary">
+        <span class="material-symbols-outlined">check_circle</span>
+      </div>
+      <div>
+        <p class="text-xs text-on-surface-variant">Activos</p>
+        <p class="text-2xl font-bold text-on-surface">{{ clientes_activos }}</p>
+      </div>
+    </div>
+    <div class="glass-card p-4 rounded-xl flex items-center gap-4">
+      <div class="w-12 h-12 bg-surface-variant rounded-lg flex items-center justify-center text-on-surface-variant">
+        <span class="material-symbols-outlined">person_add</span>
+      </div>
+      <div>
+        <p class="text-xs text-on-surface-variant">Nuevos este mes</p>
+        <p class="text-2xl font-bold text-on-surface">{{ clientes_nuevos_mes }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <form method="get" class="glass-card p-4 rounded-xl flex flex-col sm:flex-row gap-3 items-end">
+    <div class="flex-1">
+      <label class="block text-xs text-on-surface-variant mb-1">Buscar</label>
+      <div class="relative">
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant material-symbols-outlined text-[18px]">search</span>
+        <input type="text" name="q" value="{{ filtros.q }}"
+               placeholder="Nombre, email, teléfono..."
+               class="w-full pl-9 pr-4 py-2 bg-surface-container border border-outline-variant rounded-lg text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-secondary">
+      </div>
+    </div>
+    <div>
+      <label class="block text-xs text-on-surface-variant mb-1">Estado</label>
+      <select name="estado"
+              class="py-2 px-3 bg-surface-container border border-outline-variant rounded-lg text-sm text-on-surface focus:outline-none focus:border-secondary">
+        <option value="" {% if not filtros.estado %}selected{% endif %}>Todos</option>
+        <option value="activo" {% if filtros.estado == 'activo' %}selected{% endif %}>Activos</option>
+        <option value="inactivo" {% if filtros.estado == 'inactivo' %}selected{% endif %}>Inactivos</option>
+      </select>
+    </div>
+    <button type="submit"
+            class="bg-secondary text-on-secondary px-5 py-2 rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
+      Filtrar
+    </button>
+    {% if filtros.q or filtros.estado %}
+    <a href="{% url 'clientes' %}"
+       class="px-4 py-2 border border-outline-variant text-on-surface-variant rounded-lg text-sm hover:bg-surface-variant transition-colors">
+      Limpiar
+    </a>
+    {% endif %}
+  </form>
+
+  <!-- Tabla -->
+  <div class="glass-card rounded-xl overflow-hidden border border-outline-variant">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="bg-surface-container-high text-on-surface-variant text-xs uppercase tracking-wider border-b border-outline-variant">
+          <tr>
+            <th class="px-6 py-4">Cliente</th>
+            <th class="px-6 py-4">Contacto</th>
+            <th class="px-6 py-4">Citas</th>
+            <th class="px-6 py-4">Registro</th>
+            <th class="px-6 py-4">Estado</th>
+            <th class="px-6 py-4 text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant">
+          {% for cliente in clientes %}
+          <tr class="hover:bg-surface-variant/20 transition-colors">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                {% if cliente.foto_perfil %}
+                  <img src="{{ cliente.foto_perfil.url }}" class="w-10 h-10 rounded-full object-cover border border-outline-variant" alt="">
+                {% else %}
+                  <div class="w-10 h-10 rounded-full bg-surface-container-highest border border-outline-variant flex items-center justify-center text-sm font-bold text-secondary flex-shrink-0">
+                    {{ cliente.usuario.first_name|first|upper }}{{ cliente.usuario.last_name|first|upper }}
+                  </div>
+                {% endif %}
+                <div>
+                  <p class="text-sm font-semibold text-on-surface">{{ cliente.usuario.get_full_name|default:cliente.usuario.username }}</p>
+                  <p class="text-xs text-on-surface-variant">@{{ cliente.usuario.username }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <p class="text-sm text-on-surface">{{ cliente.usuario.email|default:"—" }}</p>
+              <p class="text-xs text-on-surface-variant">{{ cliente.telefono|default:"Sin teléfono" }}</p>
+            </td>
+            <td class="px-6 py-4">
+              <span class="text-sm font-bold text-on-surface">{{ cliente.total_citas }}</span>
+              <span class="text-xs text-on-surface-variant ml-1">cita(s)</span>
+            </td>
+            <td class="px-6 py-4 text-sm text-on-surface-variant">
+              {{ cliente.creado_en|date:"d/m/Y" }}
+            </td>
+            <td class="px-6 py-4">
+              {% if cliente.activo %}
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-tertiary/10 text-tertiary">
+                  <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Activo
+                </span>
+              {% else %}
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-container-high text-on-surface-variant">
+                  <span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Inactivo
+                </span>
+              {% endif %}
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex justify-end items-center gap-1">
+                <a href="{% url 'cliente_detalle' cliente.pk %}"
+                   class="p-2 text-on-surface-variant hover:text-secondary hover:bg-secondary/10 rounded-lg transition-all"
+                   title="Ver detalle">
+                  <span class="material-symbols-outlined text-[18px]">visibility</span>
+                </a>
+                <a href="{% url 'cliente_toggle' cliente.pk %}"
+                   class="p-2 rounded-lg transition-all {% if cliente.activo %}text-on-surface-variant hover:text-error hover:bg-red-900/20{% else %}text-on-surface-variant hover:text-tertiary hover:bg-tertiary/10{% endif %}"
+                   title="{% if cliente.activo %}Desactivar{% else %}Activar{% endif %}">
+                  <span class="material-symbols-outlined text-[18px]">{% if cliente.activo %}person_off{% else %}person_check{% endif %}</span>
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="px-6 py-16 text-center text-on-surface-variant">
+              <span class="material-symbols-outlined text-5xl block mb-3 opacity-30">groups</span>
+              <p class="text-sm">No hay clientes registrados{% if filtros.q or filtros.estado %} con esos filtros{% endif %}.</p>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="bg-surface-container px-6 py-3 border-t border-outline-variant">
+      <p class="text-xs text-on-surface-variant">{{ clientes|length }} cliente(s) encontrado(s)</p>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

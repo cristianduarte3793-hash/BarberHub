@@ -51,3 +51,11 @@ desktop.ini
 
 # Migraciones (opcional: muchos equipos sí las suben, las dejamos)
 # agenda/migrations/
+
+# Backups y archivos temporales del refactor
+*_OLD_BACKUP.py
+*_BACKUP.*
+*.bak
+
+# Carpetas mockup (ya eliminadas pero por seguridad)
+mockup_*/
