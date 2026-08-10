@@ -103,7 +103,7 @@
             </button>
           </form>
           {% endif %}
-          <a href="{% url 'comprobante_cita' cita.pk %}"
+          <a href="{% url 'comprobante_cita' cita.codigo_reserva %}"
              class="flex items-center gap-1 px-3 py-1.5 border border-secondary/30 text-secondary rounded-lg text-xs font-bold hover:bg-secondary/10 transition-colors"
              title="Ver comprobante">
             <span class="material-symbols-outlined text-[14px]">receipt_long</span>
@@ -161,7 +161,7 @@
               </span>
             </td>
             <td class="px-5 py-3">
-              <a href="{% url 'comprobante_cita' cita.pk %}"
+              <a href="{% url 'comprobante_cita' cita.codigo_reserva %}"
                  class="flex items-center gap-1 px-2.5 py-1 border border-secondary/30 text-secondary rounded-lg text-xs font-bold hover:bg-secondary/10 transition-colors whitespace-nowrap">
                 <span class="material-symbols-outlined text-[13px]">receipt_long</span>
                 Comprobante

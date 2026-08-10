@@ -354,10 +354,19 @@ def clientes_view(request):
 @login_required
 @admin_required
 def cliente_toggle(request, pk):
-    """Activar / desactivar cuenta de cliente."""
+    """
+    Activar / desactivar cuenta de cliente.
+    Sincroniza PerfilUsuario.activo con User.is_active para que
+    un cliente desactivado no pueda autenticarse.
+    """
     cliente = get_object_or_404(PerfilUsuario, pk=pk, rol='CLIENTE')
     cliente.activo = not cliente.activo
     cliente.save()
+
+    # Mantener User.is_active en sincronía con el perfil
+    cliente.usuario.is_active = cliente.activo
+    cliente.usuario.save(update_fields=['is_active'])
+
     nombre = cliente.usuario.get_full_name() or cliente.usuario.username
     estado = 'activado' if cliente.activo else 'desactivado'
     messages.success(request, f'Cliente "{nombre}" {estado}.')
@@ -397,30 +406,47 @@ def cliente_detalle(request, pk):
 @admin_required
 def validar_comprobante_view(request):
     """
-    Panel de validación de comprobantes.
-    Permite buscar una cita por su código de reserva (manual o vía QR).
-    No modifica el estado de la cita — solo muestra la información.
+    Valida un comprobante por código de reserva (ingresado manualmente o leído por QR).
+    - Solo admins pueden acceder.
+    - Valida el formato antes de consultar la BD.
+    - Nunca expone stack traces ni información sensible.
+    - No modifica la cita bajo ninguna circunstancia.
     """
-    cita = None
+    from ..services import CitasService
+
+    cita           = None
     codigo_buscado = ''
-    error = None
+    error          = None
 
     if request.method == 'POST':
-        codigo_buscado = request.POST.get('codigo', '').strip().upper()
-        if codigo_buscado:
+        codigo_raw     = request.POST.get('codigo', '')
+        codigo_buscado = codigo_raw.strip().upper()
+
+        if not codigo_buscado:
+            error = 'Ingresa un código de reserva.'
+
+        elif not CitasService.es_codigo_valido(codigo_buscado):
+            # Rechazar formatos inválidos sin consultar la BD
+            error = (
+                f'El código "{codigo_buscado}" no tiene un formato válido. '
+                'El formato correcto es BH-XXXXXX (ej: BH-000042).'
+            )
+
+        else:
             try:
                 cita = Cita.objects.select_related(
                     'cliente__usuario', 'barbero__perfil__usuario', 'servicio'
                 ).get(codigo_reserva=codigo_buscado)
             except Cita.DoesNotExist:
                 error = f'No se encontró ninguna reserva con el código "{codigo_buscado}".'
-        else:
-            error = 'Ingresa un código de reserva.'
+            except Exception:
+                # Captura cualquier error de BD sin exponer detalles técnicos
+                error = 'Ocurrió un error al consultar la reserva. Intenta de nuevo.'
 
     return render(request, 'agenda/admin/validar_comprobante.html', {
-        'cita': cita,
+        'cita':           cita,
         'codigo_buscado': codigo_buscado,
-        'error': error,
+        'error':          error,
     })
 
 

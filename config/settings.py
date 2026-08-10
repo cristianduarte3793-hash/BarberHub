@@ -41,7 +41,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'Agenda_Barberhub.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -61,22 +61,19 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Agenda_Barberhub.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 # ---------------------------------------------------------------------------
-# Base de datos - MySQL 8.4 via Laragon
+# Base de datos - PostgreSQL
 # ---------------------------------------------------------------------------
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME':     os.environ.get('DB_NAME', 'barberhub'),
-        'USER':     os.environ.get('DB_USER', 'root'),
+        'USER':     os.environ.get('DB_USER', 'postgres'),
         'PASSWORD': os.environ.get('DB_PASSWORD', ''),
         'HOST':     os.environ.get('DB_HOST', '127.0.0.1'),
-        'PORT':     os.environ.get('DB_PORT', '3306'),
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-        },
+        'PORT':     os.environ.get('DB_PORT', '5432'),
     }
 }
 

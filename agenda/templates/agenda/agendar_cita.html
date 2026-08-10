@@ -317,7 +317,7 @@
       .then(function(data) {
         msg.textContent = '';
         if (!data.slots || !data.slots.length) {
-          msg.textContent = 'Sin horarios disponibles para este día.';
+          msg.textContent = data.error || 'Sin horarios disponibles para este día.';
           return;
         }
         data.slots.forEach(function(slot) {

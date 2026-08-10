@@ -192,9 +192,12 @@
         <span class="material-symbols-outlined">person</span>Mi Perfil
       </a>
     {% endif %}
-    <a href="{% url 'logout' %}" class="flex items-center gap-3 py-2 text-on-surface-variant hover:text-error transition-all text-sm font-semibold">
-      <span class="material-symbols-outlined">logout</span>Cerrar Sesión
-    </a>
+    <form method="post" action="{% url 'logout' %}" class="w-full">
+      {% csrf_token %}
+      <button type="submit" class="flex items-center gap-3 py-2 text-on-surface-variant hover:text-error transition-all text-sm font-semibold w-full text-left">
+        <span class="material-symbols-outlined">logout</span>Cerrar Sesión
+      </button>
+    </form>
   </div>
 </aside>
 
@@ -247,9 +250,12 @@
             <span class="material-symbols-outlined text-[18px]">key</span>Cambiar contraseña
           </a>
           <hr class="border-outline-variant my-1">
-          <a href="{% url 'logout' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-error hover:bg-surface-variant transition-colors">
-            <span class="material-symbols-outlined text-[18px]">logout</span>Cerrar sesión
-          </a>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="flex items-center gap-2 px-4 py-2 text-sm text-error hover:bg-surface-variant transition-colors w-full text-left">
+              <span class="material-symbols-outlined text-[18px]">logout</span>Cerrar sesión
+            </button>
+          </form>
         </div>
       </div>
     </div>

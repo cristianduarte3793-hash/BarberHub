@@ -1,0 +1,1749 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$yXSN0fNz7hN1dl1K0rylyk$WZHUjNLKDYoxZqE0tTgvUEeY3+mIKS5y9Pjj+eh2gHk=",
+    "last_login": "2026-08-05T16:00:33.122Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "Administrador",
+    "last_name": "BarberHub",
+    "email": "admin@barberhub.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-07-28T16:48:55.513Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$Z5cH5fj9XBw2Pd5FTfg66t$NgmISXUEmyDF1ApzzheanRZrI8cRemkIiWOlhgeEdvQ=",
+    "last_login": "2026-08-03T14:03:02.642Z",
+    "is_superuser": false,
+    "username": "marco.rossi",
+    "first_name": "Marco",
+    "last_name": "Rossi",
+    "email": "marco.rossi@barberhub.co",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-07-30T15:53:29.646Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$B3NxNQOCPR3ZqdrF53f42j$Ilyx0oIka3LAcdHO46h3Vo2ikb8qOsrfbEB8qftoJbA=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "alex.chen",
+    "first_name": "Alex",
+    "last_name": "Chen",
+    "email": "alex.chen@barberhub.co",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-07-30T15:53:30.082Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$iaJfYp0dkbzClOuh8NFwUl$R1JwUMoyYzNLHERjT/kEcN0zJfqk2ysoU4rukgoUXrc=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "julian.mora",
+    "first_name": "Julián",
+    "last_name": "Mora",
+    "email": "julian.mora@barberhub.co",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-07-30T15:53:30.505Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$PkP7a9OBZR9lCJt4bo0ieD$ulbJpMs6V+tagW/oO78jS2cBqZfiTFk/YDYmTIALG78=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "santi.ruiz",
+    "first_name": "Santiago",
+    "last_name": "Ruiz",
+    "email": "santi.ruiz@barberhub.co",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-07-30T15:53:30.920Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$VEsyWkKYxPnt8XrwL8cUvA$yKNgbiOxvI0qUYJEZ1RV5JaAIiqMIVh4RnR8Gvc9VYY=",
+    "last_login": "2026-08-03T16:27:29.540Z",
+    "is_superuser": false,
+    "username": "carlos.gutierrez",
+    "first_name": "Carlos",
+    "last_name": "Gutiérrez",
+    "email": "carlos.g@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-07-30T15:53:31.335Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$P3h1B2OxhM8JsN548GLONm$6JAS2HXCWcvNzFSIj4N8idxvVCu3V++7rfvPtl6+e4c=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "andres.lopez",
+    "first_name": "Andrés",
+    "last_name": "López",
+    "email": "andres.l@hotmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-07-30T15:53:31.738Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$5CAO09d6GzYjXade1EYnM7$+XIrW9z5ZJJZ8YPgt9OruFOTOf5h7IbbgfK3NN06k+0=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "roberto.vargas",
+    "first_name": "Roberto",
+    "last_name": "Vargas",
+    "email": "roberto.v@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-07-30T15:53:32.122Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$KS4AjcXWLEszde2sRibZ87$/SJ1Ae7kAFnmzmlpBtlC1J/C0y88AYkQt9uzXJH/TI4=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "miguel.torres",
+    "first_name": "Miguel",
+    "last_name": "Torres",
+    "email": "miguel.t@outlook.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-07-30T15:53:32.547Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$CL414nYmvW91XkyVV2eMey$pTaboS7GGRpCpNUK3oVVZ4wIK7LZUCSJawN5s3YcUcw=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "david.ramirez",
+    "first_name": "David",
+    "last_name": "Ramírez",
+    "email": "david.r@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-07-30T15:53:32.947Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$Nker33GYdUFh2kuOwHvmIR$4ivvZBHxcWEIDvzdnWBG/UPfYjBjenoP9gL9qsAEj+0=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "juan.perez",
+    "first_name": "Juan",
+    "last_name": "Pérez",
+    "email": "juan.p@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-07-30T15:53:33.318Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$Melle47xc87CrMtGe1CqcZ$/SkeGy3FuZqItxnm7nmtJ9M/hqX3uMlsoVIdWErqP+M=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "nicolas.herrera",
+    "first_name": "Nicolás",
+    "last_name": "Herrera",
+    "email": "nicolas.h@yahoo.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-07-30T15:53:33.706Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$DW5XzptwPbuFjpqg8vs29K$76MQBxRPjzxxNg/aSUShai4Z0oZSO1Pj4YNzl+H6Fxk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "felipe.castro",
+    "first_name": "Felipe",
+    "last_name": "Castro",
+    "email": "felipe.c@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-07-30T15:53:34.096Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$LBYHeIHrcnktvnTuR45VcV$jIZe1m0wmz2NZn3aYihDI/A5fJChLKRRRBBxVv0vfQI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "sebastian.rojas",
+    "first_name": "Sebastián",
+    "last_name": "Rojas",
+    "email": "sebastian.r@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-07-30T15:53:34.480Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$F8YBDN2XtI1QmjsiNargph$eJUfH5DQLopwaA88nGdYdkQHIxvaZU/v9vDo6uK3zgI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "camilo.mendez",
+    "first_name": "Camilo",
+    "last_name": "Méndez",
+    "email": "camilo.m@outlook.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-07-30T15:53:34.864Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "agenda.perfilusuario",
+  "pk": 3,
+  "fields": {
+    "usuario": [
+      "marco.rossi"
+    ],
+    "telefono": "+57 312 100 0001",
+    "foto_perfil": "perfiles/WhatsApp_Image_2026-06-11_at_7.27.17_PM.jpeg",
+    "rol": "BARBERO",
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:30.050Z",
+    "actualizado_en": "2026-08-03T13:53:04.432Z"
+  }
+},
+{
+  "model": "agenda.perfilusuario",
+  "pk": 4,
+  "fields": {
+    "usuario": [
+      "alex.chen"
+    ],
+    "telefono": "+57 312 100 0002",
+    "foto_perfil": "",
+    "rol": "BARBERO",
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:30.490Z",
+    "actualizado_en": "2026-07-30T15:53:30.490Z"
+  }
+},
+{
+  "model": "agenda.perfilusuario",
+  "pk": 5,
+  "fields": {
+    "usuario": [
+      "julian.mora"
+    ],
+    "telefono": "+57 312 100 0003",
+    "foto_perfil": "",
+    "rol": "BARBERO",
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:30.902Z",
+    "actualizado_en": "2026-07-30T15:53:30.902Z"
+  }
+},
+{
+  "model": "agenda.perfilusuario",
+  "pk": 6,
+  "fields": {
+    "usuario": [
+      "santi.ruiz"
+    ],
+    "telefono": "+57 312 100 0004",
+    "foto_perfil": "",
+    "rol": "BARBERO",
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:31.311Z",
+    "actualizado_en": "2026-07-30T15:53:31.311Z"
+  }
+},
+{
+  "model": "agenda.perfilusuario",
+  "pk": 7,
+  "fields": {
+    "usuario": [
+      "carlos.gutierrez"
+    ],
+    "telefono": "+57 300 111 2233",
+    "foto_perfil": "perfiles/2830030B-581E-4A45-9BE0-E6BD8AAE4EC1.jpg",
+    "rol": "CLIENTE",
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:31.734Z",
+    "actualizado_en": "2026-07-30T16:01:23.673Z"
+  }
+},
+{
+  "model": "agenda.perfilusuario",
+  "pk": 8,
+  "fields": {
+    "usuario": [
+      "andres.lopez"
+    ],
+    "telefono": "+57 301 222 3344",
+    "foto_perfil": "",
+    "rol": "CLIENTE",
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:32.117Z",
+    "actualizado_en": "2026-07-30T15:53:32.117Z"
+  }
+},
+{
+  "model": "agenda.perfilusuario",
+  "pk": 9,
+  "fields": {
+    "usuario": [
+      "roberto.vargas"
+    ],
+    "telefono": "+57 302 333 4455",
+    "foto_perfil": "",
+    "rol": "CLIENTE",
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:32.544Z",
+    "actualizado_en": "2026-07-30T15:53:32.544Z"
+  }
+},
+{
+  "model": "agenda.perfilusuario",
+  "pk": 10,
+  "fields": {
+    "usuario": [
+      "miguel.torres"
+    ],
+    "telefono": "+57 303 444 5566",
+    "foto_perfil": "",
+    "rol": "CLIENTE",
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:32.943Z",
+    "actualizado_en": "2026-07-30T15:53:32.944Z"
+  }
+},
+{
+  "model": "agenda.perfilusuario",
+  "pk": 11,
+  "fields": {
+    "usuario": [
+      "david.ramirez"
+    ],
+    "telefono": "+57 304 555 6677",
+    "foto_perfil": "",
+    "rol": "CLIENTE",
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:33.314Z",
+    "actualizado_en": "2026-07-30T15:53:33.315Z"
+  }
+},
+{
+  "model": "agenda.perfilusuario",
+  "pk": 12,
+  "fields": {
+    "usuario": [
+      "juan.perez"
+    ],
+    "telefono": "+57 305 666 7788",
+    "foto_perfil": "",
+    "rol": "CLIENTE",
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:33.701Z",
+    "actualizado_en": "2026-07-30T15:53:33.701Z"
+  }
+},
+{
+  "model": "agenda.perfilusuario",
+  "pk": 13,
+  "fields": {
+    "usuario": [
+      "nicolas.herrera"
+    ],
+    "telefono": "+57 306 777 8899",
+    "foto_perfil": "",
+    "rol": "CLIENTE",
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:34.092Z",
+    "actualizado_en": "2026-07-30T15:53:34.092Z"
+  }
+},
+{
+  "model": "agenda.perfilusuario",
+  "pk": 14,
+  "fields": {
+    "usuario": [
+      "felipe.castro"
+    ],
+    "telefono": "+57 307 888 9900",
+    "foto_perfil": "",
+    "rol": "CLIENTE",
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:34.477Z",
+    "actualizado_en": "2026-07-30T15:53:34.477Z"
+  }
+},
+{
+  "model": "agenda.perfilusuario",
+  "pk": 15,
+  "fields": {
+    "usuario": [
+      "sebastian.rojas"
+    ],
+    "telefono": "+57 308 999 0011",
+    "foto_perfil": "",
+    "rol": "CLIENTE",
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:34.861Z",
+    "actualizado_en": "2026-07-30T15:53:34.861Z"
+  }
+},
+{
+  "model": "agenda.perfilusuario",
+  "pk": 16,
+  "fields": {
+    "usuario": [
+      "camilo.mendez"
+    ],
+    "telefono": "+57 309 000 1122",
+    "foto_perfil": "",
+    "rol": "CLIENTE",
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:35.275Z",
+    "actualizado_en": "2026-07-30T15:53:35.275Z"
+  }
+},
+{
+  "model": "agenda.perfilusuario",
+  "pk": 17,
+  "fields": {
+    "usuario": [
+      "admin"
+    ],
+    "telefono": "+57 310 000 0000",
+    "foto_perfil": "perfiles/ChatGPT_Image_31_jul_2026_11_50_50.png",
+    "rol": "ADMIN",
+    "activo": true,
+    "creado_en": "2026-07-30T15:58:05.225Z",
+    "actualizado_en": "2026-08-03T14:02:00.253Z"
+  }
+},
+{
+  "model": "agenda.servicio",
+  "pk": 1,
+  "fields": {
+    "nombre": "Corte Clásico",
+    "descripcion": "Corte tradicional con tijera y máquina, acabado impecable.",
+    "precio": "25000",
+    "duracion": 45,
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:29.621Z"
+  }
+},
+{
+  "model": "agenda.servicio",
+  "pk": 2,
+  "fields": {
+    "nombre": "Corte Degradado (Fade)",
+    "descripcion": "Degradado de alta precisión con distintos niveles de máquina.",
+    "precio": "0",
+    "duracion": 60,
+    "activo": false,
+    "creado_en": "2026-07-30T15:53:29.627Z"
+  }
+},
+{
+  "model": "agenda.servicio",
+  "pk": 3,
+  "fields": {
+    "nombre": "Arreglo de Barba",
+    "descripcion": "Perfilado con navaja, toalla caliente y aceite hidratante.",
+    "precio": "20000",
+    "duracion": 30,
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:29.633Z"
+  }
+},
+{
+  "model": "agenda.servicio",
+  "pk": 4,
+  "fields": {
+    "nombre": "Corte + Barba",
+    "descripcion": "Experiencia completa: corte clásico y arreglo de barba con ritual de toalla.",
+    "precio": "45000",
+    "duracion": 75,
+    "activo": true,
+    "creado_en": "2026-07-30T15:53:29.639Z"
+  }
+},
+{
+  "model": "agenda.servicio",
+  "pk": 5,
+  "fields": {
+    "nombre": "Tinte Pelo",
+    "descripcion": "Tinte de pelo de color de elección",
+    "precio": "30000",
+    "duracion": 70,
+    "activo": true,
+    "creado_en": "2026-08-03T15:29:57.695Z"
+  }
+},
+{
+  "model": "agenda.barbero",
+  "pk": 1,
+  "fields": {
+    "perfil": 3,
+    "especialidad": "Master Barber  Cortes clásicos y degradados",
+    "descripcion": "Con más de 10 años de experiencia, Marco domina técnicas europeas y latinoamericanas.",
+    "estado": "ACTIVO",
+    "disponibilidad": "DISPONIBLE",
+    "servicios": [
+      4,
+      1,
+      2
+    ]
+  }
+},
+{
+  "model": "agenda.barbero",
+  "pk": 2,
+  "fields": {
+    "perfil": 4,
+    "especialidad": "Fading Expert  Degradados y diseños modernos",
+    "descripcion": "Especialista en fades de alta precisión y diseños creativos con navaja.",
+    "estado": "ACTIVO",
+    "disponibilidad": "DISPONIBLE",
+    "servicios": [
+      4,
+      2
+    ]
+  }
+},
+{
+  "model": "agenda.barbero",
+  "pk": 3,
+  "fields": {
+    "perfil": 5,
+    "especialidad": "Classic Specialist  Barba y afeitado tradicional",
+    "descripcion": "Maestro del afeitado clásico con navaja y especialista en cuidado de barba.",
+    "estado": "ACTIVO",
+    "disponibilidad": "DISPONIBLE",
+    "servicios": [
+      3,
+      4,
+      1
+    ]
+  }
+},
+{
+  "model": "agenda.barbero",
+  "pk": 4,
+  "fields": {
+    "perfil": 6,
+    "especialidad": "Creative Stylist  Estilos urbanos y tendencias",
+    "descripcion": "El más joven del equipo, especializado en tendencias urbanas y estilos contemporáneos.",
+    "estado": "ACTIVO",
+    "disponibilidad": "DISPONIBLE",
+    "servicios": [
+      3,
+      4,
+      1,
+      2
+    ]
+  }
+},
+{
+  "model": "agenda.horario",
+  "pk": 1,
+  "fields": {
+    "dia_semana": 0,
+    "fecha_especifica": null,
+    "hora_inicio": "09:00:00",
+    "hora_fin": "20:00:00",
+    "abierto": true,
+    "motivo_bloqueo": null
+  }
+},
+{
+  "model": "agenda.horario",
+  "pk": 2,
+  "fields": {
+    "dia_semana": 1,
+    "fecha_especifica": null,
+    "hora_inicio": "09:00:00",
+    "hora_fin": "20:00:00",
+    "abierto": true,
+    "motivo_bloqueo": null
+  }
+},
+{
+  "model": "agenda.horario",
+  "pk": 3,
+  "fields": {
+    "dia_semana": 2,
+    "fecha_especifica": null,
+    "hora_inicio": "09:00:00",
+    "hora_fin": "20:00:00",
+    "abierto": true,
+    "motivo_bloqueo": null
+  }
+},
+{
+  "model": "agenda.horario",
+  "pk": 4,
+  "fields": {
+    "dia_semana": 3,
+    "fecha_especifica": null,
+    "hora_inicio": "09:00:00",
+    "hora_fin": "20:00:00",
+    "abierto": true,
+    "motivo_bloqueo": null
+  }
+},
+{
+  "model": "agenda.horario",
+  "pk": 5,
+  "fields": {
+    "dia_semana": 4,
+    "fecha_especifica": null,
+    "hora_inicio": "09:00:00",
+    "hora_fin": "20:00:00",
+    "abierto": true,
+    "motivo_bloqueo": null
+  }
+},
+{
+  "model": "agenda.horario",
+  "pk": 6,
+  "fields": {
+    "dia_semana": 5,
+    "fecha_especifica": null,
+    "hora_inicio": "09:00:00",
+    "hora_fin": "18:00:00",
+    "abierto": true,
+    "motivo_bloqueo": null
+  }
+},
+{
+  "model": "agenda.horario",
+  "pk": 7,
+  "fields": {
+    "dia_semana": 6,
+    "fecha_especifica": null,
+    "hora_inicio": "09:00:00",
+    "hora_fin": "18:00:00",
+    "abierto": false,
+    "motivo_bloqueo": "Domingo  día de descanso"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 1,
+  "fields": {
+    "cliente": 7,
+    "barbero": 1,
+    "servicio": 1,
+    "fecha": "2026-07-02",
+    "hora_inicio": "09:00:00",
+    "hora_fin": "09:45:00",
+    "precio": "25",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000001",
+    "creado_en": "2026-07-30T15:53:35.351Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 2,
+  "fields": {
+    "cliente": 8,
+    "barbero": 2,
+    "servicio": 2,
+    "fecha": "2026-07-02",
+    "hora_inicio": "10:00:00",
+    "hora_fin": "11:00:00",
+    "precio": "30",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000002",
+    "creado_en": "2026-07-30T15:53:35.357Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 3,
+  "fields": {
+    "cliente": 9,
+    "barbero": 3,
+    "servicio": 3,
+    "fecha": "2026-07-02",
+    "hora_inicio": "11:00:00",
+    "hora_fin": "11:30:00",
+    "precio": "20",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000003",
+    "creado_en": "2026-07-30T15:53:35.362Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 4,
+  "fields": {
+    "cliente": 10,
+    "barbero": 4,
+    "servicio": 4,
+    "fecha": "2026-07-03",
+    "hora_inicio": "09:00:00",
+    "hora_fin": "10:15:00",
+    "precio": "45",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000004",
+    "creado_en": "2026-07-30T15:53:35.366Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 5,
+  "fields": {
+    "cliente": 11,
+    "barbero": 1,
+    "servicio": 2,
+    "fecha": "2026-07-03",
+    "hora_inicio": "10:30:00",
+    "hora_fin": "11:30:00",
+    "precio": "30",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000005",
+    "creado_en": "2026-07-30T15:53:35.371Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 6,
+  "fields": {
+    "cliente": 12,
+    "barbero": 2,
+    "servicio": 1,
+    "fecha": "2026-07-04",
+    "hora_inicio": "09:00:00",
+    "hora_fin": "09:45:00",
+    "precio": "25",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000006",
+    "creado_en": "2026-07-30T15:53:35.380Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 7,
+  "fields": {
+    "cliente": 13,
+    "barbero": 3,
+    "servicio": 4,
+    "fecha": "2026-07-04",
+    "hora_inicio": "11:00:00",
+    "hora_fin": "12:15:00",
+    "precio": "45",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000007",
+    "creado_en": "2026-07-30T15:53:35.384Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 8,
+  "fields": {
+    "cliente": 14,
+    "barbero": 1,
+    "servicio": 3,
+    "fecha": "2026-07-06",
+    "hora_inicio": "09:00:00",
+    "hora_fin": "09:30:00",
+    "precio": "20",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000008",
+    "creado_en": "2026-07-30T15:53:35.388Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 9,
+  "fields": {
+    "cliente": 15,
+    "barbero": 4,
+    "servicio": 1,
+    "fecha": "2026-07-06",
+    "hora_inicio": "14:00:00",
+    "hora_fin": "14:45:00",
+    "precio": "25",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000009",
+    "creado_en": "2026-07-30T15:53:35.393Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 10,
+  "fields": {
+    "cliente": 16,
+    "barbero": 2,
+    "servicio": 2,
+    "fecha": "2026-07-06",
+    "hora_inicio": "10:00:00",
+    "hora_fin": "11:00:00",
+    "precio": "30",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000010",
+    "creado_en": "2026-07-30T15:53:35.398Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 11,
+  "fields": {
+    "cliente": 7,
+    "barbero": 1,
+    "servicio": 4,
+    "fecha": "2026-07-09",
+    "hora_inicio": "09:00:00",
+    "hora_fin": "10:15:00",
+    "precio": "45",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000011",
+    "creado_en": "2026-07-30T15:53:35.402Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 12,
+  "fields": {
+    "cliente": 8,
+    "barbero": 3,
+    "servicio": 1,
+    "fecha": "2026-07-09",
+    "hora_inicio": "11:00:00",
+    "hora_fin": "11:45:00",
+    "precio": "25",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000012",
+    "creado_en": "2026-07-30T15:53:35.408Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 13,
+  "fields": {
+    "cliente": 9,
+    "barbero": 4,
+    "servicio": 2,
+    "fecha": "2026-07-10",
+    "hora_inicio": "09:30:00",
+    "hora_fin": "10:30:00",
+    "precio": "30",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000013",
+    "creado_en": "2026-07-30T15:53:35.412Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 14,
+  "fields": {
+    "cliente": 10,
+    "barbero": 2,
+    "servicio": 3,
+    "fecha": "2026-07-10",
+    "hora_inicio": "14:00:00",
+    "hora_fin": "14:30:00",
+    "precio": "20",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000014",
+    "creado_en": "2026-07-30T15:53:35.416Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 15,
+  "fields": {
+    "cliente": 11,
+    "barbero": 1,
+    "servicio": 1,
+    "fecha": "2026-07-11",
+    "hora_inicio": "10:00:00",
+    "hora_fin": "10:45:00",
+    "precio": "25",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000015",
+    "creado_en": "2026-07-30T15:53:35.420Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 16,
+  "fields": {
+    "cliente": 12,
+    "barbero": 3,
+    "servicio": 4,
+    "fecha": "2026-07-11",
+    "hora_inicio": "16:00:00",
+    "hora_fin": "17:15:00",
+    "precio": "45",
+    "estado": "CANCELADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000016",
+    "creado_en": "2026-07-30T15:53:35.426Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 17,
+  "fields": {
+    "cliente": 13,
+    "barbero": 2,
+    "servicio": 2,
+    "fecha": "2026-07-13",
+    "hora_inicio": "09:00:00",
+    "hora_fin": "10:00:00",
+    "precio": "30",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000017",
+    "creado_en": "2026-07-30T15:53:35.430Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 18,
+  "fields": {
+    "cliente": 14,
+    "barbero": 4,
+    "servicio": 1,
+    "fecha": "2026-07-13",
+    "hora_inicio": "11:00:00",
+    "hora_fin": "11:45:00",
+    "precio": "25",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000018",
+    "creado_en": "2026-07-30T15:53:35.434Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 19,
+  "fields": {
+    "cliente": 15,
+    "barbero": 1,
+    "servicio": 3,
+    "fecha": "2026-07-13",
+    "hora_inicio": "14:30:00",
+    "hora_fin": "15:00:00",
+    "precio": "20",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000019",
+    "creado_en": "2026-07-30T15:53:35.440Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 20,
+  "fields": {
+    "cliente": 16,
+    "barbero": 3,
+    "servicio": 4,
+    "fecha": "2026-07-14",
+    "hora_inicio": "10:00:00",
+    "hora_fin": "11:15:00",
+    "precio": "45",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000020",
+    "creado_en": "2026-07-30T15:53:35.444Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 21,
+  "fields": {
+    "cliente": 7,
+    "barbero": 1,
+    "servicio": 2,
+    "fecha": "2026-07-16",
+    "hora_inicio": "09:00:00",
+    "hora_fin": "10:00:00",
+    "precio": "30",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000021",
+    "creado_en": "2026-07-30T15:53:35.448Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 22,
+  "fields": {
+    "cliente": 8,
+    "barbero": 2,
+    "servicio": 4,
+    "fecha": "2026-07-16",
+    "hora_inicio": "10:30:00",
+    "hora_fin": "11:45:00",
+    "precio": "45",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000022",
+    "creado_en": "2026-07-30T15:53:35.453Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 23,
+  "fields": {
+    "cliente": 9,
+    "barbero": 3,
+    "servicio": 1,
+    "fecha": "2026-07-17",
+    "hora_inicio": "09:00:00",
+    "hora_fin": "09:45:00",
+    "precio": "25",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000023",
+    "creado_en": "2026-07-30T15:53:35.458Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 24,
+  "fields": {
+    "cliente": 10,
+    "barbero": 4,
+    "servicio": 3,
+    "fecha": "2026-07-17",
+    "hora_inicio": "11:00:00",
+    "hora_fin": "11:30:00",
+    "precio": "20",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000024",
+    "creado_en": "2026-07-30T15:53:35.463Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 25,
+  "fields": {
+    "cliente": 11,
+    "barbero": 1,
+    "servicio": 4,
+    "fecha": "2026-07-18",
+    "hora_inicio": "09:00:00",
+    "hora_fin": "10:15:00",
+    "precio": "45",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000025",
+    "creado_en": "2026-07-30T15:53:35.467Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 26,
+  "fields": {
+    "cliente": 12,
+    "barbero": 2,
+    "servicio": 1,
+    "fecha": "2026-07-20",
+    "hora_inicio": "14:00:00",
+    "hora_fin": "14:45:00",
+    "precio": "25",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000026",
+    "creado_en": "2026-07-30T15:53:35.473Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 27,
+  "fields": {
+    "cliente": 13,
+    "barbero": 3,
+    "servicio": 2,
+    "fecha": "2026-07-20",
+    "hora_inicio": "10:00:00",
+    "hora_fin": "11:00:00",
+    "precio": "30",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000027",
+    "creado_en": "2026-07-30T15:53:35.479Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 28,
+  "fields": {
+    "cliente": 14,
+    "barbero": 4,
+    "servicio": 1,
+    "fecha": "2026-07-20",
+    "hora_inicio": "16:00:00",
+    "hora_fin": "16:45:00",
+    "precio": "25",
+    "estado": "CANCELADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000028",
+    "creado_en": "2026-07-30T15:53:35.483Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 29,
+  "fields": {
+    "cliente": 7,
+    "barbero": 1,
+    "servicio": 1,
+    "fecha": "2026-07-23",
+    "hora_inicio": "09:00:00",
+    "hora_fin": "09:45:00",
+    "precio": "25",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000029",
+    "creado_en": "2026-07-30T15:53:35.487Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 30,
+  "fields": {
+    "cliente": 8,
+    "barbero": 2,
+    "servicio": 2,
+    "fecha": "2026-07-23",
+    "hora_inicio": "10:30:00",
+    "hora_fin": "11:30:00",
+    "precio": "30",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000030",
+    "creado_en": "2026-07-30T15:53:35.492Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 31,
+  "fields": {
+    "cliente": 9,
+    "barbero": 3,
+    "servicio": 4,
+    "fecha": "2026-07-24",
+    "hora_inicio": "09:00:00",
+    "hora_fin": "10:15:00",
+    "precio": "45",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000031",
+    "creado_en": "2026-07-30T15:53:35.497Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 32,
+  "fields": {
+    "cliente": 10,
+    "barbero": 4,
+    "servicio": 3,
+    "fecha": "2026-07-25",
+    "hora_inicio": "11:00:00",
+    "hora_fin": "11:30:00",
+    "precio": "20",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000032",
+    "creado_en": "2026-07-30T15:53:35.503Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 33,
+  "fields": {
+    "cliente": 11,
+    "barbero": 1,
+    "servicio": 2,
+    "fecha": "2026-07-27",
+    "hora_inicio": "09:00:00",
+    "hora_fin": "10:00:00",
+    "precio": "30",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000033",
+    "creado_en": "2026-07-30T15:53:35.511Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 34,
+  "fields": {
+    "cliente": 12,
+    "barbero": 2,
+    "servicio": 4,
+    "fecha": "2026-07-27",
+    "hora_inicio": "14:00:00",
+    "hora_fin": "15:15:00",
+    "precio": "45",
+    "estado": "FINALIZADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000034",
+    "creado_en": "2026-07-30T15:53:35.523Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 35,
+  "fields": {
+    "cliente": 13,
+    "barbero": 1,
+    "servicio": 1,
+    "fecha": "2026-07-31",
+    "hora_inicio": "09:00:00",
+    "hora_fin": "09:45:00",
+    "precio": "25",
+    "estado": "CONFIRMADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000035",
+    "creado_en": "2026-07-30T15:53:35.530Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 36,
+  "fields": {
+    "cliente": 14,
+    "barbero": 2,
+    "servicio": 2,
+    "fecha": "2026-07-31",
+    "hora_inicio": "10:30:00",
+    "hora_fin": "11:30:00",
+    "precio": "30",
+    "estado": "PENDIENTE",
+    "observaciones": null,
+    "codigo_reserva": "BH-000036",
+    "creado_en": "2026-07-30T15:53:35.535Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 37,
+  "fields": {
+    "cliente": 15,
+    "barbero": 3,
+    "servicio": 4,
+    "fecha": "2026-08-01",
+    "hora_inicio": "09:00:00",
+    "hora_fin": "10:15:00",
+    "precio": "45",
+    "estado": "CONFIRMADA",
+    "observaciones": null,
+    "codigo_reserva": "BH-000037",
+    "creado_en": "2026-07-30T15:53:35.539Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 38,
+  "fields": {
+    "cliente": 16,
+    "barbero": 4,
+    "servicio": 3,
+    "fecha": "2026-08-03",
+    "hora_inicio": "11:00:00",
+    "hora_fin": "11:30:00",
+    "precio": "20",
+    "estado": "PENDIENTE",
+    "observaciones": null,
+    "codigo_reserva": "BH-000038",
+    "creado_en": "2026-07-30T15:53:35.543Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 39,
+  "fields": {
+    "cliente": 7,
+    "barbero": 1,
+    "servicio": 4,
+    "fecha": "2026-08-04",
+    "hora_inicio": "09:00:00",
+    "hora_fin": "10:15:00",
+    "precio": "45",
+    "estado": "EN_PROCESO",
+    "observaciones": null,
+    "codigo_reserva": "BH-000039",
+    "creado_en": "2026-07-30T15:53:35.547Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 40,
+  "fields": {
+    "cliente": 8,
+    "barbero": 2,
+    "servicio": 1,
+    "fecha": "2026-08-06",
+    "hora_inicio": "14:00:00",
+    "hora_fin": "14:45:00",
+    "precio": "25",
+    "estado": "PENDIENTE",
+    "observaciones": null,
+    "codigo_reserva": "BH-000040",
+    "creado_en": "2026-07-30T15:53:35.551Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 41,
+  "fields": {
+    "cliente": 7,
+    "barbero": 3,
+    "servicio": 3,
+    "fecha": "2026-08-21",
+    "hora_inicio": "13:00:00",
+    "hora_fin": "13:30:00",
+    "precio": "20",
+    "estado": "PENDIENTE",
+    "observaciones": null,
+    "codigo_reserva": "BH-000041",
+    "creado_en": "2026-08-03T13:53:31.198Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 42,
+  "fields": {
+    "cliente": 7,
+    "barbero": 1,
+    "servicio": 4,
+    "fecha": "2026-08-13",
+    "hora_inicio": "10:00:00",
+    "hora_fin": "11:15:00",
+    "precio": "45",
+    "estado": "PENDIENTE",
+    "observaciones": null,
+    "codigo_reserva": "BH-000042",
+    "creado_en": "2026-08-03T14:02:54.552Z"
+  }
+},
+{
+  "model": "agenda.cita",
+  "pk": 43,
+  "fields": {
+    "cliente": 7,
+    "barbero": 1,
+    "servicio": 4,
+    "fecha": "2026-08-06",
+    "hora_inicio": "10:00:00",
+    "hora_fin": "11:15:00",
+    "precio": "45000",
+    "estado": "PENDIENTE",
+    "observaciones": null,
+    "codigo_reserva": "BH-000043",
+    "creado_en": "2026-08-03T16:13:09.745Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 1,
+  "fields": {
+    "cita": 1,
+    "cliente": 7,
+    "barbero": 1,
+    "puntuacion": 5,
+    "comentario": "Excelente servicio, el mejor corte que me han hecho en años.",
+    "creado_en": "2026-07-30T15:53:35.565Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 2,
+  "fields": {
+    "cita": 2,
+    "cliente": 8,
+    "barbero": 2,
+    "puntuacion": 5,
+    "comentario": "Marco es un artista, salí muy satisfecho con el resultado.",
+    "creado_en": "2026-07-30T15:53:35.570Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 3,
+  "fields": {
+    "cita": 3,
+    "cliente": 9,
+    "barbero": 3,
+    "puntuacion": 5,
+    "comentario": "El ambiente de la barbería es increíble, volveré sin duda.",
+    "creado_en": "2026-07-30T15:53:35.577Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 4,
+  "fields": {
+    "cita": 4,
+    "cliente": 10,
+    "barbero": 4,
+    "puntuacion": 5,
+    "comentario": "El degradado quedó perfecto, exactamente lo que pedí.",
+    "creado_en": "2026-07-30T15:53:35.582Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 5,
+  "fields": {
+    "cita": 6,
+    "cliente": 12,
+    "barbero": 2,
+    "puntuacion": 5,
+    "comentario": "El ritual de toalla caliente fue una experiencia increíble.",
+    "creado_en": "2026-07-30T15:53:35.586Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 6,
+  "fields": {
+    "cita": 7,
+    "cliente": 13,
+    "barbero": 3,
+    "puntuacion": 5,
+    "comentario": "Puntual, limpio y excelente resultado. 100% recomendado.",
+    "creado_en": "2026-07-30T15:53:35.593Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 7,
+  "fields": {
+    "cita": 8,
+    "cliente": 14,
+    "barbero": 1,
+    "puntuacion": 4,
+    "comentario": "Santi entendió perfectamente lo que quería. Gran trabajo.",
+    "creado_en": "2026-07-30T15:53:35.597Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 8,
+  "fields": {
+    "cita": 10,
+    "cliente": 16,
+    "barbero": 2,
+    "puntuacion": 5,
+    "comentario": "Primera vez aquí y ya soy cliente fijo. El nivel es muy alto.",
+    "creado_en": "2026-07-30T15:53:35.602Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 9,
+  "fields": {
+    "cita": 11,
+    "cliente": 7,
+    "barbero": 1,
+    "puntuacion": 5,
+    "comentario": "Excelente servicio, el mejor corte que me han hecho en años.",
+    "creado_en": "2026-07-30T15:53:35.607Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 10,
+  "fields": {
+    "cita": 12,
+    "cliente": 8,
+    "barbero": 3,
+    "puntuacion": 5,
+    "comentario": "Marco es un artista, salí muy satisfecho con el resultado.",
+    "creado_en": "2026-07-30T15:53:35.611Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 11,
+  "fields": {
+    "cita": 13,
+    "cliente": 9,
+    "barbero": 4,
+    "puntuacion": 4,
+    "comentario": "El ambiente de la barbería es increíble, volveré sin duda.",
+    "creado_en": "2026-07-30T15:53:35.615Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 12,
+  "fields": {
+    "cita": 14,
+    "cliente": 10,
+    "barbero": 2,
+    "puntuacion": 5,
+    "comentario": "El degradado quedó perfecto, exactamente lo que pedí.",
+    "creado_en": "2026-07-30T15:53:35.618Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 13,
+  "fields": {
+    "cita": 17,
+    "cliente": 13,
+    "barbero": 2,
+    "puntuacion": 5,
+    "comentario": "El ritual de toalla caliente fue una experiencia increíble.",
+    "creado_en": "2026-07-30T15:53:35.624Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 14,
+  "fields": {
+    "cita": 18,
+    "cliente": 14,
+    "barbero": 4,
+    "puntuacion": 4,
+    "comentario": "Puntual, limpio y excelente resultado. 100% recomendado.",
+    "creado_en": "2026-07-30T15:53:35.630Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 15,
+  "fields": {
+    "cita": 19,
+    "cliente": 15,
+    "barbero": 1,
+    "puntuacion": 5,
+    "comentario": "Santi entendió perfectamente lo que quería. Gran trabajo.",
+    "creado_en": "2026-07-30T15:53:35.634Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 16,
+  "fields": {
+    "cita": 20,
+    "cliente": 16,
+    "barbero": 3,
+    "puntuacion": 5,
+    "comentario": "Primera vez aquí y ya soy cliente fijo. El nivel es muy alto.",
+    "creado_en": "2026-07-30T15:53:35.640Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 17,
+  "fields": {
+    "cita": 22,
+    "cliente": 8,
+    "barbero": 2,
+    "puntuacion": 5,
+    "comentario": "Excelente servicio, el mejor corte que me han hecho en años.",
+    "creado_en": "2026-07-30T15:53:35.645Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 18,
+  "fields": {
+    "cita": 23,
+    "cliente": 9,
+    "barbero": 3,
+    "puntuacion": 5,
+    "comentario": "Marco es un artista, salí muy satisfecho con el resultado.",
+    "creado_en": "2026-07-30T15:53:35.649Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 19,
+  "fields": {
+    "cita": 24,
+    "cliente": 10,
+    "barbero": 4,
+    "puntuacion": 5,
+    "comentario": "El ambiente de la barbería es increíble, volveré sin duda.",
+    "creado_en": "2026-07-30T15:53:35.654Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 20,
+  "fields": {
+    "cita": 25,
+    "cliente": 11,
+    "barbero": 1,
+    "puntuacion": 5,
+    "comentario": "El degradado quedó perfecto, exactamente lo que pedí.",
+    "creado_en": "2026-07-30T15:53:35.660Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 21,
+  "fields": {
+    "cita": 26,
+    "cliente": 12,
+    "barbero": 2,
+    "puntuacion": 5,
+    "comentario": "El ritual de toalla caliente fue una experiencia increíble.",
+    "creado_en": "2026-07-30T15:53:35.664Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 22,
+  "fields": {
+    "cita": 29,
+    "cliente": 7,
+    "barbero": 1,
+    "puntuacion": 5,
+    "comentario": "Puntual, limpio y excelente resultado. 100% recomendado.",
+    "creado_en": "2026-07-30T15:53:35.668Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 23,
+  "fields": {
+    "cita": 30,
+    "cliente": 8,
+    "barbero": 2,
+    "puntuacion": 4,
+    "comentario": "Santi entendió perfectamente lo que quería. Gran trabajo.",
+    "creado_en": "2026-07-30T15:53:35.673Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 24,
+  "fields": {
+    "cita": 31,
+    "cliente": 9,
+    "barbero": 3,
+    "puntuacion": 5,
+    "comentario": "Primera vez aquí y ya soy cliente fijo. El nivel es muy alto.",
+    "creado_en": "2026-07-30T15:53:35.677Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 25,
+  "fields": {
+    "cita": 33,
+    "cliente": 11,
+    "barbero": 1,
+    "puntuacion": 5,
+    "comentario": "Excelente servicio, el mejor corte que me han hecho en años.",
+    "creado_en": "2026-07-30T15:53:35.681Z"
+  }
+},
+{
+  "model": "agenda.calificacion",
+  "pk": 26,
+  "fields": {
+    "cita": 34,
+    "cliente": 12,
+    "barbero": 2,
+    "puntuacion": 5,
+    "comentario": "Marco es un artista, salí muy satisfecho con el resultado.",
+    "creado_en": "2026-07-30T15:53:35.686Z"
+  }
+},
+{
+  "model": "agenda.configuracionbarberia",
+  "pk": 1,
+  "fields": {
+    "nombre": "BarberHub",
+    "logo": "barberia/ChatGPT_Image_31_jul_2026_11_50_50.png",
+    "descripcion": "La mejor barbería premium de la ciudad.",
+    "direccion": "Calle 123 #45-67, Bogotá, Colombia",
+    "telefono": "+57 310 000 0000",
+    "correo": "hola@barberhub.co",
+    "facebook": "https://facebook.com/barberhub",
+    "instagram": "https://instagram.com/barberhub",
+    "tiktok": "https://tiktok.com/@barberhub",
+    "whatsapp": "+573100000000"
+  }
+}
+]

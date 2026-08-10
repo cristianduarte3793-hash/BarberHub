@@ -34,8 +34,8 @@ urlpatterns = [
     # MÓDULO ADMINISTRADOR
     # -----------------------------------------------------------------------
 
-    # Comprobante / recibo de cita
-    path('citas/<int:pk>/comprobante/',           views.comprobante_view,          name='comprobante_cita'),
+    # Comprobante / recibo de cita — usa código de reserva, no PK interno
+    path('citas/<str:codigo>/comprobante/',        views.comprobante_view,          name='comprobante_cita'),
 
     # Validación de comprobante (Admin)
     path('admin/validar/',                        views.validar_comprobante_view,  name='validar_comprobante'),
