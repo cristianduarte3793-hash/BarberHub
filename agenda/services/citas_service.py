@@ -13,9 +13,9 @@ from django.utils import timezone
 from ..models import Cita, Horario, Barbero, Servicio
 
 # ── Constantes de negocio ────────────────────────────────────────────────────
-MAX_DIAS_ANTICIPACION = 60   # No se puede agendar a más de 60 días
-MAX_CITAS_ACTIVAS     = 3    # Máximo de citas pendientes/confirmadas por cliente
-MIN_MIN_ANTICIPACION  = 30   # Mínimo 30 minutos de anticipación
+MAX_DIAS_ANTICIPACION  = 60  # No se puede agendar a más de 60 días
+MAX_CITAS_POR_DIA      = 2   # Máximo de citas activas por cliente en el mismo día
+MIN_MIN_ANTICIPACION   = 30  # Mínimo 30 minutos de anticipación
 PATRON_CODIGO         = re.compile(r'^BH-\d{6}$')  # Formato válido: BH-000001
 
 # Bloqueo diario por almuerzo — ningún slot puede comenzar ni solaparse con esta franja
@@ -212,15 +212,16 @@ class CitasService:
 
         # ── Validaciones del cliente (opcionales) ──────────────────────────
         if cliente:
-            # 10. Límite de citas activas por cliente
-            citas_activas = Cita.objects.filter(
+            # 10. Límite de citas activas por día (máximo 2 en el mismo día)
+            citas_hoy = Cita.objects.filter(
                 cliente=cliente,
+                fecha=fecha,
                 estado__in=['PENDIENTE', 'CONFIRMADA'],
             ).count()
-            if citas_activas >= MAX_CITAS_ACTIVAS:
+            if citas_hoy >= MAX_CITAS_POR_DIA:
                 errores.append(
-                    f'Ya tienes {citas_activas} cita(s) activa(s). '
-                    f'El máximo permitido es {MAX_CITAS_ACTIVAS}.'
+                    f'Ya tienes {citas_hoy} cita(s) para ese día. '
+                    f'El máximo permitido es {MAX_CITAS_POR_DIA} citas por día.'
                 )
 
             # 11. El cliente no tiene otra cita activa en ese mismo horario

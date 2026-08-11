@@ -32,6 +32,10 @@ from .cliente import (
 # Vistas de administrador
 from .admin import (
     barberos_view,
+    barbero_crear_view,
+    barbero_editar_view,
+    barbero_eliminar_view,
+    barbero_toggle_estado,
     servicios_view,
     servicio_crear,
     servicio_editar,
@@ -80,6 +84,10 @@ __all__ = [
     'slots_disponibles_view',
     # Admin
     'barberos_view',
+    'barbero_crear_view',
+    'barbero_editar_view',
+    'barbero_eliminar_view',
+    'barbero_toggle_estado',
     'servicios_view',
     'servicio_crear',
     'servicio_editar',

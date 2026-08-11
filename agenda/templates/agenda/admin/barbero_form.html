@@ -1,0 +1,200 @@
+{% extends 'agenda/base.html' %}
+
+{% block title %}{{ accion }} Barbero — BarberHub{% endblock %}
+{% block page_title %}{{ accion }} Barbero{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-6">
+
+  <!-- Header -->
+  <div class="flex items-center gap-4">
+    <a href="{% url 'barberos' %}"
+       class="p-2 text-on-surface-variant hover:text-secondary hover:bg-secondary/10 rounded-lg transition-all">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <div>
+      <h2 class="text-2xl font-bold text-on-surface font-['Montserrat']">{{ accion }} Barbero</h2>
+      <p class="text-on-surface-variant mt-1 text-sm">
+        {% if accion == 'Crear' %}Registra un nuevo profesional en el equipo.
+        {% else %}Actualiza los datos de {{ barbero }}.{% endif %}
+      </p>
+    </div>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="space-y-6">
+    {% csrf_token %}
+
+    <!-- Datos personales -->
+    <div class="glass-card rounded-xl p-6 space-y-4">
+      <h3 class="text-sm font-bold text-on-surface-variant uppercase tracking-wider flex items-center gap-2">
+        <span class="material-symbols-outlined text-secondary text-base">person</span>
+        Datos personales
+      </h3>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Nombre -->
+        <div>
+          <label class="block text-xs font-semibold text-on-surface-variant mb-1">Nombre *</label>
+          <input type="text" name="first_name"
+                 value="{{ form.first_name.value|default_if_none:'' }}"
+                 placeholder="Nombre"
+                 class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-secondary transition-colors">
+          {% if form.first_name.errors %}
+            <p class="text-error text-xs mt-1">{{ form.first_name.errors|join:', ' }}</p>
+          {% endif %}
+        </div>
+        <!-- Apellido -->
+        <div>
+          <label class="block text-xs font-semibold text-on-surface-variant mb-1">Apellido *</label>
+          <input type="text" name="last_name"
+                 value="{{ form.last_name.value|default_if_none:'' }}"
+                 placeholder="Apellido"
+                 class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-secondary transition-colors">
+          {% if form.last_name.errors %}
+            <p class="text-error text-xs mt-1">{{ form.last_name.errors|join:', ' }}</p>
+          {% endif %}
+        </div>
+        <!-- Usuario -->
+        <div>
+          <label class="block text-xs font-semibold text-on-surface-variant mb-1">Usuario *</label>
+          <input type="text" name="username"
+                 value="{{ form.username.value|default_if_none:'' }}"
+                 placeholder="Nombre de usuario"
+                 class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-secondary transition-colors">
+          {% if form.username.errors %}
+            <p class="text-error text-xs mt-1">{{ form.username.errors|join:', ' }}</p>
+          {% endif %}
+        </div>
+        <!-- Email -->
+        <div>
+          <label class="block text-xs font-semibold text-on-surface-variant mb-1">Correo</label>
+          <input type="email" name="email"
+                 value="{{ form.email.value|default_if_none:'' }}"
+                 placeholder="correo@ejemplo.com"
+                 class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-secondary transition-colors">
+          {% if form.email.errors %}
+            <p class="text-error text-xs mt-1">{{ form.email.errors|join:', ' }}</p>
+          {% endif %}
+        </div>
+        <!-- Teléfono -->
+        <div>
+          <label class="block text-xs font-semibold text-on-surface-variant mb-1">Teléfono</label>
+          <input type="text" name="telefono"
+                 value="{{ form.telefono.value|default_if_none:'' }}"
+                 placeholder="+57 310 000 0000"
+                 class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-secondary transition-colors">
+        </div>
+        <!-- Contraseña -->
+        <div>
+          <label class="block text-xs font-semibold text-on-surface-variant mb-1">
+            Contraseña {% if accion == 'Crear' %}*{% else %}<span class="text-on-surface-variant font-normal">(vacío = sin cambios)</span>{% endif %}
+          </label>
+          <input type="password" name="password"
+                 placeholder="{% if accion == 'Crear' %}Mínimo 8 caracteres{% else %}Dejar vacío para no cambiar{% endif %}"
+                 class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-secondary transition-colors">
+          {% if form.password.errors %}
+            <p class="text-error text-xs mt-1">{{ form.password.errors|join:', ' }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Foto de perfil -->
+      <div>
+        <label class="block text-xs font-semibold text-on-surface-variant mb-1">Foto de perfil</label>
+        {% if barbero and barbero.perfil.foto_perfil %}
+          <div class="flex items-center gap-4 mb-2">
+            <img src="{{ barbero.perfil.foto_perfil.url }}"
+                 class="w-16 h-16 rounded-full object-cover border border-outline" alt="Foto actual">
+            <span class="text-xs text-on-surface-variant">Foto actual — sube una nueva para reemplazarla</span>
+          </div>
+        {% endif %}
+        <input type="file" name="foto_perfil" accept="image/*"
+               class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-2 text-sm text-on-surface file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-secondary/10 file:text-secondary file:text-xs file:font-semibold cursor-pointer">
+      </div>
+    </div>
+
+    <!-- Datos profesionales -->
+    <div class="glass-card rounded-xl p-6 space-y-4">
+      <h3 class="text-sm font-bold text-on-surface-variant uppercase tracking-wider flex items-center gap-2">
+        <span class="material-symbols-outlined text-secondary text-base">content_cut</span>
+        Datos profesionales
+      </h3>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Especialidad -->
+        <div>
+          <label class="block text-xs font-semibold text-on-surface-variant mb-1">Especialidad</label>
+          <input type="text" name="especialidad"
+                 value="{{ form.especialidad.value|default_if_none:'' }}"
+                 placeholder="Ej: Fade, Degradado, Barba"
+                 class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-secondary transition-colors">
+        </div>
+        <!-- Estado -->
+        <div>
+          <label class="block text-xs font-semibold text-on-surface-variant mb-1">Estado *</label>
+          <select name="estado"
+                  class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-secondary transition-colors">
+            {% for value, label in form.fields.estado.choices %}
+              <option value="{{ value }}" {% if form.estado.value == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div>
+        <label class="block text-xs font-semibold text-on-surface-variant mb-1">Descripción</label>
+        <textarea name="descripcion" rows="3"
+                  placeholder="Breve descripción del barbero..."
+                  class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:border-secondary transition-colors resize-none">{{ form.descripcion.value|default_if_none:'' }}</textarea>
+      </div>
+    </div>
+
+    <!-- Servicios -->
+    <div class="glass-card rounded-xl p-6 space-y-3">
+      <h3 class="text-sm font-bold text-on-surface-variant uppercase tracking-wider flex items-center gap-2">
+        <span class="material-symbols-outlined text-secondary text-base">checklist</span>
+        Servicios que ofrece
+      </h3>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        {% for servicio in form.fields.servicios.queryset %}
+          <label class="flex items-center gap-2 cursor-pointer group">
+            <input type="checkbox" name="servicios" value="{{ servicio.pk }}"
+                   {% if servicio.pk in servicios_seleccionados %}checked{% endif %}
+                   class="w-4 h-4 accent-[color:var(--md-sys-color-secondary)]">
+            <span class="text-sm text-on-surface group-hover:text-secondary transition-colors">{{ servicio.nombre }}</span>
+          </label>
+        {% empty %}
+          <p class="text-xs text-on-surface-variant col-span-full">No hay servicios activos aún.</p>
+        {% endfor %}
+      </div>
+      {% if form.servicios.errors %}
+        <p class="text-error text-xs">{{ form.servicios.errors|join:', ' }}</p>
+      {% endif %}
+    </div>
+
+    <!-- Errores generales -->
+    {% if form.non_field_errors %}
+      <div class="bg-red-900/20 border border-error rounded-xl p-4">
+        {% for error in form.non_field_errors %}
+          <p class="text-error text-sm">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Acciones -->
+    <div class="flex justify-end gap-3">
+      <a href="{% url 'barberos' %}"
+         class="px-5 py-2.5 rounded-lg border border-outline-variant text-on-surface-variant text-sm font-semibold hover:bg-surface-variant transition-all">
+        Cancelar
+      </a>
+      <button type="submit"
+              class="px-6 py-2.5 bg-secondary text-on-secondary rounded-lg text-sm font-bold shadow hover:scale-[0.98] transition-all flex items-center gap-2">
+        <span class="material-symbols-outlined text-base">save</span>
+        {{ accion }} barbero
+      </button>
+    </div>
+  </form>
+
+</div>
+{% endblock %}

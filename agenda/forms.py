@@ -5,7 +5,7 @@ Formularios de BarberHub.
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
-from .models import PerfilUsuario, Servicio, Horario, ConfiguracionBarberia
+from .models import PerfilUsuario, Servicio, Horario, ConfiguracionBarberia, Barbero
 
 
 # ---------------------------------------------------------------------------
@@ -139,6 +139,92 @@ class HorarioForm(forms.ModelForm):
         if inicio and fin and inicio >= fin:
             raise forms.ValidationError('La hora de inicio debe ser anterior a la hora de fin.')
         return cleaned
+
+
+# ---------------------------------------------------------------------------
+# Barbero (Admin) — Crear y editar
+# ---------------------------------------------------------------------------
+class BarberoForm(forms.Form):
+    """
+    Formulario para crear o editar un barbero.
+    Maneja tanto el User/PerfilUsuario como el Barbero en un solo form.
+    """
+    # Datos del usuario
+    first_name = forms.CharField(label='Nombre', max_length=30,
+        widget=forms.TextInput(attrs={'placeholder': 'Nombre'}))
+    last_name = forms.CharField(label='Apellido', max_length=30,
+        widget=forms.TextInput(attrs={'placeholder': 'Apellido'}))
+    username = forms.CharField(label='Usuario', max_length=150,
+        widget=forms.TextInput(attrs={'placeholder': 'Nombre de usuario'}))
+    email = forms.EmailField(label='Correo electrónico', required=False,
+        widget=forms.EmailInput(attrs={'placeholder': 'correo@ejemplo.com'}))
+    telefono = forms.CharField(label='Teléfono', max_length=20, required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Ej: +57 310 000 0000'}))
+    foto_perfil = forms.ImageField(label='Foto de perfil', required=False)
+
+    # Contraseña solo para creación (opcional en edición)
+    password = forms.CharField(
+        label='Contraseña',
+        required=False,
+        widget=forms.PasswordInput(attrs={'placeholder': 'Dejar vacío para no cambiar'}),
+        help_text='Obligatorio al crear. En edición, déjalo vacío para no modificar.',
+    )
+
+    # Datos del barbero
+    especialidad = forms.CharField(label='Especialidad', max_length=100, required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Ej: Fade, Degradado, Barba'}))
+    descripcion = forms.CharField(label='Descripción', required=False,
+        widget=forms.Textarea(attrs={'rows': 3, 'placeholder': 'Breve descripción del barbero...'}))
+    estado = forms.ChoiceField(
+        label='Estado',
+        choices=Barbero.ESTADO_CHOICES,
+    )
+    servicios = forms.ModelMultipleChoiceField(
+        label='Servicios que ofrece',
+        queryset=Servicio.objects.filter(activo=True),
+        required=False,
+        widget=forms.CheckboxSelectMultiple(),
+    )
+
+    def __init__(self, *args, barbero_instance=None, **kwargs):
+        """
+        Si se pasa barbero_instance, pre-rellena los campos para edición.
+        """
+        super().__init__(*args, **kwargs)
+        self._barbero = barbero_instance
+
+        if barbero_instance:
+            usuario = barbero_instance.perfil.usuario
+            perfil  = barbero_instance.perfil
+            self.fields['first_name'].initial  = usuario.first_name
+            self.fields['last_name'].initial   = usuario.last_name
+            self.fields['username'].initial    = usuario.username
+            self.fields['email'].initial       = usuario.email
+            self.fields['telefono'].initial    = perfil.telefono
+            self.fields['especialidad'].initial = barbero_instance.especialidad
+            self.fields['descripcion'].initial = barbero_instance.descripcion
+            self.fields['estado'].initial      = barbero_instance.estado
+            self.fields['servicios'].initial   = barbero_instance.servicios.all()
+            # En edición el queryset de servicios incluye también los inactivos ya asignados
+            self.fields['servicios'].queryset  = Servicio.objects.all()
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        qs = User.objects.filter(username=username)
+        if self._barbero:
+            qs = qs.exclude(pk=self._barbero.perfil.usuario.pk)
+        if qs.exists():
+            raise forms.ValidationError('Este nombre de usuario ya está en uso.')
+        return username
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password', '').strip()
+        # Al crear (sin instancia) la contraseña es obligatoria
+        if not self._barbero and not password:
+            raise forms.ValidationError('La contraseña es obligatoria al crear un barbero.')
+        if password and len(password) < 8:
+            raise forms.ValidationError('La contraseña debe tener al menos 8 caracteres.')
+        return password
 
 
 # ---------------------------------------------------------------------------

@@ -22,7 +22,11 @@ urlpatterns = [
     path('perfil/password/',  views.cambiar_password_view, name='cambiar_password'),
 
     # --- Barberos (admin) ---
-    path('barberos/',         views.barberos_view,        name='barberos'),
+    path('barberos/',                             views.barberos_view,          name='barberos'),
+    path('admin/barberos/crear/',                 views.barbero_crear_view,     name='barbero_crear'),
+    path('admin/barberos/<int:pk>/editar/',        views.barbero_editar_view,    name='barbero_editar'),
+    path('admin/barberos/<int:pk>/eliminar/',      views.barbero_eliminar_view,  name='barbero_eliminar'),
+    path('admin/barberos/<int:pk>/toggle/',        views.barbero_toggle_estado,  name='barbero_toggle'),
 
     # --- Citas ---
     path('citas/agendar/',    views.agendar_cita_view,       name='agendar_cita'),

@@ -115,19 +115,22 @@
               </span>
             </td>
             <td class="px-4 py-3 text-right">
-              <form method="post" action="{% url 'cita_cambiar_estado' cita.pk %}" class="inline-flex items-center gap-1">
+              <form method="post" action="{% url 'cita_cambiar_estado' cita.pk %}" class="inline-flex items-center justify-end">
                 {% csrf_token %}
-                <select name="estado"
-                        class="h-8 bg-surface-container border border-outline-variant rounded text-xs text-on-surface px-2 focus:outline-none focus:border-secondary">
-                  {% for valor, label in cita.ESTADO_CHOICES %}
-                    <option value="{{ valor }}" {% if cita.estado == valor %}selected{% endif %}>{{ label }}</option>
-                  {% endfor %}
-                </select>
-                <button type="submit"
-                        class="p-1.5 bg-secondary/20 text-secondary hover:bg-secondary hover:text-on-secondary rounded transition-all"
-                        title="Aplicar">
-                  <span class="material-symbols-outlined text-[16px]">check</span>
-                </button>
+                <div class="flex items-center rounded-lg overflow-hidden border border-outline-variant focus-within:border-secondary transition-colors">
+                  <select name="estado"
+                          class="h-8 bg-surface-container text-xs text-on-surface-variant px-2 pr-1 focus:outline-none border-none cursor-pointer"
+                          style="-webkit-appearance:none;-moz-appearance:none;appearance:none;">
+                    {% for valor, label in cita.ESTADO_CHOICES %}
+                      <option value="{{ valor }}" {% if cita.estado == valor %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                  </select>
+                  <button type="submit"
+                          class="h-8 px-2 bg-secondary/10 text-secondary hover:bg-secondary hover:text-on-secondary transition-all border-l border-outline-variant flex items-center"
+                          title="Aplicar cambio">
+                    <span class="material-symbols-outlined text-[16px]">check</span>
+                  </button>
+                </div>
               </form>
             </td>
           </tr>

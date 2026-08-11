@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.db.models import Count, Sum, Avg, Q
 from django.utils import timezone
 
-from ..forms import ServicioForm, HorarioForm, ConfiguracionBarberiaForm
+from ..forms import ServicioForm, HorarioForm, ConfiguracionBarberiaForm, BarberoForm
 from ..models import (
     Barbero, Servicio, Cita, Horario, ConfiguracionBarberia,
     PerfilUsuario, Calificacion,
@@ -42,6 +42,140 @@ def barberos_view(request):
         'citas_pendientes': Cita.objects.filter(estado='PENDIENTE').count(),
     }
     return render(request, 'agenda/barberos.html', contexto)
+
+
+@login_required
+@admin_required
+def barbero_crear_view(request):
+    """Crear un nuevo barbero (User + PerfilUsuario + Barbero)."""
+    form = BarberoForm(request.POST or None, request.FILES or None)
+    if request.method == 'POST' and form.is_valid():
+        d = form.cleaned_data
+        # 1. Crear User de Django
+        user = User.objects.create_user(
+            username   = d['username'],
+            password   = d['password'],
+            first_name = d['first_name'],
+            last_name  = d['last_name'],
+            email      = d.get('email', ''),
+        )
+        # 2. Crear / actualizar PerfilUsuario con rol BARBERO
+        perfil = PerfilUsuario.objects.create(
+            usuario    = user,
+            rol        = 'BARBERO',
+            telefono   = d.get('telefono', ''),
+            foto_perfil= d.get('foto_perfil') or None,
+        )
+        # 3. Crear Barbero
+        barbero = Barbero.objects.create(
+            perfil      = perfil,
+            especialidad= d.get('especialidad', ''),
+            descripcion = d.get('descripcion', ''),
+            estado      = d['estado'],
+        )
+        barbero.servicios.set(d.get('servicios') or [])
+        messages.success(request, f'Barbero "{user.get_full_name()}" creado correctamente.')
+        return redirect('barberos')
+
+    return render(request, 'agenda/admin/barbero_form.html', {
+        'form':   form,
+        'accion': 'Crear',
+        'servicios_seleccionados': [int(pk) for pk in request.POST.getlist('servicios')] if request.method == 'POST' else [],
+    })
+
+
+@login_required
+@admin_required
+def barbero_editar_view(request, pk):
+    """Editar datos de un barbero existente."""
+    barbero = get_object_or_404(Barbero, pk=pk)
+    form = BarberoForm(
+        request.POST or None,
+        request.FILES or None,
+        barbero_instance=barbero,
+    )
+    if request.method == 'POST' and form.is_valid():
+        d = form.cleaned_data
+        # Actualizar User
+        user = barbero.perfil.usuario
+        user.first_name = d['first_name']
+        user.last_name  = d['last_name']
+        user.email      = d.get('email', '')
+        user.username   = d['username']
+        if d.get('password'):
+            user.set_password(d['password'])
+        user.save()
+        # Actualizar Perfil
+        perfil = barbero.perfil
+        perfil.telefono = d.get('telefono', '')
+        if d.get('foto_perfil'):
+            perfil.foto_perfil = d['foto_perfil']
+        perfil.save()
+        # Actualizar Barbero
+        barbero.especialidad = d.get('especialidad', '')
+        barbero.descripcion  = d.get('descripcion', '')
+        barbero.estado       = d['estado']
+        barbero.save()
+        barbero.servicios.set(d.get('servicios') or [])
+        messages.success(request, f'Barbero "{user.get_full_name()}" actualizado correctamente.')
+        return redirect('barberos')
+
+    return render(request, 'agenda/admin/barbero_form.html', {
+        'form':    form,
+        'accion':  'Editar',
+        'barbero': barbero,
+        'servicios_seleccionados': list(barbero.servicios.values_list('pk', flat=True)),
+    })
+
+
+@login_required
+@admin_required
+def barbero_eliminar_view(request, pk):
+    """
+    Eliminar un barbero.
+    Si tiene citas activas (PENDIENTE/CONFIRMADA), se bloquea la eliminación.
+    Si tiene citas históricas, se desactiva en su lugar.
+    """
+    barbero = get_object_or_404(Barbero, pk=pk)
+
+    citas_activas = Cita.objects.filter(
+        barbero=barbero, estado__in=['PENDIENTE', 'CONFIRMADA']
+    ).count()
+
+    if citas_activas:
+        messages.error(
+            request,
+            f'No se puede eliminar a "{barbero}" porque tiene {citas_activas} '
+            'cita(s) activa(s). Cambia su estado a Inactivo primero.'
+        )
+        return redirect('barberos')
+
+    if request.method == 'POST':
+        nombre = str(barbero)
+        # Elimina el User — en cascada elimina PerfilUsuario y Barbero
+        barbero.perfil.usuario.delete()
+        messages.success(request, f'Barbero "{nombre}" eliminado correctamente.')
+        return redirect('barberos')
+
+    return render(request, 'agenda/admin/confirmar_eliminar.html', {
+        'objeto': barbero,
+        'tipo':   'barbero',
+    })
+
+
+@login_required
+@admin_required
+def barbero_toggle_estado(request, pk):
+    """Cicla el estado del barbero: ACTIVO → INACTIVO → ACTIVO."""
+    barbero = get_object_or_404(Barbero, pk=pk)
+    if request.method == 'POST':
+        barbero.estado = 'INACTIVO' if barbero.estado == 'ACTIVO' else 'ACTIVO'
+        barbero.save()
+        messages.success(
+            request,
+            f'Barbero "{barbero}" ahora está {barbero.get_estado_display()}.'
+        )
+    return redirect('barberos')
 
 
 # ===========================================================================
