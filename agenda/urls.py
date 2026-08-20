@@ -68,6 +68,7 @@ urlpatterns = [
 
     # Reportes
     path('admin/reportes/',                   views.reportes_view,       name='reportes'),
+    path('admin/reportes/pdf/',               views.reportes_pdf_view,   name='reportes_pdf'),
 
     # Configuración
     path('admin/configuracion/',              views.configuracion_view,  name='configuracion'),
@@ -79,8 +80,10 @@ urlpatterns = [
     path('barbero/agenda/',                       views.barbero_agenda,        name='barbero_agenda'),
     path('barbero/agenda/<int:pk>/',              views.barbero_cita_detalle,  name='barbero_cita_detalle'),
     path('barbero/agenda/<int:pk>/accion/',       views.barbero_cita_accion,   name='barbero_cita_accion'),
+    path('barbero/agenda/<int:pk>/cancelar/',     views.barbero_cancelar_cita, name='barbero_cancelar_cita'),
     path('barbero/historial/',                    views.barbero_historial,     name='barbero_historial'),
     path('barbero/disponibilidad/',               views.barbero_disponibilidad,name='barbero_disponibilidad'),
     path('barbero/estado/',                       views.barbero_cambiar_estado,name='barbero_cambiar_estado'),
     path('barbero/perfil/',                       views.barbero_perfil,        name='barbero_perfil'),
+    path('notificaciones/<int:pk>/leer/',         views.marcar_notificacion_leida, name='notificacion_leer'),
 ]

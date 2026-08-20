@@ -14,6 +14,9 @@ from .barberos import Barbero, Servicio
 # Modelos de citas
 from .citas import Cita, Calificacion, Horario
 
+# Modelos de notificaciones
+from .notificaciones import Notificacion
+
 # Modelos de configuración
 from .configuracion import ConfiguracionBarberia
 
@@ -28,6 +31,8 @@ __all__ = [
     'Cita',
     'Calificacion',
     'Horario',
+    # Notificaciones
+    'Notificacion',
     # Configuración
     'ConfiguracionBarberia',
 ]

@@ -56,6 +56,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'agenda.context_processors.config_barberia',
+                'agenda.context_processors.notificaciones',
             ],
         },
     },

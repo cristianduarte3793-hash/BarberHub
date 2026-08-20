@@ -13,7 +13,7 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from ..models import Barbero, Cita, Horario, Servicio
+from ..models import Barbero, Cita, Horario, Servicio, Notificacion
 from ..services import CitasService, HorariosService
 from ..utils import es_barbero, es_cliente
 
@@ -87,6 +87,22 @@ def cancelar_cita_view(request, pk):
 
     if request.method == 'POST':
         if cita.estado in ['PENDIENTE', 'CONFIRMADA']:
+            # ── Restricción: mínimo 12 horas de anticipación ────────────
+            ahora = timezone.localtime()
+            dt_cita = dt.combine(cita.fecha, cita.hora_inicio)
+            # Comparación naive
+            ahora_naive = dt(
+                ahora.year, ahora.month, ahora.day,
+                ahora.hour, ahora.minute, ahora.second
+            )
+            from datetime import timedelta
+            if dt_cita < ahora_naive + timedelta(hours=12):
+                messages.error(
+                    request,
+                    'No puedes cancelar esta cita con menos de 12 horas de anticipación.'
+                )
+                return redirect('mis_citas')
+            # ────────────────────────────────────────────────────────────
             cita.estado = 'CANCELADA'
             cita.save()
             messages.success(request, f'Cita {cita.codigo_reserva} cancelada correctamente.')

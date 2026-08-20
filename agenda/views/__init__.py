@@ -48,6 +48,7 @@ from .admin import (
     horario_editar,
     horario_eliminar,
     reportes_view,
+    reportes_pdf_view,
     configuracion_view,
     clientes_view,
     cliente_toggle,
@@ -65,6 +66,8 @@ from .barbero import (
     barbero_historial,
     barbero_disponibilidad,
     barbero_perfil,
+    barbero_cancelar_cita,
+    marcar_notificacion_leida,
 )
 
 __all__ = [
@@ -100,6 +103,7 @@ __all__ = [
     'horario_editar',
     'horario_eliminar',
     'reportes_view',
+    'reportes_pdf_view',
     'configuracion_view',
     # Clientes
     'clientes_view',
@@ -117,4 +121,6 @@ __all__ = [
     'barbero_historial',
     'barbero_disponibilidad',
     'barbero_perfil',
+    'barbero_cancelar_cita',
+    'marcar_notificacion_leida',
 ]

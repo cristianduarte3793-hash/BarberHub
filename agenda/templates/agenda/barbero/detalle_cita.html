@@ -106,6 +106,19 @@
             </button>
           </form>
           {% endif %}
+
+          <!-- Cancelar por urgencia -->
+          {% if cita.estado == 'PENDIENTE' or cita.estado == 'CONFIRMADA' %}
+          <form method="post" action="{% url 'barbero_cancelar_cita' cita.pk %}"
+                onsubmit="return confirm('¿Seguro que quieres cancelar esta cita? Se le enviará una notificación al cliente.')">
+            {% csrf_token %}
+            <button type="submit"
+                    class="flex items-center gap-2 px-5 py-2.5 bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg text-sm font-bold hover:bg-red-500/20 transition-colors">
+              <span class="material-symbols-outlined text-[18px]">event_busy</span>
+              Cancelar por urgencia
+            </button>
+          </form>
+          {% endif %}
         </div>
       </div>
       {% endif %}

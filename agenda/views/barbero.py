@@ -16,7 +16,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from ..forms import EditarPerfilForm
-from ..models import Barbero, Calificacion, Cita
+from ..models import Barbero, Calificacion, Cita, Notificacion
 from ..utils import barbero_required
 
 
@@ -426,3 +426,64 @@ def barbero_perfil(request):
         'servicio_top': servicio_top_qs,
         'ultimas_calificaciones': ultimas_calificaciones,
     })
+
+
+# ===========================================================================
+# CANCELAR CITA (por urgencia del barbero) + NOTIFICACIÓN AL CLIENTE
+# ===========================================================================
+
+@login_required
+@barbero_required
+def barbero_cancelar_cita(request, pk):
+    """
+    El barbero cancela una cita por urgencia.
+    - Solo puede cancelar sus propias citas en estado PENDIENTE o CONFIRMADA.
+    - Se genera una notificación interna para el cliente afectado.
+    """
+    if request.method != 'POST':
+        return redirect('barbero_agenda')
+
+    barbero = request.user.perfil.barbero
+    cita = get_object_or_404(Cita, pk=pk, barbero=barbero)
+
+    if cita.estado not in ['PENDIENTE', 'CONFIRMADA']:
+        messages.error(request, 'Esta cita no puede cancelarse en su estado actual.')
+        return redirect('barbero_cita_detalle', pk=pk)
+
+    # Cancelar la cita
+    cita.estado = 'CANCELADA'
+    cita.save()
+
+    # Crear notificación para el cliente
+    nombre_barbero = barbero.perfil.usuario.get_full_name() or barbero.perfil.usuario.username
+    Notificacion.objects.create(
+        destinatario=cita.cliente,
+        cita=cita,
+        tipo='CITA_CANCELADA_BARBERO',
+        titulo='Tu cita fue cancelada por el barbero',
+        mensaje=(
+            f'Lamentamos informarte que tu cita del '
+            f'{cita.fecha.strftime("%d/%m/%Y")} a las {cita.hora_inicio.strftime("%H:%M")} '
+            f'con {nombre_barbero} ha sido cancelada por una urgencia. '
+            f'Por favor agenda una nueva cita a la brevedad. '
+            f'Disculpa los inconvenientes.'
+        ),
+    )
+
+    messages.success(request, f'Cita {cita.codigo_reserva} cancelada. Se notificó al cliente.')
+    return redirect('barbero_agenda')
+
+
+# ===========================================================================
+# MARCAR NOTIFICACIÓN COMO LEÍDA
+# ===========================================================================
+
+@login_required
+def marcar_notificacion_leida(request, pk):
+    """Marca una notificación del usuario autenticado como leída."""
+    from ..models import Notificacion
+    if request.method == 'POST':
+        notif = get_object_or_404(Notificacion, pk=pk, destinatario=request.user.perfil)
+        notif.leida = True
+        notif.save()
+    return redirect(request.META.get('HTTP_REFERER', 'dashboard'))

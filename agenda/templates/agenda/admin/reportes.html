@@ -1,16 +1,55 @@
 ﻿{% extends 'agenda/base.html' %}
+{% load barberhub_filters %}
 {% block title %}Reportes — BarberHub{% endblock %}
 {% block page_title %}Reportes y Estadísticas{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
 
-  <div>
-    <h2 class="text-2xl font-bold text-on-surface font-['Montserrat']">Reportes</h2>
-    <p class="text-on-surface-variant mt-1 text-sm">Estadísticas calculadas en tiempo real desde la base de datos.</p>
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div>
+      <h2 class="text-2xl font-bold text-on-surface font-['Montserrat']">Reportes</h2>
+      <p class="text-on-surface-variant mt-1 text-sm">
+        Estadísticas de <strong class="text-secondary">{{ mes_nombre }} {{ anio_sel }}</strong>
+      </p>
+    </div>
+    <!-- Botón exportar PDF -->
+    <a href="{% url 'reportes_pdf' %}?mes={{ mes_sel }}&anio={{ anio_sel }}"
+       target="_blank"
+       class="flex items-center gap-2 bg-secondary text-on-secondary px-5 py-2.5 rounded-lg text-sm font-bold shadow hover:scale-[0.98] transition-all">
+      <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+      Exportar PDF
+    </a>
   </div>
 
-  <!-- KPI cards fila 1 -->
+  <!-- ── Filtro de mes ───────────────────────────────────────────────── -->
+  <form method="get" class="glass-card rounded-xl p-4 border border-outline-variant flex flex-wrap items-end gap-4">
+    <div>
+      <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">Mes</label>
+      <select name="mes"
+              class="h-10 bg-surface-container border border-outline-variant rounded-lg px-3 text-on-surface text-sm focus:outline-none focus:border-secondary">
+        {% for num, nombre in meses %}
+          <option value="{{ num }}" {% if num == mes_sel %}selected{% endif %}>{{ nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1.5">Año</label>
+      <select name="anio"
+              class="h-10 bg-surface-container border border-outline-variant rounded-lg px-3 text-on-surface text-sm focus:outline-none focus:border-secondary">
+        {% for a in anios_disponibles %}
+          <option value="{{ a }}" {% if a == anio_sel %}selected{% endif %}>{{ a }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit"
+            class="h-10 bg-secondary text-on-secondary px-5 rounded-lg text-sm font-bold flex items-center gap-1 hover:opacity-90 transition-opacity">
+      <span class="material-symbols-outlined text-[16px]">filter_list</span> Ver reporte
+    </button>
+  </form>
+
+  <!-- KPI fila 1 — citas del mes -->
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
     <div class="glass-card p-5 rounded-xl border border-outline-variant space-y-2">
       <span class="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-lg">event</span>
@@ -19,12 +58,12 @@
     </div>
     <div class="glass-card p-5 rounded-xl border border-outline-variant space-y-2">
       <span class="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-lg">calendar_month</span>
-      <p class="text-xs text-on-surface-variant">Citas este mes</p>
+      <p class="text-xs text-on-surface-variant">Citas del mes</p>
       <p class="text-3xl font-bold text-on-surface">{{ citas_mes }}</p>
     </div>
     <div class="glass-card p-5 rounded-xl border border-outline-variant space-y-2">
       <span class="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-lg">event_available</span>
-      <p class="text-xs text-on-surface-variant">Total finalizadas</p>
+      <p class="text-xs text-on-surface-variant">Finalizadas</p>
       <p class="text-3xl font-bold text-on-surface">{{ citas_finalizadas }}</p>
     </div>
     <div class="glass-card p-5 rounded-xl border border-outline-variant space-y-2">
@@ -34,7 +73,7 @@
     </div>
   </div>
 
-  <!-- KPI cards fila 2 -->
+  <!-- KPI fila 2 — ingresos y globales -->
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
     <div class="glass-card p-5 rounded-xl border border-outline-variant space-y-2">
       <span class="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-lg">groups</span>
@@ -48,24 +87,24 @@
     </div>
     <div class="glass-card p-5 rounded-xl border border-outline-variant space-y-2">
       <span class="material-symbols-outlined text-tertiary bg-tertiary/10 p-2 rounded-lg">payments</span>
-      <p class="text-xs text-on-surface-variant">Ingresos este mes</p>
-      <p class="text-3xl font-bold text-on-surface">${{ ingresos_mes|floatformat:0 }}</p>
+      <p class="text-xs text-on-surface-variant">Ingresos del mes</p>
+      <p class="text-2xl font-bold text-on-surface">{{ ingresos_mes|cop }}</p>
     </div>
     <div class="glass-card p-5 rounded-xl border border-outline-variant space-y-2">
       <span class="material-symbols-outlined text-tertiary bg-tertiary/10 p-2 rounded-lg">account_balance_wallet</span>
       <p class="text-xs text-on-surface-variant">Ingresos totales</p>
-      <p class="text-3xl font-bold text-on-surface">${{ ingresos_total|floatformat:0 }}</p>
+      <p class="text-2xl font-bold text-on-surface">{{ ingresos_total|cop }}</p>
     </div>
   </div>
 
-  <!-- Gráficas y tablas -->
+  <!-- Tablas -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
     <!-- Servicios más solicitados -->
     <div class="glass-card p-6 rounded-xl border border-outline-variant">
       <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider mb-5 flex items-center gap-2">
         <span class="material-symbols-outlined text-secondary text-[18px]">bar_chart</span>
-        Servicios más solicitados
+        Servicios más solicitados — {{ mes_nombre }} {{ anio_sel }}
       </h3>
       {% if servicios_top %}
         <div class="space-y-4">
@@ -73,7 +112,7 @@
           <div>
             <div class="flex justify-between text-sm mb-1">
               <span class="text-on-surface font-medium">{{ s.servicio__nombre }}</span>
-              <span class="text-secondary font-bold">{{ s.total }} citas · ${{ s.ingresos|floatformat:0 }}</span>
+              <span class="text-secondary font-bold text-xs">{{ s.total }} citas · {{ s.ingresos|cop }}</span>
             </div>
             <div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
               {% with max_total=servicios_top.0.total %}
@@ -84,7 +123,7 @@
           {% endfor %}
         </div>
       {% else %}
-        <p class="text-on-surface-variant text-sm text-center py-6">Sin datos aún.</p>
+        <p class="text-on-surface-variant text-sm text-center py-6">Sin datos para este mes.</p>
       {% endif %}
     </div>
 
@@ -92,7 +131,7 @@
     <div class="glass-card p-6 rounded-xl border border-outline-variant">
       <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider mb-5 flex items-center gap-2">
         <span class="material-symbols-outlined text-secondary text-[18px]">military_tech</span>
-        Barberos por rendimiento
+        Barberos por rendimiento — {{ mes_nombre }} {{ anio_sel }}
       </h3>
       {% if barberos_top %}
         <div class="space-y-3">
@@ -108,19 +147,17 @@
             </div>
             <div class="text-right flex-shrink-0">
               <p class="text-sm font-bold text-secondary">{{ b.total }} citas</p>
-              <p class="text-xs text-on-surface-variant">${{ b.ingresos|floatformat:0 }}</p>
+              <p class="text-xs text-on-surface-variant">{{ b.ingresos|cop }}</p>
             </div>
           </div>
           {% endfor %}
         </div>
       {% else %}
-        <p class="text-on-surface-variant text-sm text-center py-6">Sin datos aún.</p>
+        <p class="text-on-surface-variant text-sm text-center py-6">Sin datos para este mes.</p>
       {% endif %}
     </div>
 
-    <!-- Citas por estado — REMOVED -->
-
-    <!-- Calificaciones por barbero — ancho completo -->
+    <!-- Calificaciones — ancho completo -->
     <div class="glass-card p-6 rounded-xl border border-outline-variant lg:col-span-2">
       <h3 class="text-sm font-bold text-on-surface uppercase tracking-wider mb-5 flex items-center gap-2">
         <span class="material-symbols-outlined text-secondary text-[18px]">star</span>
@@ -149,6 +186,5 @@
     </div>
 
   </div>
-
 </div>
 {% endblock %}

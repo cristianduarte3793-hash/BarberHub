@@ -366,39 +366,54 @@ def horario_eliminar(request, pk):
 @login_required
 @admin_required
 def reportes_view(request):
-    """Panel de reportes con datos reales del ORM."""
+    """Panel de reportes con filtro mensual."""
     hoy = timezone.localdate()
-    inicio_mes = hoy.replace(day=1)
 
-    # Totales generales
-    total_citas = Cita.objects.count()
-    citas_hoy = Cita.objects.filter(fecha=hoy).exclude(estado='CANCELADA').count()
-    citas_mes = Cita.objects.filter(fecha__gte=inicio_mes).exclude(estado='CANCELADA').count()
-    citas_finalizadas = Cita.objects.filter(estado='FINALIZADA').count()
-    citas_canceladas = Cita.objects.filter(estado='CANCELADA').count()
-    citas_pendientes = Cita.objects.filter(estado='PENDIENTE').count()
+    # ── Parámetros del filtro ────────────────────────────────────────────
+    try:
+        anio  = int(request.GET.get('anio',  hoy.year))
+        mes   = int(request.GET.get('mes',   hoy.month))
+        if not (1 <= mes <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        anio, mes = hoy.year, hoy.month
+
+    from datetime import date as date_type
+    import calendar
+    ultimo_dia = calendar.monthrange(anio, mes)[1]
+    inicio_mes = date_type(anio, mes, 1)
+    fin_mes    = date_type(anio, mes, ultimo_dia)
+
+    # ── Citas del mes seleccionado ───────────────────────────────────────
+    citas_mes_qs = Cita.objects.filter(fecha__range=(inicio_mes, fin_mes))
+
+    citas_mes          = citas_mes_qs.exclude(estado='CANCELADA').count()
+    citas_finalizadas  = citas_mes_qs.filter(estado='FINALIZADA').count()
+    citas_canceladas   = citas_mes_qs.filter(estado='CANCELADA').count()
+    citas_pendientes   = citas_mes_qs.filter(estado='PENDIENTE').count()
+    citas_hoy          = Cita.objects.filter(fecha=hoy).exclude(estado='CANCELADA').count()
+
     total_clientes = PerfilUsuario.objects.filter(rol='CLIENTE', activo=True).count()
     total_barberos = Barbero.objects.filter(estado='ACTIVO').count()
 
-    # Ingresos
+    ingresos_mes = citas_mes_qs.filter(
+        estado='FINALIZADA'
+    ).aggregate(total=Sum('precio'))['total'] or 0
+
     ingresos_total = Cita.objects.filter(
         estado='FINALIZADA'
     ).aggregate(total=Sum('precio'))['total'] or 0
 
-    ingresos_mes = Cita.objects.filter(
-        estado='FINALIZADA', fecha__gte=inicio_mes
-    ).aggregate(total=Sum('precio'))['total'] or 0
-
-    # Top 5 servicios más solicitados
-    servicios_top = Cita.objects.filter(
+    # Top 5 servicios del mes
+    servicios_top = citas_mes_qs.filter(
         estado='FINALIZADA'
     ).values('servicio__nombre').annotate(
         total=Count('id'),
         ingresos=Sum('precio'),
     ).order_by('-total')[:5]
 
-    # Top barberos por citas finalizadas
-    barberos_top = Cita.objects.filter(
+    # Top barberos del mes
+    barberos_top = citas_mes_qs.filter(
         estado='FINALIZADA'
     ).values(
         'barbero__perfil__usuario__first_name',
@@ -408,35 +423,223 @@ def reportes_view(request):
         ingresos=Sum('precio'),
     ).order_by('-total')[:5]
 
-    # Calificación promedio por barbero
+    # Calificaciones (históricas, no filtradas por mes)
     calificaciones_barbero = Calificacion.objects.values(
         'barbero__perfil__usuario__first_name',
         'barbero__perfil__usuario__last_name',
     ).annotate(promedio=Avg('puntuacion'), total=Count('id')).order_by('-promedio')
 
-    # Citas por estado (para gráfica)
-    citas_por_estado = {
-        e[1]: Cita.objects.filter(estado=e[0]).count()
-        for e in Cita.ESTADO_CHOICES
-    }
+    # Lista de años disponibles para el selector (desde el primer registro)
+    primera_cita = Cita.objects.order_by('fecha').first()
+    anio_inicio  = primera_cita.fecha.year if primera_cita else hoy.year
+    anios_disponibles = list(range(anio_inicio, hoy.year + 1))
+
+    MESES_ES = [
+        (1,'Enero'),(2,'Febrero'),(3,'Marzo'),(4,'Abril'),
+        (5,'Mayo'),(6,'Junio'),(7,'Julio'),(8,'Agosto'),
+        (9,'Septiembre'),(10,'Octubre'),(11,'Noviembre'),(12,'Diciembre'),
+    ]
 
     contexto = {
-        'total_citas': total_citas,
-        'citas_hoy': citas_hoy,
-        'citas_mes': citas_mes,
-        'citas_finalizadas': citas_finalizadas,
-        'citas_canceladas': citas_canceladas,
-        'citas_pendientes': citas_pendientes,
-        'total_clientes': total_clientes,
-        'total_barberos': total_barberos,
-        'ingresos_total': ingresos_total,
-        'ingresos_mes': ingresos_mes,
-        'servicios_top': servicios_top,
-        'barberos_top': barberos_top,
+        'mes_sel':   mes,
+        'anio_sel':  anio,
+        'mes_nombre': dict(MESES_ES)[mes],
+        'anios_disponibles': anios_disponibles,
+        'meses': MESES_ES,
+        'citas_hoy':          citas_hoy,
+        'citas_mes':          citas_mes,
+        'citas_finalizadas':  citas_finalizadas,
+        'citas_canceladas':   citas_canceladas,
+        'citas_pendientes':   citas_pendientes,
+        'total_clientes':     total_clientes,
+        'total_barberos':     total_barberos,
+        'ingresos_mes':       ingresos_mes,
+        'ingresos_total':     ingresos_total,
+        'servicios_top':      servicios_top,
+        'barberos_top':       barberos_top,
         'calificaciones_barbero': calificaciones_barbero,
-        'citas_por_estado': citas_por_estado,
     }
     return render(request, 'agenda/admin/reportes.html', contexto)
+
+
+@login_required
+@admin_required
+def reportes_pdf_view(request):
+    """Genera y descarga el reporte mensual en PDF."""
+    from io import BytesIO
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import cm
+    from reportlab.platypus import (
+        SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
+    )
+    from datetime import date as date_type
+    import calendar
+
+    hoy = timezone.localdate()
+    try:
+        anio = int(request.GET.get('anio', hoy.year))
+        mes  = int(request.GET.get('mes',  hoy.month))
+        if not (1 <= mes <= 12):
+            raise ValueError
+    except (ValueError, TypeError):
+        anio, mes = hoy.year, hoy.month
+
+    ultimo_dia = calendar.monthrange(anio, mes)[1]
+    inicio_mes = date_type(anio, mes, 1)
+    fin_mes    = date_type(anio, mes, ultimo_dia)
+
+    MESES_ES = {
+        1:'Enero',2:'Febrero',3:'Marzo',4:'Abril',5:'Mayo',6:'Junio',
+        7:'Julio',8:'Agosto',9:'Septiembre',10:'Octubre',11:'Noviembre',12:'Diciembre'
+    }
+    mes_nombre = MESES_ES[mes]
+
+    citas_mes_qs = Cita.objects.filter(fecha__range=(inicio_mes, fin_mes))
+    citas_total      = citas_mes_qs.count()
+    citas_finalizadas= citas_mes_qs.filter(estado='FINALIZADA').count()
+    citas_canceladas = citas_mes_qs.filter(estado='CANCELADA').count()
+    citas_pendientes = citas_mes_qs.filter(estado='PENDIENTE').count()
+    ingresos_mes     = citas_mes_qs.filter(estado='FINALIZADA').aggregate(t=Sum('precio'))['t'] or 0
+
+    servicios_top = list(citas_mes_qs.filter(estado='FINALIZADA').values('servicio__nombre').annotate(
+        total=Count('id'), ingresos=Sum('precio')
+    ).order_by('-total')[:5])
+
+    barberos_top = list(citas_mes_qs.filter(estado='FINALIZADA').values(
+        'barbero__perfil__usuario__first_name',
+        'barbero__perfil__usuario__last_name',
+    ).annotate(total=Count('id'), ingresos=Sum('precio')).order_by('-total')[:5])
+
+    # ── Construcción del PDF ─────────────────────────────────────────────
+    buffer = BytesIO()
+    doc    = SimpleDocTemplate(
+        buffer, pagesize=A4,
+        leftMargin=2*cm, rightMargin=2*cm,
+        topMargin=2*cm, bottomMargin=2*cm,
+    )
+
+    GOLD   = colors.HexColor('#e9c349')
+    DARK   = colors.HexColor('#121414')
+    GREY   = colors.HexColor('#c4c7c7')
+    DGREY  = colors.HexColor('#333535')
+    WHITE  = colors.white
+
+    styles = getSampleStyleSheet()
+    h1  = ParagraphStyle('h1',  fontName='Helvetica-Bold', fontSize=20, textColor=GOLD,   spaceAfter=4)
+    h2  = ParagraphStyle('h2',  fontName='Helvetica-Bold', fontSize=12, textColor=WHITE,  spaceBefore=14, spaceAfter=6)
+    sub = ParagraphStyle('sub', fontName='Helvetica',      fontSize=9,  textColor=GREY,   spaceAfter=12)
+    tbl_header = ParagraphStyle('th', fontName='Helvetica-Bold', fontSize=8, textColor=GOLD)
+    tbl_cell   = ParagraphStyle('td', fontName='Helvetica',      fontSize=8, textColor=WHITE)
+
+    def cop_fmt(v):
+        try:
+            return f'$ {int(float(v)):,}'.replace(',', '.') + ' COP'
+        except Exception:
+            return str(v)
+
+    elements = []
+
+    # Encabezado
+    elements.append(Paragraph('BarberHub', h1))
+    elements.append(Paragraph(f'Reporte mensual — {mes_nombre} {anio}', sub))
+    elements.append(HRFlowable(width='100%', thickness=1, color=GOLD, spaceAfter=12))
+
+    # KPIs
+    kpi_data = [
+        ['Citas del mes', 'Finalizadas', 'Canceladas', 'Pendientes', 'Ingresos del mes'],
+        [str(citas_total), str(citas_finalizadas), str(citas_canceladas),
+         str(citas_pendientes), cop_fmt(ingresos_mes)],
+    ]
+    kpi_table = Table(kpi_data, colWidths=[3.2*cm]*5)
+    kpi_table.setStyle(TableStyle([
+        ('BACKGROUND',   (0,0), (-1,0), DGREY),
+        ('BACKGROUND',   (0,1), (-1,1), colors.HexColor('#1e2020')),
+        ('TEXTCOLOR',    (0,0), (-1,0), GOLD),
+        ('TEXTCOLOR',    (0,1), (-1,1), WHITE),
+        ('FONTNAME',     (0,0), (-1,0), 'Helvetica-Bold'),
+        ('FONTNAME',     (0,1), (-1,1), 'Helvetica'),
+        ('FONTSIZE',     (0,0), (-1,-1), 8),
+        ('ALIGN',        (0,0), (-1,-1), 'CENTER'),
+        ('VALIGN',       (0,0), (-1,-1), 'MIDDLE'),
+        ('ROWBACKGROUNDS',(0,0),(-1,-1), [DGREY, colors.HexColor('#1e2020')]),
+        ('GRID',         (0,0), (-1,-1), 0.5, colors.HexColor('#444748')),
+        ('TOPPADDING',   (0,0), (-1,-1), 8),
+        ('BOTTOMPADDING',(0,0), (-1,-1), 8),
+    ]))
+    elements.append(kpi_table)
+    elements.append(Spacer(1, 0.5*cm))
+
+    # Servicios más solicitados
+    elements.append(Paragraph('Servicios más solicitados', h2))
+    if servicios_top:
+        s_data = [['Servicio', 'Citas', 'Ingresos']]
+        for s in servicios_top:
+            s_data.append([
+                s['servicio__nombre'],
+                str(s['total']),
+                cop_fmt(s['ingresos']),
+            ])
+        s_table = Table(s_data, colWidths=[9*cm, 3*cm, 5*cm])
+        s_table.setStyle(TableStyle([
+            ('BACKGROUND',   (0,0), (-1,0), DGREY),
+            ('TEXTCOLOR',    (0,0), (-1,0), GOLD),
+            ('FONTNAME',     (0,0), (-1,0), 'Helvetica-Bold'),
+            ('FONTNAME',     (0,1), (-1,-1), 'Helvetica'),
+            ('FONTSIZE',     (0,0), (-1,-1), 8),
+            ('TEXTCOLOR',    (0,1), (-1,-1), WHITE),
+            ('ROWBACKGROUNDS',(0,1),(-1,-1), [colors.HexColor('#1e2020'), colors.HexColor('#282a2b')]),
+            ('GRID',         (0,0), (-1,-1), 0.5, colors.HexColor('#444748')),
+            ('ALIGN',        (1,0), (-1,-1), 'CENTER'),
+            ('TOPPADDING',   (0,0), (-1,-1), 6),
+            ('BOTTOMPADDING',(0,0), (-1,-1), 6),
+        ]))
+        elements.append(s_table)
+    else:
+        elements.append(Paragraph('Sin datos para este mes.', sub))
+
+    elements.append(Spacer(1, 0.5*cm))
+
+    # Rendimiento de barberos
+    elements.append(Paragraph('Rendimiento de barberos', h2))
+    if barberos_top:
+        b_data = [['Barbero', 'Citas', 'Ingresos']]
+        for b in barberos_top:
+            nombre = f"{b['barbero__perfil__usuario__first_name']} {b['barbero__perfil__usuario__last_name']}"
+            b_data.append([nombre, str(b['total']), cop_fmt(b['ingresos'])])
+        b_table = Table(b_data, colWidths=[9*cm, 3*cm, 5*cm])
+        b_table.setStyle(TableStyle([
+            ('BACKGROUND',   (0,0), (-1,0), DGREY),
+            ('TEXTCOLOR',    (0,0), (-1,0), GOLD),
+            ('FONTNAME',     (0,0), (-1,0), 'Helvetica-Bold'),
+            ('FONTNAME',     (0,1), (-1,-1), 'Helvetica'),
+            ('FONTSIZE',     (0,0), (-1,-1), 8),
+            ('TEXTCOLOR',    (0,1), (-1,-1), WHITE),
+            ('ROWBACKGROUNDS',(0,1),(-1,-1), [colors.HexColor('#1e2020'), colors.HexColor('#282a2b')]),
+            ('GRID',         (0,0), (-1,-1), 0.5, colors.HexColor('#444748')),
+            ('ALIGN',        (1,0), (-1,-1), 'CENTER'),
+            ('TOPPADDING',   (0,0), (-1,-1), 6),
+            ('BOTTOMPADDING',(0,0), (-1,-1), 6),
+        ]))
+        elements.append(b_table)
+    else:
+        elements.append(Paragraph('Sin datos para este mes.', sub))
+
+    # Pie de página
+    elements.append(Spacer(1, 1*cm))
+    elements.append(HRFlowable(width='100%', thickness=0.5, color=DGREY))
+    elements.append(Paragraph(
+        f'Generado el {hoy.strftime("%d/%m/%Y")} · BarberHub',
+        ParagraphStyle('footer', fontName='Helvetica', fontSize=7, textColor=GREY, spaceBefore=6)
+    ))
+
+    doc.build(elements)
+    buffer.seek(0)
+
+    from django.http import FileResponse
+    filename = f'reporte_barberhub_{mes_nombre.lower()}_{anio}.pdf'
+    return FileResponse(buffer, as_attachment=True, filename=filename, content_type='application/pdf')
 
 
 # ===========================================================================

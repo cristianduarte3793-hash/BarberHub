@@ -216,6 +216,62 @@
     <div class="flex items-center gap-4">
       <span class="text-sm text-on-surface-variant hidden md:block" id="fecha-actual"></span>
       <div class="h-8 w-px bg-outline-variant mx-2"></div>
+
+      <!-- 🔔 Campana de notificaciones (solo clientes) -->
+      {% if request.user.is_authenticated and request.user.perfil.rol == 'CLIENTE' %}
+      <div class="relative" id="notif-wrapper">
+        <button id="notif-btn" class="relative p-2 text-on-surface-variant hover:text-secondary transition-colors">
+          <span class="material-symbols-outlined">notifications</span>
+          {% if total_no_leidas %}
+          <span class="absolute top-1 right-1 w-4 h-4 bg-error text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+            {{ total_no_leidas }}
+          </span>
+          {% endif %}
+        </button>
+        <!-- Dropdown notificaciones -->
+        <div id="notif-dropdown"
+             class="hidden absolute right-0 mt-2 w-80 bg-surface-container border border-outline-variant rounded-xl shadow-xl z-50 overflow-hidden">
+          <div class="px-4 py-3 border-b border-outline-variant flex items-center justify-between">
+            <span class="text-sm font-bold text-on-surface">Notificaciones</span>
+            {% if total_no_leidas %}
+            <span class="text-xs text-on-surface-variant">{{ total_no_leidas }} sin leer</span>
+            {% endif %}
+          </div>
+          {% if notificaciones_no_leidas %}
+            <div class="max-h-72 overflow-y-auto divide-y divide-outline-variant">
+              {% for notif in notificaciones_no_leidas %}
+              <div class="p-4 hover:bg-surface-variant/30 transition-colors">
+                <div class="flex items-start gap-3">
+                  <div class="w-8 h-8 rounded-full bg-error/10 flex items-center justify-center text-error flex-shrink-0 mt-0.5">
+                    <span class="material-symbols-outlined text-[16px]">event_busy</span>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-on-surface">{{ notif.titulo }}</p>
+                    <p class="text-xs text-on-surface-variant mt-0.5 line-clamp-2">{{ notif.mensaje }}</p>
+                    <div class="flex items-center justify-between mt-2">
+                      <span class="text-[10px] text-on-surface-variant">{{ notif.creada_en|date:"d/m/Y H:i" }}</span>
+                      <form method="post" action="{% url 'notificacion_leer' notif.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="text-[10px] text-secondary font-semibold hover:underline">
+                          Marcar leída
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="px-4 py-8 text-center text-on-surface-variant text-sm">
+              <span class="material-symbols-outlined text-3xl block mb-2 opacity-30">notifications_none</span>
+              Sin notificaciones nuevas
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
       <!-- Usuario dropdown -->
       <div class="relative" id="user-menu-wrapper">
         <button id="user-menu-btn" class="flex items-center gap-3 cursor-pointer">
@@ -392,8 +448,24 @@
     menuBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       dropdown.classList.toggle('hidden');
+      // Cerrar notificaciones si está abierto
+      const nd = document.getElementById('notif-dropdown');
+      if (nd) nd.classList.add('hidden');
     });
     document.addEventListener('click', () => dropdown.classList.add('hidden'));
+  }
+
+  // Dropdown notificaciones
+  const notifBtn = document.getElementById('notif-btn');
+  const notifDropdown = document.getElementById('notif-dropdown');
+  if (notifBtn && notifDropdown) {
+    notifBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      notifDropdown.classList.toggle('hidden');
+      // Cerrar user dropdown si está abierto
+      if (dropdown) dropdown.classList.add('hidden');
+    });
+    document.addEventListener('click', () => notifDropdown.classList.add('hidden'));
   }
 
   // Sidebar mobile toggle
